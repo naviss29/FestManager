@@ -1,0 +1,54 @@
+# =============================
+# Backend — Java / Spring Boot
+# =============================
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/*.war
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.idea/
+backend/*.iml
+backend/HELP.md
+
+# =============================
+# Frontend — Angular / Node
+# =============================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.idea/
+frontend/*.iml
+
+# =============================
+# Docker
+# =============================
+.docker/
+
+# =============================
+# Environnement
+# =============================
+.env
+.env.local
+.env.*.local
+*.env
+
+# =============================
+# Système
+# =============================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# =============================
+# IDE
+# =============================
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
