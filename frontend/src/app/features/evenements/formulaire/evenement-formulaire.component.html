@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ estModification ? 'Modifier' : 'Nouvel' }} événement</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="nom" />
+      <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="row-2col">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input matInput [matDatepicker]="pickerDebut" formControlName="dateDebut" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDebut></mat-datepicker>
+        <mat-error *ngIf="form.get('dateDebut')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin</mat-label>
+        <input matInput [matDatepicker]="pickerFin" formControlName="dateFin" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFin></mat-datepicker>
+        <mat-error *ngIf="form.get('dateFin')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Lieu</mat-label>
+      <input matInput formControlName="lieu" />
+      <mat-icon matPrefix>location_on</mat-icon>
+      <mat-error *ngIf="form.get('lieu')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annuler()">Annuler</button>
+  <button mat-raised-button color="primary"
+          (click)="soumettre()" [disabled]="form.invalid || chargement">
+    <mat-spinner *ngIf="chargement" diameter="18"></mat-spinner>
+    <span *ngIf="!chargement">{{ estModification ? 'Enregistrer' : 'Créer' }}</span>
+  </button>
+</mat-dialog-actions>

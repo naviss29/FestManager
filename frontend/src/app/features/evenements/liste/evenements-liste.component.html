@@ -1,0 +1,93 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Événements</h1>
+    <button mat-raised-button color="primary" *ngIf="peutCreer"
+            (click)="ouvrirFormulaire()">
+      <mat-icon>add</mat-icon> Nouvel événement
+    </button>
+  </div>
+
+  <!-- Filtre statut -->
+  <mat-card class="filtre-card">
+    <mat-button-toggle-group [(ngModel)]="filtreStatut" (change)="pageIndex=0; charger()">
+      <mat-button-toggle *ngFor="let opt of statutOptions" [value]="opt.valeur">
+        {{ opt.label }}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-card>
+
+  <!-- Tableau -->
+  <mat-card>
+    <mat-progress-bar mode="indeterminate" *ngIf="chargement"></mat-progress-bar>
+
+    <table mat-table [dataSource]="evenements" class="full-width">
+
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let e">
+          <strong>{{ e.nom }}</strong>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lieu">
+        <th mat-header-cell *matHeaderCellDef>Lieu</th>
+        <td mat-cell *matCellDef="let e">{{ e.lieu }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="dateDebut">
+        <th mat-header-cell *matHeaderCellDef>Début</th>
+        <td mat-cell *matCellDef="let e">{{ e.dateDebut | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="dateFin">
+        <th mat-header-cell *matHeaderCellDef>Fin</th>
+        <td mat-cell *matCellDef="let e">{{ e.dateFin | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let e">
+          <mat-chip [color]="couleurStatut(e.statut)" highlighted>{{ e.statut }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let e">
+          <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="peutCreer">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="ouvrirFormulaire(e)">
+              <mat-icon>edit</mat-icon> Modifier
+            </button>
+            <button mat-menu-item (click)="changerStatut(e, 'PUBLIE')" *ngIf="e.statut === 'BROUILLON'">
+              <mat-icon>publish</mat-icon> Publier
+            </button>
+            <button mat-menu-item (click)="changerStatut(e, 'ARCHIVE')" *ngIf="e.statut === 'PUBLIE'">
+              <mat-icon>archive</mat-icon> Archiver
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="supprimer(e)" class="danger">
+              <mat-icon>delete</mat-icon> Supprimer
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+      <tr mat-row *matRowDef="let row; columns: colonnes;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data" [attr.colspan]="colonnes.length">
+          Aucun événement trouvé.
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator [length]="totalElements" [pageSize]="pageSize"
+                   [pageSizeOptions]="[10, 20, 50]"
+                   (page)="onPage($event)">
+    </mat-paginator>
+  </mat-card>
+</div>

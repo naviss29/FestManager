@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
+import { LayoutComponent } from './shared/layout/layout.component';
 
 const routes: Routes = [
   {
@@ -8,27 +9,18 @@ const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'dashboard',
+    path: '',
+    component: LayoutComponent,
     canActivate: [AuthGuard],
-    loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
+    children: [
+      { path: 'dashboard',      loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule) },
+      { path: 'evenements',     loadChildren: () => import('./features/evenements/evenements.module').then(m => m.EvenementsModule) },
+      { path: 'benevoles',      loadChildren: () => import('./features/benevoles/benevoles.module').then(m => m.BenevolesModule) },
+      { path: 'organisations',  loadChildren: () => import('./features/organisations/organisations.module').then(m => m.OrganisationsModule) },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
   },
-  {
-    path: 'evenements',
-    canActivate: [AuthGuard],
-    loadChildren: () => import('./features/evenements/evenements.module').then(m => m.EvenementsModule)
-  },
-  {
-    path: 'benevoles',
-    canActivate: [AuthGuard],
-    loadChildren: () => import('./features/benevoles/benevoles.module').then(m => m.BenevolesModule)
-  },
-  {
-    path: 'organisations',
-    canActivate: [AuthGuard],
-    loadChildren: () => import('./features/organisations/organisations.module').then(m => m.OrganisationsModule)
-  },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

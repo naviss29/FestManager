@@ -6,6 +6,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { LayoutModule } from './shared/layout/layout.module';
 
 @NgModule({
   declarations: [App],
@@ -13,7 +14,8 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    LayoutModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -1,0 +1,79 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  background: #1a237e;
+  color: white;
+
+  .sidenav-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    background: #0d1b6e;
+
+    .logo-icon { color: #ffd740; font-size: 28px; }
+    .logo-text { font-size: 1.2rem; font-weight: 700; color: white; }
+  }
+
+  mat-nav-list {
+    flex: 1;
+    padding-top: 8px;
+
+    a {
+      color: rgba(255,255,255,0.8);
+      border-radius: 0 24px 24px 0;
+      margin-right: 8px;
+      margin-bottom: 2px;
+
+      mat-icon { color: rgba(255,255,255,0.7); }
+
+      &.active-link {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        mat-icon { color: #ffd740; }
+      }
+
+      &:hover { background: rgba(255,255,255,0.1); color: white; }
+    }
+  }
+}
+
+.sidenav-footer {
+  padding: 8px;
+
+  .user-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 8px;
+    color: rgba(255,255,255,0.9);
+
+    mat-icon { color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+    .user-details { display: flex; flex-direction: column; gap: 4px; }
+    .user-email { font-size: 0.8rem; word-break: break-all; }
+
+    .role-chip {
+      font-size: 0.65rem;
+      height: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+  }
+
+  .logout-btn {
+    width: 100%;
+    color: rgba(255,255,255,0.7);
+    &:hover { color: white; background: rgba(255,255,255,0.1); }
+  }
+}
+
+.main-content {
+  background: #f5f5f5;
+  overflow-y: auto;
+}
