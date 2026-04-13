@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -59,6 +60,9 @@ public class Mission {
     @Column(name = "geree_par_organisation", nullable = false)
     @Builder.Default
     private Boolean gereeParOrganisation = false;
+
+    @OneToMany(mappedBy = "mission", fetch = FetchType.LAZY)
+    private List<Creneau> creneaux;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

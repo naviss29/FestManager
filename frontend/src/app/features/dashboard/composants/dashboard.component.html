@@ -1,0 +1,150 @@
+<div class="dashboard-container">
+
+  <div class="entete">
+    <h2>Dashboard temps réel</h2>
+    <mat-form-field appearance="outline" class="selecteur-evenement">
+      <mat-label>Événement</mat-label>
+      <mat-select [(ngModel)]="evenementSelectionneId" (ngModelChange)="selectionnerEvenement($event)">
+        <mat-option *ngFor="let e of evenements" [value]="e.id">{{ e.nom }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="!evenementSelectionneId" class="placeholder">
+    <mat-icon>dashboard</mat-icon>
+    <p>Sélectionnez un événement pour afficher le dashboard.</p>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="chargement"></mat-progress-bar>
+
+  <ng-container *ngIf="snapshot && !chargement">
+
+    <!-- Cartes statistiques -->
+    <div class="cartes-stats">
+
+      <mat-card class="carte">
+        <mat-card-content>
+          <mat-icon>groups</mat-icon>
+          <div class="valeur">{{ snapshot.nbBenevolesEngages }}</div>
+          <div class="label">Bénévoles engagés</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="carte carte-confirme">
+        <mat-card-content>
+          <mat-icon>check_circle</mat-icon>
+          <div class="valeur">{{ snapshot.nbConfirmes }}</div>
+          <div class="label">Affectations confirmées</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="carte carte-attente">
+        <mat-card-content>
+          <mat-icon>hourglass_empty</mat-icon>
+          <div class="valeur">{{ snapshot.nbEnAttente }}</div>
+          <div class="label">En attente</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="carte">
+        <mat-card-content>
+          <mat-icon>list_alt</mat-icon>
+          <div class="valeur">{{ snapshot.nbMissions }}</div>
+          <div class="label">Missions · {{ snapshot.nbCreneaux }} créneaux</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="carte carte-taux">
+        <mat-card-content>
+          <mat-icon>percent</mat-icon>
+          <div class="valeur">{{ snapshot.tauxRemplissage }}%</div>
+          <div class="label">Taux de remplissage global</div>
+          <mat-progress-bar
+            [mode]="'determinate'"
+            [value]="snapshot.tauxRemplissage"
+            [color]="couleurTaux(snapshot.tauxRemplissage)">
+          </mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <!-- Corps principal : missions + log -->
+    <div class="corps">
+
+      <!-- Tableau progression par mission -->
+      <mat-card class="carte-missions">
+        <mat-card-header>
+          <mat-card-title>Progression par mission</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-table [dataSource]="snapshot.missions" [trackBy]="trackMission">
+
+            <ng-container matColumnDef="missionNom">
+              <mat-header-cell *matHeaderCellDef>Mission</mat-header-cell>
+              <mat-cell *matCellDef="let m">{{ m.missionNom }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="categorie">
+              <mat-header-cell *matHeaderCellDef>Catégorie</mat-header-cell>
+              <mat-cell *matCellDef="let m">
+                <mat-chip>{{ m.categorie }}</mat-chip>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="progression">
+              <mat-header-cell *matHeaderCellDef>Progression</mat-header-cell>
+              <mat-cell *matCellDef="let m">
+                <span class="progression-texte">{{ m.nbConfirmes }} / {{ m.nbPlacesRequises }}</span>
+                <mat-progress-bar
+                  class="barre-mission"
+                  mode="determinate"
+                  [value]="m.tauxRemplissage"
+                  [color]="couleurTaux(m.tauxRemplissage)">
+                </mat-progress-bar>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="taux">
+              <mat-header-cell *matHeaderCellDef>Taux</mat-header-cell>
+              <mat-cell *matCellDef="let m">
+                <span [class]="'badge-taux taux-' + couleurTaux(m.tauxRemplissage)">
+                  {{ m.tauxRemplissage }}%
+                </span>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="colonnesMissions"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: colonnesMissions;"></mat-row>
+
+          </mat-table>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Log temps réel -->
+      <mat-card class="carte-log">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="icon-live">radio_button_checked</mat-icon>
+            Activité en direct
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="log.length === 0" class="log-vide">En attente d'événements…</div>
+          <mat-list>
+            <mat-list-item *ngFor="let entry of log" class="log-item">
+              <mat-icon matListItemIcon [class]="'icon-log icon-' + entry.type">
+                {{ iconEvenement(entry.type) }}
+              </mat-icon>
+              <div matListItemTitle>{{ entry.message }}</div>
+              <div matListItemLine class="log-heure">{{ entry.timestamp | date:'HH:mm:ss' }}</div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+  </ng-container>
+
+</div>
