@@ -11,13 +11,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent }
+  { path: 'login',    component: LoginComponent },
+  { path: 'register', component: RegisterComponent }
 ];
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, RegisterComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

@@ -1,0 +1,23 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+
+  mat-card-title  { font-size: 1.8rem; font-weight: 700; color: #1a237e; }
+  mat-card-subtitle { color: #666; }
+  mat-card-header { margin-bottom: 16px; }
+}
+
+.full-width    { width: 100%; margin-bottom: 4px; }
+.info-text     { font-size: 0.8rem; color: #757575; margin: 8px 0 16px; }
+.erreur-globale { display: block; margin-bottom: 12px; font-size: 0.85rem; }
+
+mat-card-actions { justify-content: center; }

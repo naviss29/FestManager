@@ -1,5 +1,6 @@
 package com.festmanager.config;
 
+import com.festmanager.entity.Utilisateur;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -25,12 +26,20 @@ public class JwtUtils {
     }
 
     public String genererToken(UserDetails userDetails) {
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey())
-                .compact();
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs));
+
+        // Inclure le rôle (sans préfixe ROLE_) pour que le frontend puisse le lire
+        if (userDetails instanceof Utilisateur utilisateur) {
+            builder.claim("role", utilisateur.getRole().name());
+            if (utilisateur.getOrganisation() != null) {
+                builder.claim("organisationId", utilisateur.getOrganisation().getId().toString());
+            }
+        }
+
+        return builder.signWith(getSigningKey()).compact();
     }
 
     public String extraireEmail(String token) {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse, UtilisateurCourant } from '../models/auth.model';
+import { LoginRequest, LoginResponse, RegisterRequest, UtilisateurCourant } from '../models/auth.model';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,6 @@ export class AuthService {
   private utilisateurCourant$ = new BehaviorSubject<UtilisateurCourant | null>(null);
 
   constructor(private http: HttpClient, private router: Router) {
-    // Restaurer l'utilisateur depuis le token stocké au démarrage
     const token = this.getToken();
     if (token && !this.estExpire(token)) {
       this.utilisateurCourant$.next(this.decoder(token));
@@ -21,7 +20,23 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, request).pipe(
+    // Le form utilise 'password', le backend attend 'motDePasse'
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, {
+      email: request.email,
+      motDePasse: request.password
+    }).pipe(
+      tap(response => {
+        localStorage.setItem(this.TOKEN_KEY, response.token);
+        this.utilisateurCourant$.next(this.decoder(response.token));
+      })
+    );
+  }
+
+  register(request: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/register`, {
+      email: request.email,
+      motDePasse: request.password
+    }).pipe(
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         this.utilisateurCourant$.next(this.decoder(response.token));
