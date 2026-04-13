@@ -73,7 +73,8 @@ export class BenevolesListeComponent implements OnInit {
 
   valider(b: Benevole): void {
     this.benevoleService.changerStatut(b.id, 'VALIDE').subscribe({
-      next: () => { this.snackBar.open('Bénévole validé', 'Fermer', { duration: 2000 }); this.charger(); }
+      next: () => { this.snackBar.open('Bénévole validé', 'Fermer', { duration: 2000 }); this.charger(); },
+      error: () => this.snackBar.open('Erreur lors de la validation', 'Fermer', { duration: 3000 })
     });
   }
 
@@ -85,21 +86,24 @@ export class BenevolesListeComponent implements OnInit {
         const a = document.createElement('a');
         a.href = url; a.download = `benevole-${b.id}.json`; a.click();
         URL.revokeObjectURL(url);
-      }
+      },
+      error: () => this.snackBar.open('Erreur lors de l\'export', 'Fermer', { duration: 3000 })
     });
   }
 
   anonymiser(b: Benevole): void {
     if (!confirm(`Anonymiser définitivement "${b.prenom} ${b.nom}" ? Cette action est irréversible.`)) return;
     this.benevoleService.anonymiser(b.id).subscribe({
-      next: () => { this.snackBar.open('Bénévole anonymisé (RGPD)', 'Fermer', { duration: 3000 }); this.charger(); }
+      next: () => { this.snackBar.open('Bénévole anonymisé (RGPD)', 'Fermer', { duration: 3000 }); this.charger(); },
+      error: () => this.snackBar.open('Erreur lors de l\'anonymisation', 'Fermer', { duration: 3000 })
     });
   }
 
   supprimer(b: Benevole): void {
     if (!confirm(`Supprimer "${b.prenom} ${b.nom}" ?`)) return;
     this.benevoleService.supprimer(b.id).subscribe({
-      next: () => { this.snackBar.open('Bénévole supprimé', 'Fermer', { duration: 2000 }); this.charger(); }
+      next: () => { this.snackBar.open('Bénévole supprimé', 'Fermer', { duration: 2000 }); this.charger(); },
+      error: () => this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 })
     });
   }
 

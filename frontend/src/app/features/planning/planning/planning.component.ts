@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { PlanningService } from '../services/planning.service';
 import { WebSocketService } from '../services/websocket.service';
 import { BenevoleService } from '../../benevoles/services/benevole.service';
@@ -18,8 +17,6 @@ import { Benevole } from '../../benevoles/models/benevole.model';
   standalone: false
 })
 export class PlanningComponent implements OnInit, OnDestroy {
-
-  private destroy$ = new Subject<void>();
 
   evenements: Evenement[] = [];
   missions: Mission[] = [];
@@ -37,8 +34,10 @@ export class PlanningComponent implements OnInit, OnDestroy {
   affectationEnCours = false;
 
   affectationForm: FormGroup;
-
   colonnesAffectations = ['benevole', 'statut', 'commentaire', 'actions'];
+
+  /** Subscription WS — remplacée à chaque changement d'événement. */
+  private wsSub: Subscription | null = null;
 
   constructor(
     private planningService: PlanningService,
@@ -49,8 +48,8 @@ export class PlanningComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     this.affectationForm = this.fb.group({
-      benevoleId:   ['', Validators.required],
-      commentaire:  ['']
+      benevoleId:  ['', Validators.required],
+      commentaire: ['']
     });
   }
 
@@ -60,8 +59,7 @@ export class PlanningComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.wsSub?.unsubscribe();
     this.wsService.deconnecter();
   }
 
@@ -78,17 +76,22 @@ export class PlanningComponent implements OnInit, OnDestroy {
   }
 
   selectionnerEvenement(evenement: Evenement): void {
+    // Évite de recharger si c'est déjà le même événement
+    if (this.evenementSelectionne?.id === evenement.id) return;
+
     this.evenementSelectionne = evenement;
     this.missionSelectionnee = null;
     this.creneauSelectionne = null;
     this.creneaux = [];
     this.affectations = [];
-    this.chargementMissions = true;
 
-    this.wsService.connecter(evenement.id).pipe(takeUntil(this.destroy$)).subscribe({
+    // Ferme la connexion précédente, ouvre la nouvelle
+    this.wsSub?.unsubscribe();
+    this.wsSub = this.wsService.connecter(evenement.id).subscribe({
       next: evt => this.traiterEvenementWs(evt)
     });
 
+    this.chargementMissions = true;
     this.planningService.listerMissions(evenement.id).subscribe({
       next: p => { this.missions = p.content; this.chargementMissions = false; },
       error: () => { this.chargementMissions = false; }
@@ -96,6 +99,8 @@ export class PlanningComponent implements OnInit, OnDestroy {
   }
 
   selectionnerMission(mission: Mission): void {
+    if (this.missionSelectionnee?.id === mission.id) return;
+
     this.missionSelectionnee = mission;
     this.creneauSelectionne = null;
     this.affectations = [];
@@ -123,8 +128,8 @@ export class PlanningComponent implements OnInit, OnDestroy {
     this.affectationEnCours = true;
 
     this.planningService.affecter({
-      benevoleId: this.affectationForm.value.benevoleId,
-      creneauId:  this.creneauSelectionne.id,
+      benevoleId:  this.affectationForm.value.benevoleId,
+      creneauId:   this.creneauSelectionne.id,
       commentaire: this.affectationForm.value.commentaire || undefined
     }).subscribe({
       next: () => {
@@ -132,8 +137,8 @@ export class PlanningComponent implements OnInit, OnDestroy {
         this.affectationEnCours = false;
         this.selectionnerCreneau(this.creneauSelectionne!);
       },
-      error: (err) => {
-        const msg = err.error?.detail ?? 'Erreur lors de l\'affectation';
+      error: err => {
+        const msg = err.error?.detail ?? 'Conflit ou erreur lors de l\'affectation';
         this.snackBar.open(msg, 'Fermer', { duration: 4000 });
         this.affectationEnCours = false;
       }
@@ -146,17 +151,18 @@ export class PlanningComponent implements OnInit, OnDestroy {
       next: () => {
         this.snackBar.open('Affectation supprimée', 'Fermer', { duration: 2000 });
         this.selectionnerCreneau(this.creneauSelectionne!);
-      }
+      },
+      error: () => this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 })
     });
   }
 
   private traiterEvenementWs(evt: DashboardEvent): void {
-    // Mettre à jour le compteur du créneau en temps réel
+    // Mise à jour en temps réel du compteur du créneau
     const creneau = this.creneaux.find(c => c.id === evt.creneauId);
     if (creneau) {
       creneau.nbBenevolesAffectes = evt.nbBenevolesAffectes;
     }
-    // Rafraîchir la liste des affectations si le créneau est sélectionné
+    // Rafraîchit la liste si le créneau concerné est affiché
     if (this.creneauSelectionne?.id === evt.creneauId) {
       this.selectionnerCreneau(this.creneauSelectionne);
     }
@@ -172,10 +178,5 @@ export class PlanningComponent implements OnInit, OnDestroy {
     if (t >= 100) return 'primary';
     if (t >= 50) return 'accent';
     return 'warn';
-  }
-
-  nomBenevole(id: string): string {
-    const b = this.benevoles.find(bv => bv.id === id);
-    return b ? `${b.prenom} ${b.nom}` : id;
   }
 }

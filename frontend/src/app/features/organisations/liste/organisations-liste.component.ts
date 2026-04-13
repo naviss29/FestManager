@@ -63,7 +63,8 @@ export class OrganisationsListeComponent implements OnInit {
   supprimer(org: Organisation): void {
     if (!confirm(`Supprimer "${org.nom}" ?`)) return;
     this.organisationService.supprimer(org.id).subscribe({
-      next: () => { this.snackBar.open('Organisation supprimée', 'Fermer', { duration: 2000 }); this.charger(); }
+      next: () => { this.snackBar.open('Organisation supprimée', 'Fermer', { duration: 2000 }); this.charger(); },
+      error: () => this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 })
     });
   }
 }

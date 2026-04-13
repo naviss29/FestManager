@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { RxStomp } from '@stomp/rx-stomp';
 import SockJS from 'sockjs-client';
 import { environment } from '../../../../environments/environment';
@@ -10,31 +11,28 @@ export class WebSocketService implements OnDestroy {
 
   private stomp: RxStomp | null = null;
 
+  /**
+   * Crée (ou recrée) une connexion WS et retourne un Observable
+   * des événements dashboard pour l'événement donné.
+   * RxStomp.watch() gère la reconnexion automatiquement.
+   */
   connecter(evenementId: string): Observable<DashboardEvent> {
-    const subject = new Subject<DashboardEvent>();
+    this.deconnecter();
 
     this.stomp = new RxStomp();
     this.stomp.configure({
       webSocketFactory: () => new SockJS(environment.wsUrl),
       reconnectDelay: 5000
     });
-
     this.stomp.activate();
 
-    this.stomp.connected$.subscribe(() => {
-      this.stomp!.watch(`/topic/dashboard/${evenementId}`).subscribe({
-        next: (message: { body: string }) => {
-          try {
-            const event: DashboardEvent = JSON.parse(message.body);
-            subject.next(event);
-          } catch (e) {
-            console.warn('Message WebSocket invalide', e);
-          }
-        }
-      });
-    });
-
-    return subject.asObservable();
+    return this.stomp.watch(`/topic/dashboard/${evenementId}`).pipe(
+      map(message => JSON.parse(message.body) as DashboardEvent),
+      catchError(err => {
+        console.warn('Erreur WebSocket dashboard', err);
+        return EMPTY;
+      })
+    );
   }
 
   deconnecter(): void {
