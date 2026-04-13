@@ -39,12 +39,9 @@ app:
   email:
     expediteur: noreply@festmanager.app
     nom-expediteur: FestManager
-
-server:
-  port: 8080
-
-# JWT
-app:
   jwt:
     secret: changeme-remplacer-par-une-cle-secrete-longue-en-production
     expiration-ms: 86400000 # 24h
+
+server:
+  port: 8080
