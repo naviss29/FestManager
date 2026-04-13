@@ -141,6 +141,8 @@ Représente un poste de travail sur un événement (ex : "Accueil entrée princi
 | description | TEXT | nullable |
 | categorie | ENUM | ROADIE, ACCUEIL, SECURITE, CATERING, COMMUNICATION, LOGISTIQUE |
 | nb_benevoles_requis | INT | NOT NULL |
+| lieu | VARCHAR(255) | nullable (ex : Scène A, Entrée Nord) |
+| materiel_requis | TEXT | nullable |
 | multi_affectation_autorisee | BOOLEAN | default false |
 | geree_par_organisation | BOOLEAN | default false |
 | created_at | TIMESTAMP | NOT NULL |
@@ -169,6 +171,9 @@ Représente une personne bénévole. Contient toutes les données personnelles �
 | email | VARCHAR(255) | UNIQUE, NOT NULL |
 | telephone | VARCHAR(20) | nullable |
 | competences | TEXT | nullable |
+| taille_tshirt | ENUM | XS, S, M, L, XL, XXL, nullable |
+| date_naissance | DATE | nullable |
+| disponibilites | TEXT | nullable (jours/créneaux souhaités avant affectation) |
 | organisation_id | UUID | FK → ORGANISATION, nullable |
 | statut_compte | ENUM | INVITE, INSCRIT, VALIDE, ANONYMISE |
 | consentement_rgpd | BOOLEAN | NOT NULL |
@@ -203,6 +208,9 @@ Représente le badge d'accès d'un bénévole pour un événement.
 | evenement_id | UUID | FK → EVENEMENT |
 | type | ENUM | BENEVOLE, STAFF, PRESSE, ARTISTE |
 | code_qr | VARCHAR(255) | UNIQUE, généré automatiquement |
+| zones_acces | ENUM | GENERAL, SCENE, BACKSTAGE, VIP (multi-valeurs possible) |
+| date_debut_validite | DATE | nullable |
+| date_fin_validite | DATE | nullable |
 | valide | BOOLEAN | default false |
 | date_emission | TIMESTAMP | nullable |
 
@@ -361,6 +369,7 @@ festmanager-frontend/
 | F14 | Export planning (PDF ou CSV) | Moyenne |
 | F15 | Politique de confidentialité et CGU versionnées | Moyenne |
 | F16 | Notifications email (SMTP) | Basse |
+| F17 | Page Mentions Légales (éditeur, hébergeur, contact DPO) | Haute |
 
 ### Hors périmètre MVP
 
@@ -444,6 +453,7 @@ festmanager-frontend/
 | T03-03 | Export planning CSV/PDF | Phase 2 |
 | T03-04 | Job automatique d'anonymisation (purge RGPD) | Phase 2 |
 | T03-05 | Notifications email (SMTP) | Phase 2 |
+| T03-06 | Page Mentions Légales | Phase 2 |
 
 ### Phase 4 — Finition recruteur (Semaine 11-12)
 
