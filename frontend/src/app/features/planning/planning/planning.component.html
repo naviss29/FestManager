@@ -1,0 +1,163 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Planning des affectations</h1>
+    <span class="ws-badge" *ngIf="evenementSelectionne">
+      <mat-icon class="ws-icon">wifi</mat-icon> Temps réel actif
+    </span>
+  </div>
+
+  <div class="planning-grid">
+
+    <!-- Colonne 1 : Événements -->
+    <mat-card class="col-card">
+      <mat-card-header><mat-card-title>Événements</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <mat-selection-list [multiple]="false">
+          <mat-list-option
+            *ngFor="let e of evenements"
+            [value]="e"
+            [selected]="evenementSelectionne?.id === e.id"
+            (click)="selectionnerEvenement(e)">
+            <span matListItemTitle>{{ e.nom }}</span>
+            <span matListItemLine>{{ e.dateDebut | date:'dd/MM/yyyy' }}</span>
+          </mat-list-option>
+        </mat-selection-list>
+        <p class="no-data" *ngIf="evenements.length === 0">Aucun événement.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Colonne 2 : Missions -->
+    <mat-card class="col-card">
+      <mat-card-header>
+        <mat-card-title>Missions</mat-card-title>
+        <mat-card-subtitle *ngIf="evenementSelectionne">{{ evenementSelectionne.nom }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-progress-bar mode="indeterminate" *ngIf="chargementMissions"></mat-progress-bar>
+        <mat-selection-list [multiple]="false" *ngIf="!chargementMissions">
+          <mat-list-option
+            *ngFor="let m of missions"
+            [value]="m"
+            [selected]="missionSelectionnee?.id === m.id"
+            (click)="selectionnerMission(m)">
+            <span matListItemTitle>{{ m.nom }}</span>
+            <span matListItemLine>{{ m.categorie }}</span>
+          </mat-list-option>
+        </mat-selection-list>
+        <p class="no-data" *ngIf="!chargementMissions && missions.length === 0 && evenementSelectionne">
+          Aucune mission pour cet événement.
+        </p>
+        <p class="no-data" *ngIf="!evenementSelectionne">Sélectionnez un événement.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Colonne 3 : Créneaux -->
+    <mat-card class="col-card">
+      <mat-card-header>
+        <mat-card-title>Créneaux</mat-card-title>
+        <mat-card-subtitle *ngIf="missionSelectionnee">{{ missionSelectionnee.nom }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-progress-bar mode="indeterminate" *ngIf="chargementCreneaux"></mat-progress-bar>
+        <div *ngFor="let c of creneaux"
+          class="creneau-item"
+          [class.selected]="creneauSelectionne?.id === c.id"
+          (click)="selectionnerCreneau(c)">
+          <div class="creneau-info">
+            <span class="creneau-heure">{{ c.debut | date:'HH:mm' }} – {{ c.fin | date:'HH:mm' }}</span>
+            <span class="creneau-date">{{ c.debut | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="creneau-taux">
+            <span>{{ c.nbBenevolesAffectes }}/{{ c.nbBenevolesRequis }}</span>
+            <mat-progress-bar
+              [mode]="'determinate'"
+              [value]="tauxRemplissage(c)"
+              [color]="couleurTaux(c)">
+            </mat-progress-bar>
+          </div>
+        </div>
+        <p class="no-data" *ngIf="!chargementCreneaux && creneaux.length === 0 && missionSelectionnee">
+          Aucun créneau.
+        </p>
+        <p class="no-data" *ngIf="!missionSelectionnee">Sélectionnez une mission.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Colonne 4 : Affectations -->
+    <mat-card class="col-card affectations-col">
+      <mat-card-header>
+        <mat-card-title>Affectations</mat-card-title>
+        <mat-card-subtitle *ngIf="creneauSelectionne">
+          {{ creneauSelectionne.debut | date:'dd/MM/yyyy HH:mm' }} – {{ creneauSelectionne.fin | date:'HH:mm' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+
+        <!-- Formulaire d'affectation -->
+        <form [formGroup]="affectationForm" (ngSubmit)="affecter()" class="affectation-form"
+          *ngIf="creneauSelectionne">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Bénévole</mat-label>
+            <mat-select formControlName="benevoleId">
+              <mat-option *ngFor="let b of benevoles" [value]="b.id">
+                {{ b.prenom }} {{ b.nom }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Commentaire (optionnel)</mat-label>
+            <input matInput formControlName="commentaire" />
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit"
+            [disabled]="affectationForm.invalid || affectationEnCours">
+            <mat-icon>add</mat-icon> Affecter
+          </button>
+        </form>
+
+        <mat-divider *ngIf="creneauSelectionne" style="margin: 16px 0;"></mat-divider>
+
+        <!-- Liste des affectations -->
+        <mat-progress-bar mode="indeterminate" *ngIf="chargementAffectations"></mat-progress-bar>
+        <table mat-table [dataSource]="affectations" class="full-width"
+          *ngIf="creneauSelectionne && !chargementAffectations">
+
+          <ng-container matColumnDef="benevole">
+            <th mat-header-cell *matHeaderCellDef>Bénévole</th>
+            <td mat-cell *matCellDef="let a">{{ a.benevolePrenom }} {{ a.benevoleNom }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="statut">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let a">
+              <mat-chip>{{ a.statut }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="commentaire">
+            <th mat-header-cell *matHeaderCellDef>Commentaire</th>
+            <td mat-cell *matCellDef="let a">{{ a.commentaire || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let a">
+              <button mat-icon-button color="warn" (click)="supprimerAffectation(a)"
+                matTooltip="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colonnesAffectations"></tr>
+          <tr mat-row *matRowDef="let row; columns: colonnesAffectations;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" colspan="4">Aucune affectation sur ce créneau.</td>
+          </tr>
+        </table>
+
+        <p class="no-data" *ngIf="!creneauSelectionne">Sélectionnez un créneau.</p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

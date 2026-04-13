@@ -1,0 +1,62 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Organisations</h1>
+    <button mat-raised-button color="primary" *ngIf="peutCreer" (click)="ouvrirFormulaire()">
+      <mat-icon>add</mat-icon> Nouvelle organisation
+    </button>
+  </div>
+
+  <mat-card class="filtre-card">
+    <mat-button-toggle-group [(ngModel)]="filtreType" (change)="pageIndex=0; charger()">
+      <mat-button-toggle *ngFor="let opt of typeOptions" [value]="opt.valeur">{{ opt.label }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-card>
+
+  <mat-card>
+    <mat-progress-bar mode="indeterminate" *ngIf="chargement"></mat-progress-bar>
+    <table mat-table [dataSource]="organisations" class="full-width">
+
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let o"><strong>{{ o.nom }}</strong></td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let o"><mat-chip>{{ o.type }}</mat-chip></td>
+      </ng-container>
+
+      <ng-container matColumnDef="emailContact">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let o">{{ o.emailContact }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="telephoneContact">
+        <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+        <td mat-cell *matCellDef="let o">{{ o.telephoneContact || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let o">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="ouvrirFormulaire(o)"><mat-icon>edit</mat-icon> Modifier</button>
+            <button mat-menu-item (click)="supprimer(o)" *ngIf="peutSupprimer" class="danger">
+              <mat-icon>delete</mat-icon> Supprimer
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+      <tr mat-row *matRowDef="let row; columns: colonnes;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data" [attr.colspan]="colonnes.length">Aucune organisation trouvée.</td>
+      </tr>
+    </table>
+    <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[10,20,50]" (page)="onPage($event)"></mat-paginator>
+  </mat-card>
+</div>

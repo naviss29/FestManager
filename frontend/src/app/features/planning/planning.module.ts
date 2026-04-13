@@ -3,56 +3,46 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { BenevolesListeComponent } from './liste/benevoles-liste.component';
-import { BenevoleFormulaireComponent } from './formulaire/benevole-formulaire.component';
+import { PlanningComponent } from './planning/planning.component';
 
 const routes: Routes = [
-  { path: '', component: BenevolesListeComponent }
+  { path: '', component: PlanningComponent }
 ];
 
 @NgModule({
-  declarations: [
-    BenevolesListeComponent,
-    BenevoleFormulaireComponent
-  ],
+  declarations: [PlanningComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    MatTableModule,
-    MatPaginatorModule,
     MatCardModule,
+    MatListModule,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule,
-    MatChipsModule,
     MatProgressBarModule,
-    MatButtonToggleModule,
-    MatDialogModule,
+    MatTableModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatCheckboxModule,
     MatDividerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTooltipModule
   ]
 })
-export class BenevolesModule {}
+export class PlanningModule {}

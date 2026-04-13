@@ -16,7 +16,8 @@ export class LayoutComponent implements OnInit {
     { label: 'Dashboard',      icon: 'dashboard',    route: '/dashboard' },
     { label: 'Événements',     icon: 'event',        route: '/evenements' },
     { label: 'Bénévoles',      icon: 'people',       route: '/benevoles' },
-    { label: 'Organisations',  icon: 'business',     route: '/organisations' }
+    { label: 'Organisations',  icon: 'business',     route: '/organisations' },
+    { label: 'Planning',       icon: 'calendar_month', route: '/planning' }
   ];
 
   constructor(private authService: AuthService) {}

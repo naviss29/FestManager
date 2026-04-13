@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>{{ estModification ? 'Modifier' : 'Nouvelle' }} organisation</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-col">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom</mat-label><input matInput formControlName="nom" />
+      <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email de contact</mat-label><input matInput formControlName="emailContact" type="email" />
+      <mat-error *ngIf="form.get('emailContact')?.hasError('required')">Obligatoire</mat-error>
+      <mat-error *ngIf="form.get('emailContact')?.hasError('email')">Format invalide</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Téléphone</mat-label><input matInput formControlName="telephoneContact" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>SIRET (entreprises)</mat-label><input matInput formControlName="siret" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Adresse</mat-label><textarea matInput formControlName="adresse" rows="2"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annuler()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="soumettre()" [disabled]="form.invalid || chargement">
+    {{ estModification ? 'Enregistrer' : 'Créer' }}
+  </button>
+</mat-dialog-actions>

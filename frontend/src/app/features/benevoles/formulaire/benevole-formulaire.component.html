@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>{{ titre }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-col">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="nom" />
+      <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Prénom</mat-label>
+      <input matInput formControlName="prenom" />
+      <mat-error *ngIf="form.get('prenom')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <mat-error *ngIf="form.get('email')?.hasError('required')">Obligatoire</mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">Format invalide</mat-error>
+    </mat-form-field>
+
+    <ng-container *ngIf="mode !== 'INVITATION' || estModification">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Téléphone</mat-label>
+        <input matInput formControlName="telephone" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Taille T-shirt</mat-label>
+        <mat-select formControlName="tailleTshirt">
+          <mat-option [value]="null">—</mat-option>
+          <mat-option *ngFor="let t of tailles" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date de naissance</mat-label>
+        <input matInput formControlName="dateNaissance" type="date" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Compétences</mat-label>
+        <textarea matInput formControlName="competences" rows="2"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Disponibilités</mat-label>
+        <textarea matInput formControlName="disponibilites" rows="2"></textarea>
+      </mat-form-field>
+
+      <div *ngIf="mode === 'INSCRIPTION' && !estModification" class="rgpd-consent">
+        <mat-checkbox formControlName="consentementRgpd">
+          J'accepte la collecte et le traitement de mes données personnelles conformément au RGPD.
+        </mat-checkbox>
+        <mat-error *ngIf="form.get('consentementRgpd')?.invalid && form.get('consentementRgpd')?.touched">
+          Le consentement RGPD est obligatoire
+        </mat-error>
+      </div>
+
+    </ng-container>
+
+    <p class="info-text" *ngIf="mode === 'INVITATION' && !estModification">
+      Un email d'invitation sera envoyé à l'adresse indiquée.
+    </p>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annuler()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="soumettre()" [disabled]="form.invalid || chargement">
+    {{ estModification ? 'Enregistrer' : (mode === 'INVITATION' ? 'Inviter' : 'Créer') }}
+  </button>
+</mat-dialog-actions>
