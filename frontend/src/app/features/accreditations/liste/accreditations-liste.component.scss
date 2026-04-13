@@ -1,0 +1,29 @@
+.accreditations-container {
+  padding: 24px;
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.vide {
+  text-align: center;
+  color: #888;
+  padding: 24px 0;
+}
+
+.zone-chip {
+  margin-right: 4px;
+  font-size: 11px;
+}
+
+.icon-valide {
+  color: #4caf50;
+}
+
+.icon-invalide {
+  color: #f44336;
+}

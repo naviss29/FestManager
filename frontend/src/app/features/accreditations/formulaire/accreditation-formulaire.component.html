@@ -1,0 +1,76 @@
+<!-- Mode affichage QR code -->
+<ng-container *ngIf="modeAffichage && accreditation">
+  <h2 mat-dialog-title>Accréditation — {{ accreditation.benevolePrenom }} {{ accreditation.benevoleNom }}</h2>
+  <mat-dialog-content class="qr-container">
+    <div class="qr-infos">
+      <p><strong>Événement :</strong> {{ accreditation.evenementNom }}</p>
+      <p><strong>Type :</strong> {{ accreditation.type }}</p>
+      <p><strong>Zones :</strong> {{ accreditation.zonesAcces.join(', ') }}</p>
+      <p *ngIf="accreditation.dateDebutValidite">
+        <strong>Validité :</strong>
+        {{ accreditation.dateDebutValidite | date:'dd/MM/yyyy' }}
+        <span *ngIf="accreditation.dateFinValidite"> → {{ accreditation.dateFinValidite | date:'dd/MM/yyyy' }}</span>
+      </p>
+    </div>
+    <div class="qr-image">
+      <img [src]="qrSrc" alt="QR code accréditation" width="250" height="250" />
+    </div>
+    <p class="qr-code-texte">{{ accreditation.codeQr }}</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="annuler()">Fermer</button>
+  </mat-dialog-actions>
+</ng-container>
+
+<!-- Mode création -->
+<ng-container *ngIf="!modeAffichage">
+  <h2 mat-dialog-title>Nouvelle accréditation</h2>
+  <mat-dialog-content>
+    <form [formGroup]="form" class="formulaire">
+
+      <mat-form-field appearance="outline" class="champ-plein">
+        <mat-label>ID du bénévole</mat-label>
+        <input matInput formControlName="benevoleId" placeholder="UUID du bénévole" />
+        <mat-error *ngIf="form.get('benevoleId')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="champ-plein">
+        <mat-label>Type d'accréditation</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let t of typesOptions" [value]="t.valeur">{{ t.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="champ-plein">
+        <mat-label>Zones d'accès</mat-label>
+        <mat-select formControlName="zonesAcces" multiple>
+          <mat-option *ngFor="let z of zonesOptions" [value]="z.valeur">{{ z.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="dates">
+        <mat-form-field appearance="outline">
+          <mat-label>Début de validité</mat-label>
+          <input matInput [matDatepicker]="pickerDebut" formControlName="dateDebutValidite" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDebut></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fin de validité</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="dateFinValidite" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="annuler()">Annuler</button>
+    <button mat-raised-button color="primary" (click)="soumettre()" [disabled]="form.invalid || chargement">
+      <mat-spinner diameter="18" *ngIf="chargement"></mat-spinner>
+      <span *ngIf="!chargement">Créer</span>
+    </button>
+  </mat-dialog-actions>
+</ng-container>
