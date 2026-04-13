@@ -3,3 +3,13 @@ spring:
     url: jdbc:postgresql://postgres:5432/festmanager
     username: festmanager
     password: festmanager_dev
+
+  # SMTP — variables d'environnement Docker (à définir dans docker-compose ou .env)
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${SMTP_TLS:false}

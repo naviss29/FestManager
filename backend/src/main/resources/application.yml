@@ -25,6 +25,21 @@ spring:
   security:
     require-ssl: false
 
+  # Email SMTP — valeurs par défaut (surchargées par profil docker/prod)
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
+app:
+  email:
+    expediteur: noreply@festmanager.app
+    nom-expediteur: FestManager
+
 server:
   port: 8080
 

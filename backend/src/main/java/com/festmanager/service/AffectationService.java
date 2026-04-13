@@ -31,6 +31,7 @@ public class AffectationService {
     private final CreneauRepository creneauRepository;
     private final AffectationMapper affectationMapper;
     private final DashboardService dashboardService;
+    private final EmailService emailService;
 
     // --- Lecture ---
 
@@ -124,6 +125,10 @@ public class AffectationService {
         affectation.setStatut(nouveauStatut);
         Affectation sauvegardee = affectationRepository.save(affectation);
         dashboardService.notifierAffectation(sauvegardee, DashboardEvent.TypeEvenement.AFFECTATION_MODIFIEE);
+        // Email de confirmation quand le statut passe à CONFIRME
+        if (nouveauStatut == StatutAffectation.CONFIRME) {
+            emailService.envoyerConfirmationAffectation(sauvegardee);
+        }
         return affectationMapper.toResponse(sauvegardee);
     }
 

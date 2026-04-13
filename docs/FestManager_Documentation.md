@@ -1,9 +1,9 @@
 # FestManager — Documentation du projet
 
-> Version : 0.2  
+> Version : 0.4  
 > Auteur : Alan  
 > Date : Avril 2026  
-> Statut : **En cours de définition — modèle de données à valider**
+> Statut : **Phase 2 complète — Dockerisation en cours**
 
 ---
 
@@ -13,6 +13,8 @@
 |---|---|---|
 | 0.1 | Avril 2026 | Document initial |
 | 0.2 | Avril 2026 | Ajout organisations prestataires + conformité RGPD |
+| 0.3 | Avril 2026 | Phases 1 et 2 complétées — backend + frontend fonctionnels |
+| 0.4 | Avril 2026 | Dockerisation complète — ajout section lancement et prérequis |
 
 ---
 
@@ -290,7 +292,92 @@ L'application doit afficher :
 
 ---
 
-## 6. Architecture applicative
+## 6. Lancement du projet
+
+### Prérequis
+
+| Outil | Version minimale | Installation |
+|---|---|---|
+| Docker Desktop | 4.x | https://www.docker.com/products/docker-desktop |
+| Docker Compose | V2 (intégré à Docker Desktop) | Inclus dans Docker Desktop |
+| Git | 2.x | https://git-scm.com |
+| Java 17 *(dev local uniquement)* | 17 LTS | https://adoptium.net |
+| Node.js *(dev local uniquement)* | 20 LTS | https://nodejs.org |
+
+> En production / démo, seuls **Docker Desktop** et **Git** sont nécessaires. Java et Node ne sont utilisés qu'en développement local.
+
+---
+
+### Lancement avec Docker *(recommandé)*
+
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/<utilisateur>/FestManager.git
+cd FestManager
+
+# 2. Construire les images
+docker compose build
+
+# 3. Démarrer la stack complète (PostgreSQL + Backend + Frontend)
+docker compose up
+
+# 4. Arrêter la stack
+docker compose down
+
+# Arrêter et supprimer les volumes (repart de zéro en BDD)
+docker compose down -v
+```
+
+Une fois démarré :
+
+| Service | URL |
+|---|---|
+| Application (Frontend Angular) | http://localhost:4200 |
+| API Backend (Spring Boot) | http://localhost:8080 |
+| Base de données PostgreSQL | localhost:5432 |
+
+> Le frontend proxifie automatiquement les appels `/api/*` et `/ws/*` vers le backend via nginx.  
+> Aucune configuration CORS manuelle n'est nécessaire en mode Docker.
+
+---
+
+### Lancement en développement local *(sans Docker)*
+
+Le profil `dev` utilise une base **H2 embarquée en mémoire** — aucune installation de PostgreSQL requise.
+
+**Backend :**
+```bash
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# API disponible sur http://localhost:8080
+# Console H2 disponible sur http://localhost:8080/h2-console
+```
+
+**Frontend :**
+```bash
+cd frontend
+npm install
+npm start
+# Application disponible sur http://localhost:4200
+```
+
+> En mode dev local, le proxy Angular (`proxy.conf.json`) redirige `/api/*` vers `http://localhost:8080`.
+
+---
+
+### Variables d'environnement Docker
+
+Les variables sont définies directement dans `docker-compose.yml`. Pour personnaliser sans modifier le fichier, créer un fichier `.env` à la racine :
+
+```env
+POSTGRES_DB=festmanager
+POSTGRES_USER=festmanager
+POSTGRES_PASSWORD=mon_mot_de_passe_securise
+```
+
+---
+
+## 7. Architecture applicative
 
 ### Vue d'ensemble
 
@@ -347,7 +434,7 @@ festmanager-frontend/
 
 ---
 
-## 7. Fonctionnalités
+## 8. Fonctionnalités
 
 ### MVP (version 1.0 — objectif recruteur)
 
@@ -380,7 +467,7 @@ festmanager-frontend/
 
 ---
 
-## 8. Règles de travail et conventions
+## 9. Règles de travail et conventions
 
 ### Git
 
@@ -404,79 +491,70 @@ festmanager-frontend/
 
 ---
 
-## 9. Roadmap
+## 10. Roadmap
 
-### Phase 0 — Cadrage (en cours)
+### Phase 0 — Cadrage ✅
 
 | ID | Tâche | Statut |
 |---|---|---|
 | T00-01 | Définir le besoin et le contexte | ✅ Validé |
 | T00-02 | Choisir la stack technique | ✅ Validé |
-| T00-03 | Modéliser les entités et relations | 🔲 **À valider** |
-| T00-04 | Rédiger la documentation initiale | 🔲 En cours |
-| T00-05 | Créer le repo GitHub avec README | 🔲 À faire |
+| T00-03 | Modéliser les entités et relations | ✅ Validé |
+| T00-04 | Rédiger la documentation initiale | ✅ Validé |
+| T00-05 | Créer le repo GitHub avec README | ✅ Validé |
 
-### Phase 1 — Fondations techniques (Semaine 1-2)
+### Phase 1 — Fondations techniques ✅
 
-| ID | Tâche | Dépend de |
+| ID | Tâche | Statut |
 |---|---|---|
-| T01-01 | Initialiser le projet Spring Boot | T00-05 |
-| T01-02 | Initialiser le projet Angular | T00-05 |
-| T01-03 | Mettre en place Docker Compose | T01-01, T01-02 |
-| T01-04 | Configurer Spring Security + JWT | T01-01 |
-| T01-05 | Créer les entités JPA et migrations Flyway | T00-03 validé |
-| T01-06 | Mettre en place GitHub Actions | T01-01, T01-02 |
+| T01-01 | Initialiser le projet Spring Boot | ✅ Validé |
+| T01-02 | Initialiser le projet Angular | ✅ Validé |
+| T01-03 | Mettre en place Docker Compose | ✅ Validé |
+| T01-04 | Configurer Spring Security + JWT | ✅ Validé |
+| T01-05 | Créer les entités JPA et migrations Flyway | ✅ Validé |
+| T01-06 | Mettre en place GitHub Actions | ✅ Validé |
 
-### Phase 2 — Core features (Semaine 3-6)
+### Phase 2 — Core features ✅
 
-| ID | Tâche | Dépend de |
+| ID | Tâche | Statut |
 |---|---|---|
-| T02-01 | API REST : Événements (CRUD) | Phase 1 |
-| T02-02 | API REST : Organisations (CRUD + accès référent) | Phase 1 |
-| T02-03 | API REST : Missions et créneaux | T02-01 |
-| T02-04 | API REST : Bénévoles (3 flux + RGPD) | Phase 1 |
-| T02-05 | API REST : Affectations + contrôle conflits | T02-03, T02-04 |
-| T02-06 | API REST : Journal d'audit (lecture admin) | Phase 1 |
-| T02-07 | WebSocket : canal dashboard temps réel | T02-05 |
-| T02-08 | Frontend : Authentification | Phase 1 |
-| T02-09 | Frontend : Événements | T02-01 |
-| T02-10 | Frontend : Organisations et référents | T02-02 |
-| T02-11 | Frontend : Bénévoles + espace RGPD | T02-04 |
-| T02-12 | Frontend : Planning / affectations temps réel | T02-05, T02-07 |
+| T02-01 | API REST : Événements (CRUD) | ✅ Validé |
+| T02-02 | API REST : Organisations (CRUD + accès référent) | ✅ Validé |
+| T02-03 | API REST : Missions et créneaux | ✅ Validé |
+| T02-04 | API REST : Bénévoles (3 flux + RGPD) | ✅ Validé |
+| T02-05 | API REST : Affectations + contrôle conflits | ✅ Validé |
+| T02-06 | API REST : Journal d'audit (lecture admin) | ✅ Validé |
+| T02-07 | WebSocket : canal dashboard temps réel | ✅ Validé |
+| T02-08 | Frontend : Authentification (login + inscription) | ✅ Validé |
+| T02-09 | Frontend : Événements | ✅ Validé |
+| T02-10 | Frontend : Organisations et référents | ✅ Validé |
+| T02-11 | Frontend : Bénévoles + espace RGPD | ✅ Validé |
+| T02-12 | Frontend : Planning / affectations temps réel | ✅ Validé |
+| T02-13 | Dockerisation complète (Dockerfiles + nginx.conf) | ✅ Validé |
 
-### Phase 3 — Features avancées (Semaine 7-10)
+### Phase 3 — Features avancées (en cours)
 
-| ID | Tâche | Dépend de |
+| ID | Tâche | Statut |
 |---|---|---|
-| T03-01 | Génération QR code accréditations | Phase 2 |
-| T03-02 | Dashboard temps réel complet | T02-07 |
-| T03-03 | Export planning CSV/PDF | Phase 2 |
-| T03-04 | Job automatique d'anonymisation (purge RGPD) | Phase 2 |
-| T03-05 | Notifications email (SMTP) | Phase 2 |
-| T03-06 | Page Mentions Légales | Phase 2 |
+| T03-01 | Génération QR code accréditations | ✅ Validé |
+| T03-02 | Dashboard temps réel complet | ✅ Validé |
+| T03-03 | Export planning CSV/PDF | ✅ Validé |
+| T03-04 | Job automatique d'anonymisation (purge RGPD) | ✅ Validé |
+| T03-05 | Notifications email (SMTP) | ✅ Validé |
+| T03-06 | Page Mentions Légales | 🔲 À faire |
 
-### Phase 4 — Finition recruteur (Semaine 11-12)
+### Phase 4 — Finition recruteur
 
-| ID | Tâche | Dépend de |
+| ID | Tâche | Statut |
 |---|---|---|
-| T04-01 | Tests unitaires et d'intégration complets | Phase 3 |
-| T04-02 | Documentation API (Swagger / OpenAPI) | Phase 3 |
-| T04-03 | Déploiement démo en ligne (Railway) | Phase 3 |
-| T04-04 | README final avec screenshots et lien démo | T04-03 |
-| T04-05 | Diagramme d'architecture dans le README | T04-04 |
+| T04-01 | Tests unitaires et d'intégration complets | 🔲 À faire |
+| T04-02 | Documentation API (Swagger / OpenAPI) | 🔲 À faire |
+| T04-03 | Déploiement démo en ligne (Railway) | 🔲 À faire |
+| T04-04 | README final avec screenshots et lien démo | 🔲 À faire |
+| T04-05 | Diagramme d'architecture dans le README | 🔲 À faire |
 
 ---
 
-## 10. Prochaine étape immédiate
+## 11. Prochaine étape immédiate
 
-> **Tâche active : T00-03 — Validation du modèle de données**
-
-Points à confirmer avant tout démarrage du développement :
-
-1. Les 8 entités (dont ORGANISATION et JOURNAL_AUDIT) couvrent-elles tous les besoins terrain ?
-2. La distinction `geree_par_organisation` (mission entièrement déléguée) vs bénévoles rattachés à une organisation te semble-t-elle juste ?
-3. Le niveau d'accès du référent organisation (voir ses missions + valider ses membres uniquement) correspond-il à ton besoin réel ?
-4. Les mesures RGPD listées sont-elles suffisantes ou manque-t-il quelque chose ?
-5. Des champs manquent-ils sur certaines entités ?
-
-**Validation = go pour T00-05 (création du repo GitHub) et T01-05 (entités JPA).**
+> **Tâche active : T03-06 — Page Mentions Légales**
