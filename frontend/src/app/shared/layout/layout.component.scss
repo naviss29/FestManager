@@ -71,6 +71,14 @@
     color: rgba(255,255,255,0.7);
     &:hover { color: white; background: rgba(255,255,255,0.1); }
   }
+
+  .mentions-btn {
+    width: 100%;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    &:hover { color: rgba(255,255,255,0.7); background: transparent; }
+    mat-icon { font-size: 16px; height: 16px; width: 16px; }
+  }
 }
 
 .main-content {

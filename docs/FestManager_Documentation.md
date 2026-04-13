@@ -1,9 +1,9 @@
 # FestManager — Documentation du projet
 
-> Version : 0.4  
+> Version : 0.5  
 > Auteur : Alan  
 > Date : Avril 2026  
-> Statut : **Phase 2 complète — Dockerisation en cours**
+> Statut : **Phase 3 complète — Phase 4 en cours**
 
 ---
 
@@ -15,6 +15,7 @@
 | 0.2 | Avril 2026 | Ajout organisations prestataires + conformité RGPD |
 | 0.3 | Avril 2026 | Phases 1 et 2 complétées — backend + frontend fonctionnels |
 | 0.4 | Avril 2026 | Dockerisation complète — ajout section lancement et prérequis |
+| 0.5 | Avril 2026 | Phase 3 complète — QR codes, dashboard, exports, RGPD, email, mentions légales |
 
 ---
 
@@ -541,7 +542,7 @@ festmanager-frontend/
 | T03-03 | Export planning CSV/PDF | ✅ Validé |
 | T03-04 | Job automatique d'anonymisation (purge RGPD) | ✅ Validé |
 | T03-05 | Notifications email (SMTP) | ✅ Validé |
-| T03-06 | Page Mentions Légales | 🔲 À faire |
+| T03-06 | Page Mentions Légales | ✅ Validé |
 
 ### Phase 4 — Finition recruteur
 
@@ -557,4 +558,4 @@ festmanager-frontend/
 
 ## 11. Prochaine étape immédiate
 
-> **Tâche active : T03-06 — Page Mentions Légales**
+> **Phase 3 complète. Prochaine étape : Phase 4 — T04-02 Documentation API Swagger / OpenAPI**

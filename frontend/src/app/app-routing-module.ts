@@ -9,6 +9,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
   },
   {
+    path: 'mentions-legales',
+    loadChildren: () => import('./features/mentions-legales/mentions-legales.module').then(m => m.MentionsLegalesModule)
+  },
+  {
     path: '',
     component: LayoutComponent,
     canActivate: [AuthGuard],

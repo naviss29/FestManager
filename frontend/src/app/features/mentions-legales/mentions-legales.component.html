@@ -1,0 +1,134 @@
+<div class="mentions-container">
+
+  <div class="entete">
+    <button mat-icon-button (click)="retour()" matTooltip="Retour">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Mentions légales</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+
+      <!-- Éditeur -->
+      <section>
+        <h2>1. Éditeur du site</h2>
+        <p>
+          Le site FestManager est édité par :<br>
+          <strong>Alan</strong><br>
+          Développeur indépendant<br>
+          France<br>
+          Contact : <a href="mailto:contact@festmanager.app">contact@festmanager.app</a>
+        </p>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Hébergement -->
+      <section>
+        <h2>2. Hébergement</h2>
+        <p>
+          Ce site est hébergé par :<br>
+          <strong>Railway</strong><br>
+          San Francisco, CA, États-Unis<br>
+          <a href="https://railway.app" target="_blank" rel="noopener noreferrer">railway.app</a>
+        </p>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Propriété intellectuelle -->
+      <section>
+        <h2>3. Propriété intellectuelle</h2>
+        <p>
+          L'ensemble du contenu de ce site (code source, interfaces, documentation) est la propriété
+          exclusive de son auteur. Toute reproduction, même partielle, est interdite sans autorisation
+          préalable.
+        </p>
+        <p>
+          FestManager est un projet open source — le code source est disponible sur
+          <a href="https://github.com/naviss29/FestManager" target="_blank" rel="noopener noreferrer">GitHub</a>.
+        </p>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Données personnelles -->
+      <section>
+        <h2>4. Données personnelles et RGPD</h2>
+        <p>
+          FestManager traite des données personnelles dans le cadre de la gestion des bénévoles
+          d'associations événementielles. Ce traitement est soumis au
+          <strong>Règlement Général sur la Protection des Données (RGPD — UE 2016/679)</strong>.
+        </p>
+
+        <h3>Responsable du traitement</h3>
+        <p>
+          Le responsable du traitement est l'organisateur de l'événement utilisant la plateforme.
+          L'éditeur du logiciel agit en qualité de <strong>sous-traitant</strong> au sens de l'article 28 du RGPD.
+        </p>
+
+        <h3>Données collectées</h3>
+        <ul>
+          <li>Données d'identification des bénévoles (nom, prénom, email, téléphone)</li>
+          <li>Données de participation (affectations, missions, créneaux)</li>
+          <li>Données de connexion (email, mot de passe chiffré bcrypt)</li>
+          <li>Journal d'audit des accès aux données personnelles</li>
+        </ul>
+
+        <h3>Base légale</h3>
+        <p>
+          Le traitement est fondé sur le <strong>consentement explicite</strong> de la personne concernée
+          (Art. 6.1.a du RGPD), recueilli lors de l'inscription et tracé en base.
+        </p>
+
+        <h3>Durée de conservation</h3>
+        <p>
+          Les données personnelles sont conservées pendant <strong>3 ans</strong> à compter de la fin du
+          dernier événement auquel le bénévole a participé, puis anonymisées automatiquement.
+        </p>
+
+        <h3>Vos droits</h3>
+        <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+        <ul>
+          <li><strong>Droit d'accès</strong> (Art. 15) — export JSON de toutes vos données</li>
+          <li><strong>Droit de rectification</strong> (Art. 16) — modification depuis votre profil</li>
+          <li><strong>Droit à l'effacement</strong> (Art. 17) — anonymisation de vos données</li>
+          <li><strong>Droit à la portabilité</strong> (Art. 20) — export structuré</li>
+          <li><strong>Droit d'opposition</strong> (Art. 21) — retrait du consentement</li>
+        </ul>
+        <p>
+          Ces droits sont exercibles directement depuis votre espace personnel ou par email à :<br>
+          <a href="mailto:dpo@festmanager.app">dpo@festmanager.app</a>
+        </p>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Cookies -->
+      <section>
+        <h2>5. Cookies</h2>
+        <p>
+          FestManager n'utilise pas de cookies de traçage ou publicitaires.
+          Seul un token d'authentification JWT est stocké en <code>localStorage</code> pour maintenir
+          votre session. Ce token ne contient aucune donnée sensible et est supprimé à la déconnexion.
+        </p>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Contact -->
+      <section>
+        <h2>6. Contact</h2>
+        <p>
+          Pour toute question relative à ce site ou à vos données personnelles :<br>
+          <a href="mailto:contact@festmanager.app">contact@festmanager.app</a>
+        </p>
+      </section>
+
+    </mat-card-content>
+  </mat-card>
+
+  <p class="derniere-maj">Dernière mise à jour : avril 2026</p>
+
+</div>

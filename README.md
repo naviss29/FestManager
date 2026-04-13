@@ -2,7 +2,7 @@
 
 > Application web de gestion de bénévoles et de logistique pour festivals et événements culturels.
 
-![Status](https://img.shields.io/badge/status-Phase%203%20en%20cours-orange)
+![Status](https://img.shields.io/badge/status-Phase%204%20en%20cours-blue)
 ![Java](https://img.shields.io/badge/Java-17-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-green)
 ![Angular](https://img.shields.io/badge/Angular-17-red)
@@ -36,7 +36,7 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Export planning CSV et PDF | ✅ |
 | Notifications email (confirmation affectation, invitation, rappel) | ✅ |
 | Anonymisation automatique RGPD (job nocturne, Art. 17) | ✅ |
-| Page Mentions Légales | 🔲 |
+| Page Mentions Légales | ✅ |
 | Documentation API Swagger | 🔲 |
 | Déploiement démo en ligne (Railway) | 🔲 |
 
@@ -142,7 +142,7 @@ QR code, accréditations, export CSV/PDF, job RGPD, email.
 - [x] Phase 0 — Cadrage, modèle de données, documentation
 - [x] Phase 1 — Fondations (Spring Boot, Angular, Docker, JWT, entités JPA)
 - [x] Phase 2 — Core features (CRUD complet, affectations, WebSocket, auth)
-- [ ] Phase 3 — Features avancées (QR codes ✅, dashboard ✅, exports ✅, RGPD ✅, email ✅, mentions légales 🔲)
+- [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
 - [ ] Phase 4 — Finalisation (Swagger, déploiement Railway, README screenshots)
 
 ---
