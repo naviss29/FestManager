@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: festmanager-db
+    environment:
+      POSTGRES_DB: festmanager
+      POSTGRES_USER: festmanager
+      POSTGRES_PASSWORD: festmanager_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - festmanager-network
+
+  backend:
+    build: ./backend
+    container_name: festmanager-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - festmanager-network
+
+  frontend:
+    build: ./frontend
+    container_name: festmanager-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - festmanager-network
+
+volumes:
+  postgres_data:
+
+networks:
+  festmanager-network:
+    driver: bridge
