@@ -11,6 +11,8 @@ import com.festmanager.mapper.AffectationMapper;
 import com.festmanager.repository.AffectationRepository;
 import com.festmanager.repository.BenevoleRepository;
 import com.festmanager.repository.CreneauRepository;
+import com.festmanager.websocket.DashboardEvent;
+import com.festmanager.websocket.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class AffectationService {
     private final BenevoleRepository benevoleRepository;
     private final CreneauRepository creneauRepository;
     private final AffectationMapper affectationMapper;
+    private final DashboardService dashboardService;
 
     // --- Lecture ---
 
@@ -96,7 +99,9 @@ public class AffectationService {
                 .commentaire(request.getCommentaire())
                 .build();
 
-        return affectationMapper.toResponse(affectationRepository.save(affectation));
+        Affectation sauvegardee = affectationRepository.save(affectation);
+        dashboardService.notifierAffectation(sauvegardee, DashboardEvent.TypeEvenement.AFFECTATION_CREEE);
+        return affectationMapper.toResponse(sauvegardee);
     }
 
     // --- Changement de statut ---
@@ -117,14 +122,18 @@ public class AffectationService {
         }
 
         affectation.setStatut(nouveauStatut);
-        return affectationMapper.toResponse(affectationRepository.save(affectation));
+        Affectation sauvegardee = affectationRepository.save(affectation);
+        dashboardService.notifierAffectation(sauvegardee, DashboardEvent.TypeEvenement.AFFECTATION_MODIFIEE);
+        return affectationMapper.toResponse(sauvegardee);
     }
 
     // --- Suppression ---
 
     @Transactional
     public void supprimer(UUID id) {
-        affectationRepository.delete(trouverParId(id));
+        Affectation affectation = trouverParId(id);
+        dashboardService.notifierAffectation(affectation, DashboardEvent.TypeEvenement.AFFECTATION_SUPPRIMEE);
+        affectationRepository.delete(affectation);
     }
 
     // --- Méthodes privées ---
