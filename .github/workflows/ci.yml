@@ -15,21 +15,6 @@ jobs:
     name: Backend (Java 17 / Maven)
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: festmanager_test
-          POSTGRES_USER: festmanager
-          POSTGRES_PASSWORD: festmanager_dev
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,14 +26,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Diagnostic Maven wrapper
+        working-directory: backend
+        run: |
+          ls -la mvnw
+          chmod +x mvnw
+          ./mvnw --version
+
       - name: Compiler et tester
         working-directory: backend
-        run: ./mvnw verify -B
+        run: ./mvnw test -B -e --no-transfer-progress
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/festmanager_test
-          SPRING_DATASOURCE_USERNAME: festmanager
-          SPRING_DATASOURCE_PASSWORD: festmanager_dev
-          APP_JWT_SECRET: ${{ secrets.JWT_SECRET || 'dGVzdC1zZWNyZXQtcG91ci1jaS1mZXN0bWFuYWdlci10ZXN0LWtleS0yMDI2' }}
+          SPRING_PROFILES_ACTIVE: test
+          APP_JWT_SECRET: dGVzdC1zZWNyZXQtcG91ci1jaS1mZXN0bWFuYWdlci10ZXN0LWtleS0yMDI2
           APP_JWT_EXPIRATION_MS: 86400000
 
       - name: Publier les résultats de tests
