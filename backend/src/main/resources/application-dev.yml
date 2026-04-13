@@ -24,3 +24,11 @@ app:
     # Clé de dev — 64 octets encodés base64 (ne pas utiliser en prod)
     secret: ZGV2LXNlY3JldC1mZXN0bWFuYWdlci1rZXktbG9uZ3VlLXBvdXItaG1hYy1zaGEyNTY=
     expiration-ms: 86400000
+
+# Désactivation du job RGPD en développement (base H2 en mémoire)
+spring.task.scheduling.pool.size: 0
+
+  # En dev, les emails sont loggués dans la console (pas envoyés)
+  mail:
+    host: localhost
+    port: 1025
