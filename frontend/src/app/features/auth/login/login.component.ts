@@ -1,0 +1,44 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  standalone: false
+})
+export class LoginComponent {
+
+  form: FormGroup;
+  chargement = false;
+  erreur: string | null = null;
+  motDePasseVisible = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.form = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+  }
+
+  soumettre(): void {
+    if (this.form.invalid || this.chargement) return;
+
+    this.chargement = true;
+    this.erreur = null;
+
+    this.authService.login(this.form.value).subscribe({
+      next: () => this.router.navigate(['/dashboard']),
+      error: () => {
+        this.erreur = 'Email ou mot de passe incorrect.';
+        this.chargement = false;
+      }
+    });
+  }
+}
