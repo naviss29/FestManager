@@ -35,6 +35,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Authentification publique
                 .requestMatchers("/api/auth/**").permitAll()
+                // Inscription libre bénévole (flux 1)
+                .requestMatchers("/api/benevoles/inscription").permitAll()
                 // WebSocket
                 .requestMatchers("/ws/**").permitAll()
                 // Swagger (dev uniquement)
