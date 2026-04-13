@@ -168,6 +168,31 @@ export class PlanningComponent implements OnInit, OnDestroy {
     }
   }
 
+  exporterCsv(): void {
+    if (!this.evenementSelectionne) return;
+    this.planningService.exporterCsv(this.evenementSelectionne.id).subscribe({
+      next: blob => this.telecharger(blob, `planning-${this.evenementSelectionne!.nom}.csv`, 'text/csv'),
+      error: () => this.snackBar.open('Erreur lors de l\'export CSV', 'Fermer', { duration: 3000 })
+    });
+  }
+
+  exporterPdf(): void {
+    if (!this.evenementSelectionne) return;
+    this.planningService.exporterPdf(this.evenementSelectionne.id).subscribe({
+      next: blob => this.telecharger(blob, `planning-${this.evenementSelectionne!.nom}.pdf`, 'application/pdf'),
+      error: () => this.snackBar.open('Erreur lors de l\'export PDF', 'Fermer', { duration: 3000 })
+    });
+  }
+
+  private telecharger(blob: Blob, nomFichier: string, type: string): void {
+    const url = URL.createObjectURL(new Blob([blob], { type }));
+    const lien = document.createElement('a');
+    lien.href = url;
+    lien.download = nomFichier;
+    lien.click();
+    URL.revokeObjectURL(url);
+  }
+
   tauxRemplissage(c: Creneau): number {
     if (c.nbBenevolesRequis === 0) return 100;
     return Math.min(100, Math.round((c.nbBenevolesAffectes / c.nbBenevolesRequis) * 100));

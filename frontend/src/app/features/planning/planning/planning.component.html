@@ -1,9 +1,19 @@
 <div class="page-container">
   <div class="page-header">
     <h1>Planning des affectations</h1>
-    <span class="ws-badge" *ngIf="evenementSelectionne">
-      <mat-icon class="ws-icon">wifi</mat-icon> Temps réel actif
-    </span>
+    <div class="header-actions">
+      <span class="ws-badge" *ngIf="evenementSelectionne">
+        <mat-icon class="ws-icon">wifi</mat-icon> Temps réel actif
+      </span>
+      <ng-container *ngIf="evenementSelectionne">
+        <button mat-stroked-button (click)="exporterCsv()" matTooltip="Exporter en CSV">
+          <mat-icon>table_view</mat-icon> CSV
+        </button>
+        <button mat-stroked-button color="primary" (click)="exporterPdf()" matTooltip="Exporter en PDF">
+          <mat-icon>picture_as_pdf</mat-icon> PDF
+        </button>
+      </ng-container>
+    </div>
   </div>
 
   <div class="planning-grid">

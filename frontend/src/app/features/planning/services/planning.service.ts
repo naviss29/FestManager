@@ -41,4 +41,16 @@ export class PlanningService {
   supprimer(id: string): Observable<void> {
     return this.http.delete<void>(`${this.api}/affectations/${id}`);
   }
+
+  exporterCsv(evenementId: string): Observable<Blob> {
+    return this.http.get(`${this.api}/evenements/${evenementId}/export/csv`, {
+      responseType: 'blob'
+    });
+  }
+
+  exporterPdf(evenementId: string): Observable<Blob> {
+    return this.http.get(`${this.api}/evenements/${evenementId}/export/pdf`, {
+      responseType: 'blob'
+    });
+  }
 }
