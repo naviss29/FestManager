@@ -551,8 +551,8 @@ festmanager-frontend/
 | T04-01 | Tests unitaires et d'intégration complets | 🔲 À faire |
 | T04-02 | Documentation API (Swagger / OpenAPI) | ✅ Validé |
 | T04-03 | Déploiement démo en ligne (Railway) | ✅ Validé |
-| T04-04 | README final avec screenshots et lien démo | 🔲 À faire |
-| T04-05 | Diagramme d'architecture dans le README | 🔲 À faire |
+| T04-04 | README final avec screenshots et lien démo | ✅ Validé |
+| T04-05 | Diagramme d'architecture dans le README | ✅ Validé |
 
 ---
 
@@ -603,4 +603,4 @@ festmanager-frontend/
 
 ## 12. Prochaine étape immédiate
 
-> **Prochaine étape : T04-04 — README final avec screenshots**
+> **Phase 4 complète. Projet portfolio terminé.**

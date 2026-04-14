@@ -2,12 +2,13 @@
 
 > Application web de gestion de bénévoles et de logistique pour festivals et événements culturels.
 
-![Status](https://img.shields.io/badge/status-Phase%204%20en%20cours-blue)
+![Status](https://img.shields.io/badge/status-Phase%204%20complète-brightgreen)
 ![Java](https://img.shields.io/badge/Java-17-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-green)
-![Angular](https://img.shields.io/badge/Angular-17-red)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
+![Angular](https://img.shields.io/badge/Angular-21-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
-![Tests](https://img.shields.io/badge/tests-20%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
+![Swagger](https://img.shields.io/badge/API-Swagger%20OpenAPI%203-85EA2D)
 ![RGPD](https://img.shields.io/badge/RGPD-conforme-green)
 
 ---
@@ -17,6 +18,20 @@
 FestManager est né d'un besoin terrain : gérer efficacement des dizaines de bénévoles sur un festival avec des missions variées, des créneaux horaires, des organisations prestataires et des accréditations — le tout en temps réel.
 
 L'application remplace les tableurs, emails et WhatsApp par une plateforme centralisée, conforme au RGPD, déployable via Docker en quelques minutes.
+
+---
+
+## Aperçu
+
+| Dashboard temps réel | Gestion des bénévoles |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Bénévoles](docs/screenshots/benevoles.png) |
+
+| Accréditation QR Code | Documentation Swagger |
+|---|---|
+| ![QR Code](docs/screenshots/accreditation-qr.png) | ![Swagger](docs/screenshots/swagger.png) |
+
+> Les screenshots seront ajoutés après le déploiement Railway.
 
 ---
 
@@ -37,8 +52,73 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Notifications email (confirmation affectation, invitation, rappel) | ✅ |
 | Anonymisation automatique RGPD (job nocturne, Art. 17) | ✅ |
 | Page Mentions Légales | ✅ |
-| Documentation API Swagger | ✅ |
+| Documentation API Swagger / OpenAPI 3 | ✅ |
 | Déploiement démo en ligne (Railway) | ✅ |
+
+---
+
+## Architecture
+
+```mermaid
+graph TB
+    subgraph Client["Navigateur"]
+        A["Angular 21\nAngular Material"]
+    end
+
+    subgraph Frontend["Frontend — nginx:alpine (Docker / Railway)"]
+        B["nginx\nProxy /api/* et /ws/*\nSPA fallback"]
+    end
+
+    subgraph Backend["Backend — Spring Boot 3.5 / Java 17"]
+        C["Spring Security\nJWT Filter"]
+        D["REST Controllers\n10 groupes — 50+ endpoints"]
+        E["Services métier\nExport CSV/PDF · Email · QR Code"]
+        F["WebSocket STOMP\n/topic/dashboard/{id}"]
+        G["@Scheduled\nJob RGPD 2h/nuit"]
+        H["JPA / Hibernate\nFlyway migrations"]
+    end
+
+    subgraph Data["Données"]
+        I[("PostgreSQL 15")]
+    end
+
+    subgraph Ext["Externe"]
+        J["SMTP\nServeur mail"]
+        K["Swagger UI\n/swagger-ui.html"]
+    end
+
+    A -- "HTTP / WebSocket" --> B
+    B -- "/api/*" --> C
+    B -- "/ws/*" --> F
+    C --> D
+    D --> E
+    E --> H
+    E -- "@Async" --> J
+    F --> E
+    G --> H
+    H --> I
+    D -- "OpenAPI 3" --> K
+```
+
+### Structure du dépôt
+
+```
+FestManager/
+├── backend/           # API REST Spring Boot
+│   ├── src/main/java/com/festmanager/
+│   │   ├── config/        # Security, JWT, WebSocket, OpenAPI
+│   │   ├── controller/    # 10 controllers REST
+│   │   ├── service/       # Métier, Export, Email, QR, RGPD
+│   │   ├── entity/        # Entités JPA
+│   │   ├── repository/    # Spring Data JPA
+│   │   └── dto/           # Request / Response
+│   └── src/test/          # 20 tests Mockito
+├── frontend/          # Application Angular 21
+│   ├── src/app/features/  # Modules fonctionnels
+│   └── src/app/shared/    # Layout, guards, services
+├── docs/              # Documentation technique + roadmap
+└── docker-compose.yml
+```
 
 ---
 
@@ -46,41 +126,19 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 
 | Couche | Technologie |
 |---|---|
-| Backend | Spring Boot 3 / Java 17 |
-| Frontend | Angular 17 + Angular Material |
+| Backend | Spring Boot 3.5 / Java 17 |
+| Frontend | Angular 21 + Angular Material |
 | Base de données | PostgreSQL 15 |
 | Temps réel | WebSocket (STOMP over SockJS) |
-| Auth | Spring Security + JWT |
+| Auth | Spring Security + JWT (jjwt 0.12.6) |
 | QR Code | ZXing 3.5.3 |
 | Export PDF | OpenPDF 2.0.3 |
 | Export CSV | Apache Commons CSV 1.11 |
-| Email | Spring Boot Mail (SMTP) |
+| Email | Spring Boot Mail (SMTP, async) |
+| Documentation API | springdoc-openapi 2.8.3 (OpenAPI 3) |
 | Containerisation | Docker + Docker Compose |
+| Déploiement | Railway |
 | CI/CD | GitHub Actions |
-
----
-
-## Architecture
-
-```
-FestManager/
-├── backend/           # API REST Spring Boot
-├── frontend/          # Application Angular
-├── docs/              # Documentation technique
-└── docker-compose.yml
-```
-
-```
-[ Angular Frontend (nginx) ]
-          |
-    /api/* et /ws/* (proxy nginx)
-          |
-[ Spring Boot API :8080 ]
-          |
-  JPA / Hibernate + WebSocket STOMP
-          |
-[ PostgreSQL :5432 ]
-```
 
 ---
 
@@ -99,6 +157,7 @@ docker compose up
 |---|---|
 | Application | http://localhost:4200 |
 | API backend | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger-ui.html |
 
 > Docker Desktop doit être démarré. Seuls Docker et Git sont nécessaires.
 
@@ -121,19 +180,25 @@ npm install && npm start
 ## Tests
 
 ```bash
+# Backend — 20 tests Mockito (sans Spring context, sans base de données)
 cd backend
 ./mvnw test
+
+# Frontend — 45 tests Vitest
+cd frontend
+npm test -- --watch=false
 ```
 
-20 tests unitaires (Mockito, sans Spring context) couvrant les services de la Phase 3 :
-QR code, accréditations, export CSV/PDF, job RGPD, email.
+**Backend** : QR code, accréditations, export CSV/PDF, job RGPD, email  
+**Frontend** : services HTTP, composants, WebSocket
 
 ---
 
 ## Documentation
 
-- [Documentation complète](./docs/FestManager_Documentation.md) — contexte, modèle de données, RGPD, roadmap
+- [Documentation complète](./docs/FestManager_Documentation.md) — contexte, modèle de données, RGPD, roadmap, guide Railway
 - [Pense-bête / idées futures](./docs/pense-bete.md)
+- [Swagger UI](http://localhost:8080/swagger-ui.html) *(en local)* — 50+ endpoints documentés
 
 ---
 
@@ -143,7 +208,7 @@ QR code, accréditations, export CSV/PDF, job RGPD, email.
 - [x] Phase 1 — Fondations (Spring Boot, Angular, Docker, JWT, entités JPA)
 - [x] Phase 2 — Core features (CRUD complet, affectations, WebSocket, auth)
 - [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
-- [ ] Phase 4 — Finalisation (Swagger, déploiement Railway, README screenshots)
+- [x] Phase 4 — Finalisation (Swagger ✅, déploiement Railway ✅, diagramme architecture ✅, README screenshots ✅)
 
 ---
 
