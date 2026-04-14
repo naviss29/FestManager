@@ -19,6 +19,7 @@ services:
     container_name: festmanager-backend
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      ALLOWED_ORIGINS: "http://localhost:4200,http://localhost:80,http://localhost"
     ports:
       - "8080:8080"
     depends_on:
@@ -29,6 +30,10 @@ services:
   frontend:
     build: ./frontend
     container_name: festmanager-frontend
+    environment:
+      BACKEND_URL: "http://backend:8080"
+      # Restreint la substitution aux seules variables connues (évite de casser les vars nginx)
+      NGINX_ENVSUBST_TEMPLATE_VARS: "BACKEND_URL"
     ports:
       - "4200:80"
     depends_on:

@@ -1,10 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/festmanager
-    username: festmanager
-    password: festmanager_dev
+    # Local Docker : défauts postgres/festmanager
+    # Railway : surcharger avec SPRING_DATASOURCE_URL / USERNAME / PASSWORD
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/festmanager}
+    username: ${SPRING_DATASOURCE_USERNAME:festmanager}
+    password: ${SPRING_DATASOURCE_PASSWORD:festmanager_dev}
 
-  # SMTP — variables d'environnement Docker (à définir dans docker-compose ou .env)
+  # SMTP — variables d'environnement (Docker ou Railway)
   mail:
     host: ${SMTP_HOST:localhost}
     port: ${SMTP_PORT:1025}
@@ -13,3 +15,13 @@ spring:
     properties:
       mail.smtp.auth: ${SMTP_AUTH:false}
       mail.smtp.starttls.enable: ${SMTP_TLS:false}
+
+# Railway injecte PORT automatiquement — fallback 8080 pour Docker local
+server:
+  port: ${PORT:8080}
+
+app:
+  # CORS : liste d'origines séparées par des virgules
+  # Railway : mettre l'URL du service frontend (ex: https://festmanager.up.railway.app)
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200,http://localhost:80,http://localhost}

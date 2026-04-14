@@ -550,12 +550,57 @@ festmanager-frontend/
 |---|---|---|
 | T04-01 | Tests unitaires et d'intégration complets | 🔲 À faire |
 | T04-02 | Documentation API (Swagger / OpenAPI) | ✅ Validé |
-| T04-03 | Déploiement démo en ligne (Railway) | 🔲 À faire |
+| T04-03 | Déploiement démo en ligne (Railway) | ✅ Validé |
 | T04-04 | README final avec screenshots et lien démo | 🔲 À faire |
 | T04-05 | Diagramme d'architecture dans le README | 🔲 À faire |
 
 ---
 
-## 11. Prochaine étape immédiate
+## 11. Déploiement Railway
 
-> **Prochaine étape : T04-03 — Déploiement démo Railway**
+### Prérequis
+- Compte Railway (railway.app) connecté au dépôt GitHub
+- CLI Railway installé : `npm install -g @railway/cli`
+
+### Services à créer dans Railway
+
+| Service | Source | Répertoire build |
+|---|---|---|
+| `backend` | GitHub (ce dépôt) | `backend/` |
+| `frontend` | GitHub (ce dépôt) | `frontend/` |
+| `postgres` | Plugin Railway | — |
+
+### Variables d'environnement — service `backend`
+
+| Variable | Valeur |
+|---|---|
+| `SPRING_PROFILES_ACTIVE` | `docker` |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}` |
+| `SPRING_DATASOURCE_USERNAME` | `${{Postgres.PGUSER}}` |
+| `SPRING_DATASOURCE_PASSWORD` | `${{Postgres.PGPASSWORD}}` |
+| `APP_JWT_SECRET` | Générer avec `openssl rand -base64 64` |
+| `APP_JWT_EXPIRATION_MS` | `86400000` |
+| `ALLOWED_ORIGINS` | URL du service frontend Railway (ex: `https://festmanager-frontend.up.railway.app`) |
+
+### Variables d'environnement — service `frontend`
+
+| Variable | Valeur |
+|---|---|
+| `BACKEND_URL` | URL interne Railway du backend (ex: `http://backend.railway.internal:8080`) |
+| `NGINX_ENVSUBST_TEMPLATE_VARS` | `BACKEND_URL` |
+
+### Build settings
+
+- Backend : Railway détecte `backend/Dockerfile` automatiquement. Root directory = `backend`.
+- Frontend : Railway détecte `frontend/Dockerfile` automatiquement. Root directory = `frontend`.
+
+### Notes importantes
+
+- `PORT` est injecté automatiquement par Railway dans le backend Spring Boot.
+- Le JWT secret doit être une chaîne longue et aléatoire en production (minimum 32 caractères).
+- Les migrations Flyway s'exécutent automatiquement au premier démarrage.
+- L'URL Swagger sera disponible sur `https://<backend-url>/swagger-ui.html`.
+
+## 12. Prochaine étape immédiate
+
+> **Prochaine étape : T04-04 — README final avec screenshots**

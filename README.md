@@ -38,7 +38,7 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Anonymisation automatique RGPD (job nocturne, Art. 17) | ✅ |
 | Page Mentions Légales | ✅ |
 | Documentation API Swagger | ✅ |
-| Déploiement démo en ligne (Railway) | 🔲 |
+| Déploiement démo en ligne (Railway) | ✅ |
 
 ---
 
