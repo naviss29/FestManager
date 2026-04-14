@@ -1,6 +1,8 @@
 package com.festmanager.controller;
 
 import com.festmanager.service.ExportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -19,10 +21,12 @@ import java.util.UUID;
 @RequestMapping("/api/evenements/{evenementId}/export")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR')")
+@Tag(name = "Exports", description = "Export du planning en CSV (Apache Commons CSV) ou PDF (OpenPDF) — téléchargement en pièce jointe")
 public class ExportController {
 
     private final ExportService exportService;
 
+    @Operation(summary = "Exporter le planning en CSV", description = "Colonnes : Événement, Mission, Catégorie, Début, Fin, Prénom, Nom, Statut, Commentaire. UTF-8, séparateur `;`.")
     @GetMapping("/csv")
     public ResponseEntity<byte[]> exporterCsv(@PathVariable UUID evenementId) {
         byte[] contenu = exportService.exporterCsv(evenementId);
@@ -36,6 +40,7 @@ public class ExportController {
         return ResponseEntity.ok().headers(headers).body(contenu);
     }
 
+    @Operation(summary = "Exporter le planning en PDF", description = "PDF structuré par mission avec bandeau coloré et lignes zébrées.")
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> exporterPdf(@PathVariable UUID evenementId) {
         byte[] contenu = exportService.exporterPdf(evenementId);

@@ -5,6 +5,9 @@ import com.festmanager.dto.BenevoleRequest;
 import com.festmanager.dto.BenevoleResponse;
 import com.festmanager.entity.enums.StatutCompteBenevole;
 import com.festmanager.service.BenevoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +25,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/benevoles")
 @RequiredArgsConstructor
+@Tag(name = "Bénévoles", description = "Gestion des bénévoles — 3 flux d'inscription, droits RGPD intégrés")
 public class BenevoleController {
 
     private final BenevoleService benevoleService;
 
     // --- Lecture ---
 
+    @Operation(summary = "Lister les bénévoles", description = "Filtrable par statut. Tracé dans le journal d'audit RGPD.")
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<Page<BenevoleResponse>> lister(
@@ -37,6 +42,7 @@ public class BenevoleController {
         return ResponseEntity.ok(benevoleService.listerBenevoles(statut, pageable, request.getRemoteAddr()));
     }
 
+    @Operation(summary = "Obtenir un bénévole")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<BenevoleResponse> obtenir(@PathVariable UUID id, HttpServletRequest request) {
@@ -45,6 +51,8 @@ public class BenevoleController {
 
     // --- Flux 1 : Inscription libre (public) ---
 
+    @Operation(summary = "Inscription libre (public)", description = "Endpoint public — aucun token requis. Le bénévole s'inscrit lui-même.")
+    @SecurityRequirements
     @PostMapping("/inscription")
     public ResponseEntity<BenevoleResponse> inscrire(@Valid @RequestBody BenevoleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(benevoleService.inscrire(request));
@@ -52,6 +60,7 @@ public class BenevoleController {
 
     // --- Flux 2 : Création manuelle ---
 
+    @Operation(summary = "Créer un bénévole manuellement")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<BenevoleResponse> creer(
@@ -63,6 +72,7 @@ public class BenevoleController {
 
     // --- Flux 3 : Invitation par email ---
 
+    @Operation(summary = "Inviter un bénévole par email", description = "Envoie un email d'invitation SMTP de manière asynchrone.")
     @PostMapping("/invitation")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<BenevoleResponse> inviter(
@@ -74,6 +84,7 @@ public class BenevoleController {
 
     // --- Modification ---
 
+    @Operation(summary = "Modifier un bénévole")
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<BenevoleResponse> modifier(
@@ -85,6 +96,7 @@ public class BenevoleController {
 
     // --- RGPD : Export des données (Art. 15) ---
 
+    @Operation(summary = "Exporter les données d'un bénévole (RGPD Art. 15)", description = "Retourne un JSON structuré de toutes les données personnelles.")
     @GetMapping("/{id}/export")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR', 'REFERENT_ORGANISATION')")
     public ResponseEntity<Map<String, Object>> exporter(@PathVariable UUID id, HttpServletRequest request) {
@@ -93,6 +105,7 @@ public class BenevoleController {
 
     // --- RGPD : Anonymisation (Art. 17) ---
 
+    @Operation(summary = "Anonymiser un bénévole (RGPD Art. 17)", description = "Remplace les données personnelles par des valeurs anonymes. Irréversible.")
     @PostMapping("/{id}/anonymiser")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR')")
     @ResponseStatus(HttpStatus.NO_CONTENT)

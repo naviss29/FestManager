@@ -2,6 +2,8 @@ package com.festmanager.controller;
 
 import com.festmanager.dto.DashboardSnapshotResponse;
 import com.festmanager.websocket.DashboardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +16,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
+@Tag(name = "Dashboard", description = "Snapshot temps réel des statistiques d'un événement — à combiner avec le WebSocket STOMP /topic/dashboard/{id}")
 public class DashboardController {
 
     private final DashboardService dashboardService;
 
-    /**
-     * Retourne le snapshot initial du dashboard pour un événement.
-     * Le client charge cet état puis s'abonne au topic WebSocket
-     * /topic/dashboard/{evenementId} pour les mises à jour en temps réel.
-     */
+    @Operation(summary = "Snapshot du dashboard", description = "Retourne l'état initial (nb missions, créneaux, bénévoles, taux de remplissage). Le client s'abonne ensuite au topic WebSocket `/topic/dashboard/{evenementId}` pour les mises à jour en temps réel.")
     @GetMapping("/{evenementId}")
     public ResponseEntity<DashboardSnapshotResponse> snapshot(@PathVariable UUID evenementId) {
         return ResponseEntity.ok(dashboardService.snapshot(evenementId));
