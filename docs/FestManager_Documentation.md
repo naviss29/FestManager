@@ -549,7 +549,7 @@ festmanager-frontend/
 | ID | Tâche | Statut |
 |---|---|---|
 | T04-01 | Tests unitaires et d'intégration complets | 🔲 À faire |
-| T04-02 | Documentation API (Swagger / OpenAPI) | 🔲 À faire |
+| T04-02 | Documentation API (Swagger / OpenAPI) | ✅ Validé |
 | T04-03 | Déploiement démo en ligne (Railway) | 🔲 À faire |
 | T04-04 | README final avec screenshots et lien démo | 🔲 À faire |
 | T04-05 | Diagramme d'architecture dans le README | 🔲 À faire |
@@ -558,4 +558,4 @@ festmanager-frontend/
 
 ## 11. Prochaine étape immédiate
 
-> **Phase 3 complète. Prochaine étape : Phase 4 — T04-02 Documentation API Swagger / OpenAPI**
+> **Prochaine étape : T04-03 — Déploiement démo Railway**

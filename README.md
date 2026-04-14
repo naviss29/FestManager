@@ -37,7 +37,7 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Notifications email (confirmation affectation, invitation, rappel) | ✅ |
 | Anonymisation automatique RGPD (job nocturne, Art. 17) | ✅ |
 | Page Mentions Légales | ✅ |
-| Documentation API Swagger | 🔲 |
+| Documentation API Swagger | ✅ |
 | Déploiement démo en ligne (Railway) | 🔲 |
 
 ---
