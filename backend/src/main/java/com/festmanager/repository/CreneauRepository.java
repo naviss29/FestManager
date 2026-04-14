@@ -17,14 +17,17 @@ public interface CreneauRepository extends JpaRepository<Creneau, UUID> {
 
     // Recherche les chevauchements horaires pour un bénévole sur un événement donné
     @Query("""
-        SELECT c FROM Creneau c
+        SELECT DISTINCT c FROM Creneau c
         JOIN c.mission m
-        JOIN Affectation a ON a.creneau = c
         WHERE m.evenement.id = :evenementId
-          AND a.benevole.id = :benevoleId
-          AND a.statut IN ('EN_ATTENTE', 'CONFIRME')
           AND c.debut < :fin
           AND c.fin > :debut
+          AND EXISTS (
+            SELECT a FROM Affectation a
+            WHERE a.creneau = c
+              AND a.benevole.id = :benevoleId
+              AND a.statut IN ('EN_ATTENTE', 'CONFIRME')
+          )
     """)
     List<Creneau> findChevauchements(
             @Param("evenementId") UUID evenementId,
