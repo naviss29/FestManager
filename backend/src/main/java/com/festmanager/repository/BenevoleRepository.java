@@ -35,12 +35,10 @@ public interface BenevoleRepository extends JpaRepository<Benevole, UUID> {
         SELECT DISTINCT b FROM Benevole b
         WHERE b.statutCompte <> 'ANONYMISE'
           AND (
-            -- A eu des affectations, mais le dernier événement est trop ancien
             (SELECT MAX(e.dateFin) FROM Affectation a
              JOIN a.creneau c JOIN c.mission m JOIN m.evenement e
              WHERE a.benevole = b) < :dateLimite
             OR
-            -- N'a jamais eu d'affectation et le compte est trop ancien
             (NOT EXISTS (SELECT a FROM Affectation a WHERE a.benevole = b)
              AND b.createdAt < :dateLimiteCreation)
           )
