@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'evenements',     loadChildren: () => import('./features/evenements/evenements.module').then(m => m.EvenementsModule) },
       { path: 'benevoles',      loadChildren: () => import('./features/benevoles/benevoles.module').then(m => m.BenevolesModule) },
       { path: 'organisations',  loadChildren: () => import('./features/organisations/organisations.module').then(m => m.OrganisationsModule) },
+      { path: 'missions',        loadChildren: () => import('./features/missions/missions.module').then(m => m.MissionsModule) },
       { path: 'planning',        loadChildren: () => import('./features/planning/planning.module').then(m => m.PlanningModule) },
       { path: 'accreditations',  loadChildren: () => import('./features/accreditations/accreditations.module').then(m => m.AccreditationsModule) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

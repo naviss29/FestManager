@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{ estModification ? 'Modifier la' : 'Nouvelle' }} mission</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="nom" />
+      <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+
+    <div class="row-2col">
+      <mat-form-field appearance="outline">
+        <mat-label>Lieu</mat-label>
+        <input matInput formControlName="lieu" />
+        <mat-icon matPrefix>location_on</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Catégorie</mat-label>
+        <mat-select formControlName="categorie">
+          <mat-option *ngFor="let cat of categories" [value]="cat.valeur">
+            {{ cat.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('categorie')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Matériel requis</mat-label>
+      <textarea matInput formControlName="materielRequis" rows="2"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Nombre de bénévoles requis</mat-label>
+      <input matInput type="number" formControlName="nbBenevolesRequis" min="1" />
+      <mat-icon matPrefix>people</mat-icon>
+      <mat-error *ngIf="form.get('nbBenevolesRequis')?.hasError('min')">Minimum 1</mat-error>
+      <mat-error *ngIf="form.get('nbBenevolesRequis')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+    <div class="checkboxes">
+      <mat-checkbox formControlName="multiAffectationAutorisee">
+        Multi-affectation autorisée
+      </mat-checkbox>
+      <mat-checkbox formControlName="gereeParOrganisation">
+        Gérée par une organisation
+      </mat-checkbox>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width" *ngIf="gereeParOrganisation">
+      <mat-label>Organisation</mat-label>
+      <mat-select formControlName="organisationId">
+        <mat-option *ngFor="let org of organisations" [value]="org.id">
+          {{ org.nom }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('organisationId')?.hasError('required')">Obligatoire</mat-error>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annuler()">Annuler</button>
+  <button mat-raised-button color="primary"
+          (click)="soumettre()" [disabled]="form.invalid || chargement">
+    <mat-spinner *ngIf="chargement" diameter="18"></mat-spinner>
+    <span *ngIf="!chargement">{{ estModification ? 'Enregistrer' : 'Créer' }}</span>
+  </button>
+</mat-dialog-actions>
