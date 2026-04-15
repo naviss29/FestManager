@@ -44,10 +44,10 @@ public class DashboardService {
         long nbMissions     = missionRepository.findByEvenementId(evenementId).size();
         long nbCreneaux     = missionRepository.countCreneauxByEvenement(evenementId);
         long nbPlaces       = missionRepository.sumPlacesRequisesByEvenement(evenementId);
-        long nbConfirmes    = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.CONFIRME);
-        long nbEnAttente    = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.EN_ATTENTE);
-        long nbRefuses      = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.REFUSE);
-        long nbAnnules      = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.ANNULE);
+        long nbConfirmes    = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.CONFIRME.name());
+        long nbEnAttente    = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.EN_ATTENTE.name());
+        long nbRefuses      = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.REFUSE.name());
+        long nbAnnules      = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.ANNULE.name());
         long nbBenevoles    = affectationRepository.countBenevolesDistinctsParEvenement(evenementId);
         double taux         = nbPlaces > 0 ? Math.round((double) nbConfirmes / nbPlaces * 1000.0) / 10.0 : 0.0;
 
@@ -76,7 +76,7 @@ public class DashboardService {
         long places    = mission.getCreneaux() != null
             ? mission.getCreneaux().stream().mapToLong(c -> c.getNbBenevolesRequis()).sum()
             : 0;
-        long confirmes = affectationRepository.countParMissionEtStatut(mission.getId(), StatutAffectation.CONFIRME);
+        long confirmes = affectationRepository.countParMissionEtStatut(mission.getId(), StatutAffectation.CONFIRME.name());
         double taux    = places > 0 ? Math.round((double) confirmes / places * 1000.0) / 10.0 : 0.0;
 
         DashboardSnapshotResponse.MissionStat stat = new DashboardSnapshotResponse.MissionStat();

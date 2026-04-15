@@ -23,9 +23,9 @@ public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
     List<Mission> findByOrganisationId(UUID organisationId);
 
-    @Query("SELECT COALESCE(SUM(c.nbBenevolesRequis), 0) FROM Creneau c WHERE c.mission.evenement.id = :evenementId")
+    @Query(value = "SELECT COALESCE(SUM(c.nb_benevoles_requis), 0) FROM creneau c JOIN mission m ON c.mission_id = m.id WHERE m.evenement_id = :evenementId", nativeQuery = true)
     long sumPlacesRequisesByEvenement(@Param("evenementId") UUID evenementId);
 
-    @Query("SELECT COUNT(c) FROM Creneau c WHERE c.mission.evenement.id = :evenementId")
+    @Query(value = "SELECT COUNT(c.id) FROM creneau c JOIN mission m ON c.mission_id = m.id WHERE m.evenement_id = :evenementId", nativeQuery = true)
     long countCreneauxByEvenement(@Param("evenementId") UUID evenementId);
 }

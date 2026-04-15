@@ -26,25 +26,24 @@ public interface AffectationRepository extends JpaRepository<Affectation, UUID> 
 
     // --- Requêtes export ---
 
-    @Query("""
-        SELECT a FROM Affectation a
-        JOIN FETCH a.benevole
-        JOIN FETCH a.creneau c
-        JOIN FETCH c.mission m
-        JOIN FETCH m.evenement
-        WHERE m.evenement.id = :evenementId
-        ORDER BY m.nom, c.debut, a.benevole.nom
-    """)
+    @Query(value = """
+        SELECT a.* FROM affectation a
+        JOIN creneau c ON a.creneau_id = c.id
+        JOIN mission m ON c.mission_id = m.id
+        JOIN benevole b ON a.benevole_id = b.id
+        WHERE m.evenement_id = :evenementId
+        ORDER BY m.nom, c.debut, b.nom
+    """, nativeQuery = true)
     List<Affectation> findParEvenementPourExport(@Param("evenementId") UUID evenementId);
 
     // --- Requêtes dashboard ---
 
-    @Query("SELECT COUNT(a) FROM Affectation a WHERE a.creneau.mission.evenement.id = :evenementId AND a.statut = :statut")
-    long countParEvenementEtStatut(@Param("evenementId") UUID evenementId, @Param("statut") StatutAffectation statut);
+    @Query(value = "SELECT COUNT(a.id) FROM affectation a JOIN creneau c ON a.creneau_id = c.id JOIN mission m ON c.mission_id = m.id WHERE m.evenement_id = :evenementId AND a.statut = :statut", nativeQuery = true)
+    long countParEvenementEtStatut(@Param("evenementId") UUID evenementId, @Param("statut") String statut);
 
-    @Query("SELECT COUNT(DISTINCT a.benevole.id) FROM Affectation a WHERE a.creneau.mission.evenement.id = :evenementId")
+    @Query(value = "SELECT COUNT(DISTINCT a.benevole_id) FROM affectation a JOIN creneau c ON a.creneau_id = c.id JOIN mission m ON c.mission_id = m.id WHERE m.evenement_id = :evenementId", nativeQuery = true)
     long countBenevolesDistinctsParEvenement(@Param("evenementId") UUID evenementId);
 
-    @Query("SELECT COUNT(a) FROM Affectation a WHERE a.creneau.mission.id = :missionId AND a.statut = :statut")
-    long countParMissionEtStatut(@Param("missionId") UUID missionId, @Param("statut") StatutAffectation statut);
+    @Query(value = "SELECT COUNT(a.id) FROM affectation a JOIN creneau c ON a.creneau_id = c.id WHERE c.mission_id = :missionId AND a.statut = :statut", nativeQuery = true)
+    long countParMissionEtStatut(@Param("missionId") UUID missionId, @Param("statut") String statut);
 }

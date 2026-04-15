@@ -31,18 +31,20 @@ public interface BenevoleRepository extends JpaRepository<Benevole, UUID> {
      *
      * Règle RGPD : anonymisation 3 ans après le dernier événement (Art. 17).
      */
-    @Query("""
-        SELECT DISTINCT b FROM Benevole b
-        WHERE b.statutCompte <> 'ANONYMISE'
+    @Query(value = """
+        SELECT DISTINCT b.* FROM benevole b
+        WHERE b.statut_compte <> 'ANONYMISE'
           AND (
-            (SELECT MAX(e.dateFin) FROM Affectation a
-             JOIN a.creneau c JOIN c.mission m JOIN m.evenement e
-             WHERE a.benevole = b) < :dateLimite
+            (SELECT MAX(e.date_fin) FROM affectation a
+             JOIN creneau c ON a.creneau_id = c.id
+             JOIN mission m ON c.mission_id = m.id
+             JOIN evenement e ON m.evenement_id = e.id
+             WHERE a.benevole_id = b.id) < :dateLimite
             OR
-            (NOT EXISTS (SELECT a FROM Affectation a WHERE a.benevole = b)
-             AND b.createdAt < :dateLimiteCreation)
+            (NOT EXISTS (SELECT 1 FROM affectation a WHERE a.benevole_id = b.id)
+             AND b.created_at < :dateLimiteCreation)
           )
-    """)
+    """, nativeQuery = true)
     List<Benevole> findEligiblesAnonymisation(
         @Param("dateLimite") LocalDate dateLimite,
         @Param("dateLimiteCreation") java.time.LocalDateTime dateLimiteCreation
