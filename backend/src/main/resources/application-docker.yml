@@ -5,8 +5,8 @@ spring:
   data:
     jpa:
       repositories:
-        bootstrap-mode: deferred  # init des repositories en arrière-plan APRÈS le démarrage de Tomcat
-                                  # évite le pic mémoire Antlr/HQL avant que le port soit bindé
+        bootstrap-mode: lazy      # init des repositories uniquement au PREMIER appel HTTP
+                                  # le parseur Antlr HQL ne se charge pas du tout au démarrage
 
   datasource:
     # Local Docker : défauts postgres/festmanager
@@ -17,6 +17,9 @@ spring:
     hikari:
       maximum-pool-size: 3    # réduit le pool de 10 (défaut) à 3 pour limiter la mémoire
       minimum-idle: 1
+
+  jpa:
+    open-in-view: false           # désactive l'OSIV (économise mémoire + supprime le WARN au démarrage)
 
   # SMTP — variables d'environnement (Docker ou Railway)
   mail:
@@ -31,6 +34,12 @@ spring:
 # Railway injecte PORT automatiquement — fallback 8080 pour Docker local
 server:
   port: ${PORT:8080}
+
+springdoc:
+  api-docs:
+    enabled: false  # Swagger désactivé en prod — réduit la mémoire (scanning 10+ controllers évité)
+  swagger-ui:
+    enabled: false
 
 app:
   # CORS : liste d'origines séparées par des virgules
