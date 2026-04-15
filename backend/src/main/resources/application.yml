@@ -40,7 +40,8 @@ app:
     expediteur: noreply@festmanager.app
     nom-expediteur: FestManager
   jwt:
-    secret: changeme-remplacer-par-une-cle-secrete-longue-en-production
+    # Valeur Base64 valide pour le dev local — surcharger avec APP_JWT_SECRET en production
+    secret: ZmVzdG1hbmFnZXItZGV2LWp3dC1zZWNyZXQta2V5LW1pbmltdW0tMzItYnl0ZXMh
     expiration-ms: 86400000 # 24h
 
 server:
