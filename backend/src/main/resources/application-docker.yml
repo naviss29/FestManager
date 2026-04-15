@@ -11,6 +11,8 @@ spring:
 
   jpa:
     open-in-view: false           # désactive l'OSIV (économise mémoire + supprime le WARN au démarrage)
+    hibernate:
+      ddl-auto: update            # adapte le schéma si changement de colonne (ex: categorie enum→String)
 
   # SMTP — variables d'environnement (Docker ou Railway)
   mail:
