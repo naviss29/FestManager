@@ -2,6 +2,7 @@ package com.festmanager.repository;
 
 import com.festmanager.entity.Affectation;
 import com.festmanager.entity.enums.StatutAffectation;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,10 @@ import java.util.UUID;
 @Repository
 public interface AffectationRepository extends JpaRepository<Affectation, UUID> {
 
+    @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
     List<Affectation> findByBenevoleId(UUID benevoleId);
 
+    @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
     List<Affectation> findByCreneauId(UUID creneauId);
 
     Optional<Affectation> findByBenevoleIdAndCreneauId(UUID benevoleId, UUID creneauId);

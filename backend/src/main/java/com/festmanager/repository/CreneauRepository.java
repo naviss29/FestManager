@@ -1,6 +1,7 @@
 package com.festmanager.repository;
 
 import com.festmanager.entity.Creneau;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Repository
 public interface CreneauRepository extends JpaRepository<Creneau, UUID> {
 
+    @EntityGraph(attributePaths = {"mission"})
     List<Creneau> findByMissionId(UUID missionId);
 
     // Recherche les chevauchements horaires pour un bénévole sur un événement donné

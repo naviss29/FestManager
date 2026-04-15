@@ -4,6 +4,7 @@ import com.festmanager.entity.Mission;
 import com.festmanager.entity.enums.CategorieMission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +16,10 @@ import java.util.UUID;
 @Repository
 public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
+    @EntityGraph(attributePaths = {"evenement", "organisation"})
     Page<Mission> findByEvenementId(UUID evenementId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"evenement", "organisation"})
     Page<Mission> findByEvenementIdAndCategorie(UUID evenementId, CategorieMission categorie, Pageable pageable);
 
     List<Mission> findByEvenementId(UUID evenementId);
