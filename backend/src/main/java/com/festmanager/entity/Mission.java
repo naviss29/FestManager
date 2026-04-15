@@ -1,6 +1,5 @@
 package com.festmanager.entity;
 
-import com.festmanager.entity.enums.CategorieMission;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,9 +43,8 @@ public class Mission {
     @Column(name = "materiel_requis", columnDefinition = "TEXT")
     private String materielRequis;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CategorieMission categorie;
+    @Column(nullable = false, length = 100)
+    private String categorie;
 
     @Column(name = "nb_benevoles_requis", nullable = false)
     private Integer nbBenevolesRequis;

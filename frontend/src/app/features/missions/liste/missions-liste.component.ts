@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
 import { MissionService } from '../services/mission.service';
-import { Mission, CategorieMission } from '../models/mission.model';
+import { Mission, CATEGORIES_SUGGESTIONS } from '../models/mission.model';
 import { MissionFormulaireComponent } from '../formulaire/mission-formulaire.component';
 import { EvenementService } from '../../evenements/services/evenement.service';
 import { Evenement } from '../../evenements/models/evenement.model';
@@ -25,19 +25,11 @@ export class MissionsListeComponent implements OnInit {
   pageSize = 20;
   pageIndex = 0;
   chargement = false;
-  filtreCategorie: CategorieMission | '' = '';
+  filtreCategorie = '';
 
   colonnes = ['nom', 'categorie', 'lieu', 'benevoles', 'options', 'actions'];
 
-  categories: { valeur: CategorieMission | ''; label: string }[] = [
-    { valeur: '',              label: 'Toutes' },
-    { valeur: 'ROADIE',        label: 'Roadie' },
-    { valeur: 'ACCUEIL',       label: 'Accueil' },
-    { valeur: 'SECURITE',      label: 'Sécurité' },
-    { valeur: 'CATERING',      label: 'Catering' },
-    { valeur: 'COMMUNICATION', label: 'Communication' },
-    { valeur: 'LOGISTIQUE',    label: 'Logistique' }
-  ];
+  categoriesSuggestions = ['', ...CATEGORIES_SUGGESTIONS];
 
   peutGerer = false;
 
@@ -110,8 +102,8 @@ export class MissionsListeComponent implements OnInit {
     });
   }
 
-  couleurCategorie(categorie: CategorieMission): string {
-    const couleurs: Record<CategorieMission, string> = {
+  couleurCategorie(categorie: string): string {
+    const couleurs: Record<string, string> = {
       ROADIE:        'primary',
       ACCUEIL:       'accent',
       SECURITE:      'warn',

@@ -1,8 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { MissionService } from '../services/mission.service';
-import { Mission, CategorieMission } from '../models/mission.model';
+import { Mission, CATEGORIES_SUGGESTIONS } from '../models/mission.model';
 import { OrganisationService } from '../../organisations/services/organisation.service';
 import { Organisation } from '../../organisations/models/organisation.model';
 
@@ -23,14 +25,8 @@ export class MissionFormulaireComponent implements OnInit {
   estModification: boolean;
   organisations: Organisation[] = [];
 
-  categories: { valeur: CategorieMission; label: string }[] = [
-    { valeur: 'ROADIE',        label: 'Roadie' },
-    { valeur: 'ACCUEIL',       label: 'Accueil' },
-    { valeur: 'SECURITE',      label: 'Sécurité' },
-    { valeur: 'CATERING',      label: 'Catering' },
-    { valeur: 'COMMUNICATION', label: 'Communication' },
-    { valeur: 'LOGISTIQUE',    label: 'Logistique' }
-  ];
+  categoriesSuggestions = CATEGORIES_SUGGESTIONS;
+  categoriesFiltrees$!: Observable<string[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +42,7 @@ export class MissionFormulaireComponent implements OnInit {
       description:              [m?.description ?? ''],
       lieu:                     [m?.lieu ?? '',         Validators.maxLength(255)],
       materielRequis:           [m?.materielRequis ?? ''],
-      categorie:                [m?.categorie ?? null,  Validators.required],
+      categorie:                [m?.categorie ?? '',    [Validators.required, Validators.maxLength(100)]],
       nbBenevolesRequis:        [m?.nbBenevolesRequis ?? 1, [Validators.required, Validators.min(1)]],
       multiAffectationAutorisee:[m?.multiAffectationAutorisee ?? false],
       gereeParOrganisation:     [m?.gereeParOrganisation ?? false],
@@ -55,6 +51,14 @@ export class MissionFormulaireComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.categoriesFiltrees$ = this.form.get('categorie')!.valueChanges.pipe(
+      startWith(''),
+      map(val => {
+        const filtre = (val ?? '').toLowerCase();
+        return this.categoriesSuggestions.filter(c => c.toLowerCase().includes(filtre));
+      })
+    );
+
     this.organisationService.lister(0, 100).subscribe(page => {
       this.organisations = page.content;
     });

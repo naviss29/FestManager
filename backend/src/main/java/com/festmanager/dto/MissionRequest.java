@@ -1,6 +1,5 @@
 package com.festmanager.dto;
 
-import com.festmanager.entity.enums.CategorieMission;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,8 +22,9 @@ public class MissionRequest {
 
     private String materielRequis;
 
-    @NotNull(message = "La catégorie est obligatoire")
-    private CategorieMission categorie;
+    @NotBlank(message = "La catégorie est obligatoire")
+    @Size(max = 100)
+    private String categorie;
 
     @NotNull(message = "Le nombre de bénévoles requis est obligatoire")
     @Min(value = 1, message = "Il faut au moins 1 bénévole")

@@ -23,11 +23,15 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Catégorie</mat-label>
-        <mat-select formControlName="categorie">
-          <mat-option *ngFor="let cat of categories" [value]="cat.valeur">
-            {{ cat.label }}
+        <input matInput formControlName="categorie"
+               [matAutocomplete]="autoCategorie"
+               placeholder="Ex: BAR, ROADIE, SECURITE…" />
+        <mat-autocomplete #autoCategorie="matAutocomplete">
+          <mat-option *ngFor="let cat of categoriesFiltrees$ | async" [value]="cat">
+            {{ cat }}
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
+        <mat-hint>Choisissez une suggestion ou saisissez librement</mat-hint>
         <mat-error *ngIf="form.get('categorie')?.hasError('required')">Obligatoire</mat-error>
       </mat-form-field>
     </div>

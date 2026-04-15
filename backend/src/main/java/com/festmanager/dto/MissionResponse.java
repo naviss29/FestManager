@@ -1,6 +1,5 @@
 package com.festmanager.dto;
 
-import com.festmanager.entity.enums.CategorieMission;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ public class MissionResponse {
     private String description;
     private String lieu;
     private String materielRequis;
-    private CategorieMission categorie;
+    private String categorie;
     private Integer nbBenevolesRequis;
     private Boolean multiAffectationAutorisee;
     private Boolean gereeParOrganisation;

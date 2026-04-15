@@ -4,7 +4,6 @@ import com.festmanager.dto.CreneauRequest;
 import com.festmanager.dto.CreneauResponse;
 import com.festmanager.dto.MissionRequest;
 import com.festmanager.dto.MissionResponse;
-import com.festmanager.entity.enums.CategorieMission;
 import com.festmanager.service.CreneauService;
 import com.festmanager.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +35,7 @@ public class MissionController {
     @GetMapping("/api/evenements/{evenementId}/missions")
     public ResponseEntity<Page<MissionResponse>> listerMissions(
             @PathVariable UUID evenementId,
-            @RequestParam(required = false) CategorieMission categorie,
+            @RequestParam(required = false) String categorie,
             @PageableDefault(size = 20, sort = "nom") Pageable pageable) {
         return ResponseEntity.ok(missionService.listerMissions(evenementId, categorie, pageable));
     }

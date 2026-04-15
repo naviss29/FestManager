@@ -5,7 +5,6 @@ import com.festmanager.dto.MissionResponse;
 import com.festmanager.entity.Evenement;
 import com.festmanager.entity.Mission;
 import com.festmanager.entity.Organisation;
-import com.festmanager.entity.enums.CategorieMission;
 import com.festmanager.mapper.MissionMapper;
 import com.festmanager.repository.EvenementRepository;
 import com.festmanager.repository.MissionRepository;
@@ -30,7 +29,7 @@ public class MissionService {
     private final MissionMapper missionMapper;
 
     @Transactional(readOnly = true)
-    public Page<MissionResponse> listerMissions(UUID evenementId, CategorieMission categorie, Pageable pageable) {
+    public Page<MissionResponse> listerMissions(UUID evenementId, String categorie, Pageable pageable) {
         verifierEvenementExiste(evenementId);
         Page<Mission> missions = (categorie != null)
                 ? missionRepository.findByEvenementIdAndCategorie(evenementId, categorie, pageable)

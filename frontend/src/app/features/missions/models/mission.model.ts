@@ -1,4 +1,6 @@
-export type CategorieMission = 'ROADIE' | 'ACCUEIL' | 'SECURITE' | 'CATERING' | 'COMMUNICATION' | 'LOGISTIQUE';
+export const CATEGORIES_SUGGESTIONS = [
+  'ACCUEIL', 'SECURITE', 'CATERING', 'COMMUNICATION', 'LOGISTIQUE', 'ROADIE'
+];
 
 export interface Mission {
   id: string;
@@ -10,7 +12,7 @@ export interface Mission {
   description?: string;
   lieu?: string;
   materielRequis?: string;
-  categorie: CategorieMission;
+  categorie: string;
   nbBenevolesRequis: number;
   multiAffectationAutorisee: boolean;
   gereeParOrganisation: boolean;
@@ -22,7 +24,7 @@ export interface MissionRequest {
   description?: string;
   lieu?: string;
   materielRequis?: string;
-  categorie: CategorieMission;
+  categorie: string;
   nbBenevolesRequis: number;
   multiAffectationAutorisee: boolean;
   gereeParOrganisation: boolean;
