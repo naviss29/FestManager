@@ -1,6 +1,12 @@
 spring:
   main:
-    lazy-initialization: true   # réduit le temps de démarrage sur Railway (évite le startup probe timeout)
+    lazy-initialization: true   # réduit le temps de démarrage sur Railway
+
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred  # init des repositories en arrière-plan APRÈS le démarrage de Tomcat
+                                  # évite le pic mémoire Antlr/HQL avant que le port soit bindé
 
   datasource:
     # Local Docker : défauts postgres/festmanager
@@ -8,6 +14,9 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/festmanager}
     username: ${SPRING_DATASOURCE_USERNAME:festmanager}
     password: ${SPRING_DATASOURCE_PASSWORD:festmanager_dev}
+    hikari:
+      maximum-pool-size: 3    # réduit le pool de 10 (défaut) à 3 pour limiter la mémoire
+      minimum-idle: 1
 
   # SMTP — variables d'environnement (Docker ou Railway)
   mail:
