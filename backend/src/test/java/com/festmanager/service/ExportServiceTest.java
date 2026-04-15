@@ -1,7 +1,6 @@
 package com.festmanager.service;
 
 import com.festmanager.entity.*;
-import com.festmanager.entity.enums.CategorieMission;
 import com.festmanager.entity.enums.StatutAffectation;
 import com.festmanager.repository.AffectationRepository;
 import com.festmanager.repository.EvenementRepository;
@@ -105,7 +104,7 @@ class ExportServiceTest {
         Mission mission = new Mission();
         mission.setId(UUID.randomUUID());
         mission.setNom("Accueil entrée");
-        mission.setCategorie(CategorieMission.ACCUEIL);
+        mission.setCategorie("ACCUEIL");
         mission.setLieu("Porte A");
         mission.setEvenement(evenement);
 
