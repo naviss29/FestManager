@@ -1,9 +1,6 @@
 spring:
-  data:
-    jpa:
-      repositories:
-        bootstrap-mode: lazy      # init des repositories uniquement au PREMIER appel HTTP
-                                  # le parseur Antlr HQL ne se charge pas du tout au démarrage
+  main:
+    lazy-initialization: true   # réduit le démarrage Railway — beans initialisés à la 1ère requête
 
   datasource:
     # Local Docker : défauts postgres/festmanager
