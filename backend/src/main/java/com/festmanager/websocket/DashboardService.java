@@ -82,7 +82,7 @@ public class DashboardService {
         DashboardSnapshotResponse.MissionStat stat = new DashboardSnapshotResponse.MissionStat();
         stat.setMissionId(mission.getId());
         stat.setMissionNom(mission.getNom());
-        stat.setCategorie(mission.getCategorie().name());
+        stat.setCategorie(mission.getCategorie());
         stat.setNbPlacesRequises(places);
         stat.setNbConfirmes(confirmes);
         stat.setTauxRemplissage(taux);

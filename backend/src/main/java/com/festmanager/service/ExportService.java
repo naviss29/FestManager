@@ -60,7 +60,7 @@ public class ExportService {
                 printer.printRecord(
                     evenement.getNom(),
                     a.getCreneau().getMission().getNom(),
-                    a.getCreneau().getMission().getCategorie().name(),
+                    a.getCreneau().getMission().getCategorie(),
                     a.getCreneau().getDebut().format(FORMAT_DATE),
                     a.getCreneau().getFin().format(FORMAT_DATE),
                     a.getBenevole().getPrenom(),
@@ -132,7 +132,7 @@ public class ExportService {
                     PdfPTable bandeau = new PdfPTable(1);
                     bandeau.setWidthPercentage(100);
                     PdfPCell cellMission = new PdfPCell(new Phrase(
-                        nomMission + "  ·  " + a.getCreneau().getMission().getCategorie().name(),
+                        nomMission + "  ·  " + a.getCreneau().getMission().getCategorie(),
                         fontMission
                     ));
                     cellMission.setBackgroundColor(Color.decode("#283593"));
