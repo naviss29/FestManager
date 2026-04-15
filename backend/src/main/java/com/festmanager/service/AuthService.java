@@ -8,11 +8,13 @@ import com.festmanager.entity.Utilisateur;
 import com.festmanager.entity.enums.RoleUtilisateur;
 import com.festmanager.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class AuthService {
     @Transactional
     public LoginResponse inscrire(RegisterRequest request) {
         if (utilisateurRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Un compte existe déjà avec cet email.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Un compte existe déjà avec cet email.");
         }
 
         RoleUtilisateur role = utilisateurRepository.count() == 0
