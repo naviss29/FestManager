@@ -1,7 +1,4 @@
 spring:
-  main:
-    lazy-initialization: true   # réduit le temps de démarrage sur Railway
-
   data:
     jpa:
       repositories:
