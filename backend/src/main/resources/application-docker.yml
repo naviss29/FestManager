@@ -1,4 +1,7 @@
 spring:
+  main:
+    lazy-initialization: true   # réduit le temps de démarrage sur Railway (évite le startup probe timeout)
+
   datasource:
     # Local Docker : défauts postgres/festmanager
     # Railway : surcharger avec SPRING_DATASOURCE_URL / USERNAME / PASSWORD
