@@ -64,10 +64,12 @@ public class AccreditationService {
         return accreditationMapper.toResponse(accreditationRepository.save(accreditation));
     }
 
+    @Transactional(readOnly = true)
     public AccreditationResponse obtenir(UUID id) {
         return accreditationMapper.toResponse(trouverParId(id));
     }
 
+    @Transactional(readOnly = true)
     public List<AccreditationResponse> listerParEvenement(UUID evenementId) {
         return accreditationRepository.findByEvenementId(evenementId)
             .stream()
@@ -75,6 +77,7 @@ public class AccreditationService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<AccreditationResponse> listerParBenevole(UUID benevoleId) {
         return accreditationRepository.findByBenevoleId(benevoleId)
             .stream()
@@ -86,6 +89,7 @@ public class AccreditationService {
      * Retourne l'image QR code en bytes PNG pour l'accréditation demandée.
      * Utilisé par l'endpoint dédié image (/qr).
      */
+    @Transactional(readOnly = true)
     public byte[] obtenirImageQr(UUID id) {
         Accreditation accreditation = trouverParId(id);
         return qrCodeService.genererQrCodeBytes(accreditation.getCodeQr());

@@ -28,6 +28,7 @@ public class EvenementService {
     private final UtilisateurRepository utilisateurRepository;
     private final EvenementMapper evenementMapper;
 
+    @Transactional(readOnly = true)
     public Page<EvenementResponse> listerEvenements(StatutEvenement statut, Pageable pageable) {
         Page<Evenement> evenements = (statut != null)
                 ? evenementRepository.findByStatut(statut, pageable)
@@ -35,6 +36,7 @@ public class EvenementService {
         return evenements.map(evenementMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public EvenementResponse obtenirEvenement(UUID id) {
         return evenementMapper.toResponse(trouverParId(id));
     }

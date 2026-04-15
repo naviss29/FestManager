@@ -35,6 +35,7 @@ public class BenevoleService {
 
     // --- Lecture ---
 
+    @Transactional
     public Page<BenevoleResponse> listerBenevoles(StatutCompteBenevole statut, Pageable pageable, String ip) {
         Page<Benevole> benevoles = (statut != null)
                 ? benevoleRepository.findByStatutCompte(statut, pageable)
@@ -45,6 +46,7 @@ public class BenevoleService {
         });
     }
 
+    @Transactional
     public BenevoleResponse obtenirBenevole(UUID id, String ip) {
         Benevole benevole = trouverParId(id);
         auditService.tracer(ActionAudit.LECTURE, ENTITE, id, ip, null);

@@ -29,6 +29,7 @@ public class MissionService {
     private final OrganisationRepository organisationRepository;
     private final MissionMapper missionMapper;
 
+    @Transactional(readOnly = true)
     public Page<MissionResponse> listerMissions(UUID evenementId, CategorieMission categorie, Pageable pageable) {
         verifierEvenementExiste(evenementId);
         Page<Mission> missions = (categorie != null)
@@ -37,6 +38,7 @@ public class MissionService {
         return missions.map(missionMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public MissionResponse obtenirMission(UUID id) {
         return missionMapper.toResponse(trouverParId(id));
     }

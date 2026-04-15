@@ -601,6 +601,27 @@ festmanager-frontend/
 - Les migrations Flyway s'exécutent automatiquement au premier démarrage.
 - L'URL Swagger sera disponible sur `https://<backend-url>/swagger-ui.html`.
 
+### Pièges connus
+
+#### ⚠️ `BACKEND_URL` doit utiliser le Private Networking Railway
+
+**Symptôme :** toutes les requêtes `/api/*` retournent `503 Service Unavailable` alors que le backend est bien démarré.
+
+**Cause :** si `BACKEND_URL` pointe vers l'URL publique du backend (ex: `https://festmanager-backend-production.up.railway.app`), nginx proxifie la requête vers Railway Edge, qui la reroute vers nginx, créant une boucle infinie jusqu'à ce que Railway Edge réponde lui-même `Service Unavailable`.
+
+**Fix :** utiliser l'URL interne Private Networking visible dans l'onglet **Settings → Networking** du service backend :
+
+```
+BACKEND_URL=http://festmanager-backend.railway.internal:8080
+```
+
+Cette URL ne transite pas par le CDN Railway — la communication reste interne entre les deux conteneurs.
+
+> **Pour générer le JWT secret sans openssl (Windows) :**
+> ```powershell
+> [Convert]::ToBase64String((1..64 | ForEach-Object { [byte](Get-Random -Max 256) }))
+> ```
+
 ## 12. Prochaine étape immédiate
 
 > **Phase 4 complète. Projet portfolio terminé.**

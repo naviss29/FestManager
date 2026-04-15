@@ -24,6 +24,7 @@ public class CreneauService {
     private final MissionRepository missionRepository;
     private final CreneauMapper creneauMapper;
 
+    @Transactional(readOnly = true)
     public List<CreneauResponse> listerCreneaux(UUID missionId) {
         verifierMissionExiste(missionId);
         return creneauRepository.findByMissionId(missionId).stream()
@@ -31,6 +32,7 @@ public class CreneauService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public CreneauResponse obtenirCreneau(UUID id) {
         return creneauMapper.toResponse(trouverParId(id));
     }

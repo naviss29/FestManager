@@ -35,18 +35,21 @@ public class AffectationService {
 
     // --- Lecture ---
 
+    @Transactional(readOnly = true)
     public List<AffectationResponse> listerParCreneau(UUID creneauId) {
         return affectationRepository.findByCreneauId(creneauId).stream()
                 .map(affectationMapper::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<AffectationResponse> listerParBenevole(UUID benevoleId) {
         return affectationRepository.findByBenevoleId(benevoleId).stream()
                 .map(affectationMapper::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public AffectationResponse obtenir(UUID id) {
         return affectationMapper.toResponse(trouverParId(id));
     }

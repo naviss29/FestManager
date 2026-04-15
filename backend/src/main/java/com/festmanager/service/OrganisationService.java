@@ -29,6 +29,7 @@ public class OrganisationService {
     private final UtilisateurRepository utilisateurRepository;
     private final OrganisationMapper organisationMapper;
 
+    @Transactional(readOnly = true)
     public Page<OrganisationResponse> listerOrganisations(TypeOrganisation type, Pageable pageable) {
         Utilisateur courant = utilisateurCourant();
 
@@ -47,6 +48,7 @@ public class OrganisationService {
         return organisations.map(organisationMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public OrganisationResponse obtenirOrganisation(UUID id) {
         Utilisateur courant = utilisateurCourant();
 
