@@ -39,6 +39,24 @@
       <mat-error *ngIf="form.get('lieu')?.hasError('required')">Obligatoire</mat-error>
     </mat-form-field>
 
+    <!-- Bannière — visible uniquement en modification -->
+    <div *ngIf="estModification" class="photo-section">
+      <img *ngIf="photoPreview || data?.banniereUrl"
+           [src]="photoPreview || apiUrl + data!.banniereUrl"
+           alt="Bannière de l'événement"
+           class="banniere-preview" />
+      <mat-icon *ngIf="!photoPreview && !data?.banniereUrl" class="photo-placeholder">image</mat-icon>
+      <div class="photo-actions">
+        <button mat-stroked-button type="button" (click)="inputBanniere.click()">
+          <mat-icon>upload</mat-icon>
+          {{ data?.banniereUrl ? 'Changer la bannière' : 'Ajouter une bannière' }}
+        </button>
+        <span *ngIf="fichierSelectionne" class="photo-nom">{{ fichierSelectionne.name }}</span>
+      </div>
+      <input #inputBanniere type="file" accept="image/*" style="display:none"
+             (change)="onFichierChange($event)" />
+    </div>
+
   </form>
 </mat-dialog-content>
 

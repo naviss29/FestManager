@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/festmanager
+    username: festmanager
+    password: festmanager_dev
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+  mail:
+    host: localhost
+    port: 1025
+    username:
+    password:
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
+server:
+  port: 8080
+
+app:
+  uploads:
+    dir: ./uploads
+  jwt:
+    secret: ZGV2LXNlY3JldC1mZXN0bWFuYWdlci1rZXktbG9uZ3VlLXBvdXItaG1hYy1zaGEyNTY=
+    expiration-ms: 86400000
+  cors:
+    allowed-origins: http://localhost:4200

@@ -1,0 +1,76 @@
+.inscription-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 32px 16px;
+  background: #f5f5f5;
+}
+
+.inscription-card {
+  width: 100%;
+  max-width: 560px;
+  padding: 24px;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a237e;
+  }
+
+  .titre-icon {
+    font-size: 2rem;
+    color: #1a237e;
+  }
+}
+
+.btn-soumettre {
+  height: 48px;
+  font-size: 1rem;
+  margin-top: 8px;
+
+  mat-spinner {
+    margin: 0 auto;
+  }
+}
+
+.erreur-globale {
+  display: block;
+  font-size: 0.875rem;
+}
+
+// Écran de confirmation
+.succes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 0;
+  gap: 12px;
+
+  .succes-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #4caf50;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  p {
+    color: #555;
+    max-width: 380px;
+    line-height: 1.6;
+  }
+
+  .lien-login {
+    margin-top: 8px;
+  }
+}

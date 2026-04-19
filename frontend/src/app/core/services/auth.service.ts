@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse, RegisterRequest, UtilisateurCourant } from '../models/auth.model';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UtilisateurCourant } from '../models/auth.model';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
@@ -32,14 +32,17 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/register`, {
+  register(request: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, {
       email: request.email,
       motDePasse: request.password
     }).pipe(
       tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.token);
-        this.utilisateurCourant$.next(this.decoder(response.token));
+        // Si le compte est immédiatement actif (premier admin), on stocke le token
+        if (!response.enAttenteValidation && response.token) {
+          localStorage.setItem(this.TOKEN_KEY, response.token);
+          this.utilisateurCourant$.next(this.decoder(response.token));
+        }
       })
     );
   }

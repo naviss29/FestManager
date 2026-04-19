@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class BenevoleService {
     private final BenevoleRepository benevoleRepository;
     private final BenevoleMapper benevoleMapper;
     private final AuditService auditService;
+    private final FichierService fichierService;
 
     // --- Lecture ---
 
@@ -114,6 +116,22 @@ public class BenevoleService {
 
         Benevole sauvegarde = benevoleRepository.save(benevole);
         auditService.tracer(ActionAudit.MODIFICATION, ENTITE, id, ip, "mise à jour profil");
+        return benevoleMapper.toResponse(sauvegarde);
+    }
+
+    // --- Photo de profil ---
+
+    /**
+     * Sauvegarde la photo de profil d'un bénévole et met à jour son URL en base.
+     * Toute photo précédente est remplacée.
+     */
+    @Transactional
+    public BenevoleResponse sauvegarderPhoto(UUID id, MultipartFile fichier, String ip) {
+        Benevole benevole = trouverParId(id);
+        String url = fichierService.sauvegarder(fichier, "benevoles", id.toString());
+        benevole.setPhotoUrl(url);
+        Benevole sauvegarde = benevoleRepository.save(benevole);
+        auditService.tracer(ActionAudit.MODIFICATION, ENTITE, id, ip, "upload photo profil");
         return benevoleMapper.toResponse(sauvegarde);
     }
 

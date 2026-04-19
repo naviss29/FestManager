@@ -35,8 +35,10 @@ export class LoginComponent {
 
     this.authService.login(this.form.value).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.erreur = 'Email ou mot de passe incorrect.';
+      error: (err) => {
+        this.erreur = err.status === 403
+          ? 'Votre compte est en attente de validation par un administrateur.'
+          : 'Email ou mot de passe incorrect.';
         this.chargement = false;
       }
     });

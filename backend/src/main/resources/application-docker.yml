@@ -35,6 +35,9 @@ springdoc:
     enabled: false
 
 app:
+  uploads:
+    # Répertoire de stockage des fichiers — monter un volume Docker persistant sur ce chemin en production
+    dir: ${UPLOADS_DIR:./uploads}
   # CORS : liste d'origines séparées par des virgules
   # Railway : mettre l'URL du service frontend (ex: https://festmanager.up.railway.app)
   cors:

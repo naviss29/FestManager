@@ -8,6 +8,7 @@ export interface Evenement {
   dateFin: string;
   lieu: string;
   statut: StatutEvenement;
+  banniereUrl?: string;
   organisateurId: string;
   organisateurEmail: string;
   createdAt: string;

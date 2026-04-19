@@ -17,6 +17,7 @@
     background: #0d1b6e;
 
     .logo-icon { color: #ffd740; font-size: 28px; }
+    // Blanc pur sur #1a237e → ratio 7.5:1 (WCAG AAA ✓)
     .logo-text { font-size: 1.2rem; font-weight: 700; color: white; }
   }
 
@@ -24,21 +25,34 @@
     flex: 1;
     padding-top: 8px;
 
+    // Surcharge les variables CSS de Material 3 qui fixent la couleur du texte
+    // des items de liste indépendamment de la couleur héritée du parent
+    --mat-list-list-item-label-text-color: white;
+    --mat-list-list-item-leading-icon-color: #c5cae9;
+
     a {
-      color: rgba(255,255,255,0.8);
+      color: white;
       border-radius: 0 24px 24px 0;
       margin-right: 8px;
       margin-bottom: 2px;
 
-      mat-icon { color: rgba(255,255,255,0.7); }
+      // Cible le span titre généré par matListItemTitle
+      [matListItemTitle] { color: white; }
+
+      mat-icon { color: #c5cae9; }
 
       &.active-link {
-        background: rgba(255,255,255,0.15);
-        color: white;
+        background: rgba(255, 255, 255, 0.18);
+        font-weight: 500;
+        [matListItemTitle] { color: white; }
         mat-icon { color: #ffd740; }
       }
 
-      &:hover { background: rgba(255,255,255,0.1); color: white; }
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        [matListItemTitle] { color: #ffd740; }
+        mat-icon { color: #ffd740; }
+      }
     }
   }
 }
@@ -51,9 +65,10 @@
     align-items: flex-start;
     gap: 8px;
     padding: 12px 8px;
-    color: rgba(255,255,255,0.9);
+    color: white;
 
-    mat-icon { color: rgba(255,255,255,0.6); margin-top: 2px; }
+    // #c5cae9 sur #1a237e → ratio ~8:1 (WCAG AAA ✓)
+    mat-icon { color: #c5cae9; margin-top: 2px; }
 
     .user-details { display: flex; flex-direction: column; gap: 4px; }
     .user-email { font-size: 0.8rem; word-break: break-all; }
@@ -61,22 +76,25 @@
     .role-chip {
       font-size: 0.65rem;
       height: 20px;
-      background: rgba(255,255,255,0.2);
-      color: white;
+      // Fond semi-transparent clair sur bleu marine
+      background: rgba(255, 255, 255, 0.25);
+      // Couleur du texte forcée via styles.scss (.sidenav .role-chip .mat-mdc-chip-action-label)
     }
   }
 
   .logout-btn {
     width: 100%;
-    color: rgba(255,255,255,0.7);
-    &:hover { color: white; background: rgba(255,255,255,0.1); }
+    // Blanc sur #1a237e → ratio 7.5:1 (WCAG AAA ✓)
+    color: white;
+    &:hover { background: rgba(255, 255, 255, 0.12); }
   }
 
   .mentions-btn {
     width: 100%;
     font-size: 0.75rem;
-    color: rgba(255,255,255,0.4);
-    &:hover { color: rgba(255,255,255,0.7); background: transparent; }
+    // #afb2d2 sur #1a237e → ratio ~6.5:1 (WCAG AA ✓, amélioré depuis rgba(255,255,255,0.4) = 3.4:1)
+    color: #afb2d2;
+    &:hover { color: white; background: transparent; }
     mat-icon { font-size: 16px; height: 16px; width: 16px; }
   }
 }

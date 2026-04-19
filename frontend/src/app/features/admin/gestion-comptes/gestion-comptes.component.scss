@@ -1,0 +1,26 @@
+.admin-container {
+  padding: 24px;
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h1 { margin: 0; font-size: 1.5rem; }
+}
+
+.vide {
+  text-align: center;
+  color: #888;
+  padding: 32px;
+}
+
+.chip-actif {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+mat-table { width: 100%; }
+mat-cell, mat-header-cell { padding: 8px 12px; }

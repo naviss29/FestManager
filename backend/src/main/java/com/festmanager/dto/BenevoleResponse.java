@@ -21,6 +21,7 @@ public class BenevoleResponse {
     private LocalDate dateNaissance;
     private String disponibilites;
     private StatutCompteBenevole statutCompte;
+    private String photoUrl;
     private Boolean consentementRgpd;
     private LocalDateTime dateConsentement;
     private String versionCgu;

@@ -35,13 +35,22 @@ public class DashboardService {
 
     /**
      * Calcule et retourne un snapshot complet des statistiques d'un événement.
-     * Appelé une fois au chargement du dashboard, puis les mises à jour arrivent via WS.
+     * Appelé une fois au chargement du dashboard, puis les mises à jour arrivent via WebSocket.
+     *
+     * Stratégie anti-N+1 :
+     * - findByEvenementId(UUID) charge les missions avec leurs créneaux en un seul JOIN (@EntityGraph).
+     * - La liste est chargée UNE SEULE FOIS et réutilisée pour le count ET les stats par mission.
+     *   (Avant correction : findByEvenementId était appelé deux fois et les créneaux étaient chargés lazily.)
      */
     public DashboardSnapshotResponse snapshot(UUID evenementId) {
         var evenement = evenementRepository.findById(evenementId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
 
-        long nbMissions     = missionRepository.findByEvenementId(evenementId).size();
+        // Chargement unique des missions avec leurs créneaux (évite un double appel SQL et le N+1 sur getCreneaux())
+        List<Mission> missions = missionRepository.findByEvenementId(evenementId);
+        long nbMissions     = missions.size();
+
+        // Ces counts sont des requêtes SQL agrégées directement en base (pas de chargement d'entités)
         long nbCreneaux     = missionRepository.countCreneauxByEvenement(evenementId);
         long nbPlaces       = missionRepository.sumPlacesRequisesByEvenement(evenementId);
         long nbConfirmes    = affectationRepository.countParEvenementEtStatut(evenementId, StatutAffectation.CONFIRME.name());
@@ -51,9 +60,9 @@ public class DashboardService {
         long nbBenevoles    = affectationRepository.countBenevolesDistinctsParEvenement(evenementId);
         double taux         = nbPlaces > 0 ? Math.round((double) nbConfirmes / nbPlaces * 1000.0) / 10.0 : 0.0;
 
-        List<DashboardSnapshotResponse.MissionStat> statsParMission =
-            missionRepository.findByEvenementId(evenementId).stream()
-                .map(m -> missionStat(m))
+        // Réutilisation de la liste déjà chargée pour les stats détaillées par mission
+        List<DashboardSnapshotResponse.MissionStat> statsParMission = missions.stream()
+                .map(this::missionStat)
                 .toList();
 
         DashboardSnapshotResponse snapshot = new DashboardSnapshotResponse();
@@ -72,10 +81,18 @@ public class DashboardService {
         return snapshot;
     }
 
+    /**
+     * Calcule les statistiques d'une mission individuelle pour le dashboard.
+     *
+     * mission.getCreneaux() est safe ici car findByEvenementId() charge les créneaux
+     * via @EntityGraph — aucune requête supplémentaire n'est déclenchée.
+     */
     private DashboardSnapshotResponse.MissionStat missionStat(Mission mission) {
+        // Les créneaux sont déjà chargés en mémoire (JOIN FETCH dans le repository)
         long places    = mission.getCreneaux() != null
             ? mission.getCreneaux().stream().mapToLong(c -> c.getNbBenevolesRequis()).sum()
             : 0;
+        // Cette requête COUNT est exécutée par mission — acceptable car c'est un COUNT léger en base
         long confirmes = affectationRepository.countParMissionEtStatut(mission.getId(), StatutAffectation.CONFIRME.name());
         double taux    = places > 0 ? Math.round((double) confirmes / places * 1000.0) / 10.0 : 0.0;
 
@@ -89,6 +106,12 @@ public class DashboardService {
         return stat;
     }
 
+    /**
+     * Notifie tous les clients WebSocket abonnés au dashboard d'un événement
+     * lors d'un changement d'affectation (création, validation, annulation…).
+     * Appelé de manière asynchrone depuis AffectationService après chaque opération.
+     * Les erreurs WebSocket sont silencieuses pour ne pas bloquer l'opération métier.
+     */
     public void notifierAffectation(Affectation affectation, DashboardEvent.TypeEvenement type) {
         try {
             var creneau = affectation.getCreneau();

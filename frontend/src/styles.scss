@@ -1,8 +1,3 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
 html {
@@ -11,7 +6,8 @@ html {
     (
       color: (
         primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        // Violet comme couleur tertiaire/accent : contraste visuel net avec l'azure primary
+        tertiary: mat.$violet-palette,
       ),
       typography: Roboto,
       density: 0,
@@ -20,20 +16,123 @@ html {
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+// ── Accessibilité : contour visible au focus clavier (WCAG 2.4.7) ─────────────
+*:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// ── Fix Material 3 : les mat-chip appliquent leur propre couleur de texte,
+//    ce qui peut rendre le texte noir sur fond sombre dans la sidenav ──────────
+.sidenav .role-chip .mat-mdc-chip-action-label {
+  color: white;
+}
+
+// ── Titres des items de nav : Material 3 surcharge la couleur héritée via ses
+//    propres variables CSS, il faut donc cibler directement le span interne ────
+.sidenav mat-nav-list a [matListItemTitle] {
+  color: white;
+}
+
+.sidenav mat-nav-list a:hover [matListItemTitle] {
+  color: #ffd740;
+}
+
+// ── Utilitaires partagés — formulaires dans les dialogues ────────────────────
+// Centralisés ici car les composants de formulaire n'ont pas de .scss dédié.
+
+// Conteneur principal du formulaire : colonne, espacement régulier
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+  min-width: 460px;
+}
+
+// Deux colonnes de même largeur avec gouttière
+.row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+// Champ occupant toute la largeur du conteneur
+.full-width {
+  width: 100%;
+}
+
+// Ligne de cases à cocher
+.fm-checkboxes {
+  display: flex;
+  gap: 24px;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+
+// Bloc de consentement RGPD
+.rgpd-consent {
+  padding: 4px 0;
+}
+
+// Texte d'information secondaire dans un formulaire
+.info-text {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+// Section upload photo / bannière dans les formulaires
+.photo-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+
+  .photo-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--mat-sys-outline-variant);
+  }
+
+  .banniere-preview {
+    width: 140px;
+    height: 72px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid var(--mat-sys-outline-variant);
+  }
+
+  .photo-placeholder {
+    width: 72px;
+    height: 72px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mat-sys-outline);
+  }
+
+  .photo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .photo-nom {
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+    word-break: break-all;
+  }
+}

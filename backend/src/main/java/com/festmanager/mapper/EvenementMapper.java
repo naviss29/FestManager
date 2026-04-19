@@ -29,6 +29,7 @@ public class EvenementMapper {
         response.setDateFin(evenement.getDateFin());
         response.setLieu(evenement.getLieu());
         response.setStatut(evenement.getStatut());
+        response.setBanniereUrl(evenement.getBanniereUrl());
         response.setOrganisateurId(evenement.getOrganisateur().getId());
         response.setOrganisateurEmail(evenement.getOrganisateur().getEmail());
         response.setCreatedAt(evenement.getCreatedAt());

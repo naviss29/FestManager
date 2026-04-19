@@ -2,12 +2,12 @@
 
 > Application web de gestion de bénévoles et de logistique pour festivals et événements culturels.
 
-![Status](https://img.shields.io/badge/status-Phase%204%20complète-brightgreen)
+![Status](https://img.shields.io/badge/status-Phase%205%20en%20cours-orange)
 ![Java](https://img.shields.io/badge/Java-17-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
 ![Angular](https://img.shields.io/badge/Angular-21-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
-![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-153%20passing-brightgreen)
 ![Swagger](https://img.shields.io/badge/API-Swagger%20OpenAPI%203-85EA2D)
 ![RGPD](https://img.shields.io/badge/RGPD-conforme-green)
 
@@ -54,6 +54,9 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Page Mentions Légales | ✅ |
 | Documentation API Swagger / OpenAPI 3 | ✅ |
 | Déploiement démo en ligne (Railway) | ✅ |
+| Portail d'inscription public (`/inscription`, sans authentification) | ✅ |
+| Validation admin des nouveaux comptes (actif=false → validation manuelle) | ✅ |
+| Stockage de fichiers (photos bénévoles, bannières événements) | ✅ |
 
 ---
 
@@ -112,7 +115,7 @@ FestManager/
 │   │   ├── entity/        # Entités JPA
 │   │   ├── repository/    # Spring Data JPA
 │   │   └── dto/           # Request / Response
-│   └── src/test/          # 20 tests Mockito
+│   └── src/test/          # 95 tests Mockito
 ├── frontend/          # Application Angular 21
 │   ├── src/app/features/  # Modules fonctionnels
 │   └── src/app/shared/    # Layout, guards, services
@@ -161,9 +164,34 @@ docker compose up
 
 > Docker Desktop doit être démarré. Seuls Docker et Git sont nécessaires.
 
-### En développement local *(sans Docker)*
+### En développement local hybride *(recommandé pour coder)*
 
-Le profil `dev` utilise une base H2 embarquée — aucune installation requise.
+PostgreSQL tourne dans Docker, backend et frontend en natif avec hot-reload.
+
+**Prérequis :** Docker Desktop, Java 17 ([Eclipse Temurin](https://adoptium.net)), Node.js 20+
+
+```bash
+# Terminal 1 — Base de données uniquement
+docker compose up postgres -d
+
+# Terminal 2 — Backend Spring Boot (hot-reload)
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+
+# Terminal 3 — Frontend Angular (hot-reload)
+cd frontend
+npm install && npm start
+```
+
+| Service | URL |
+|---|---|
+| Application | http://localhost:4200 |
+| API backend | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger-ui.html |
+
+### En développement local *(sans Docker, base H2)*
+
+Le profil `dev` utilise une base H2 embarquée — aucune installation de PostgreSQL requise.
 
 ```bash
 # Backend
@@ -175,22 +203,24 @@ cd frontend
 npm install && npm start
 ```
 
+> La base H2 est recréée à chaque redémarrage du backend. Utile pour tester rapidement sans Docker.
+
 ---
 
 ## Tests
 
 ```bash
-# Backend — 20 tests Mockito (sans Spring context, sans base de données)
+# Backend — 90 tests Mockito (sans Spring context, sans base de données)
 cd backend
 ./mvnw test
 
-# Frontend — 45 tests Vitest
+# Frontend — 56 tests Jasmine/Karma
 cd frontend
 npm test -- --watch=false
 ```
 
-**Backend** : QR code, accréditations, export CSV/PDF, job RGPD, email  
-**Frontend** : services HTTP, composants, WebSocket
+**Backend (95 tests)** : Auth, Bénévoles, Événements, Missions, Organisations, Créneaux, Affectations, Journal d'audit, Audit, Export CSV/PDF, RGPD, Badges PDF  
+**Frontend (56 tests)** : tous les services HTTP (MissionService, EvenementService, BenevoleService, AccreditationService, PlanningService, OrganisationService, DashboardRestService, AuthService, WebSocketService)
 
 ---
 
@@ -209,6 +239,7 @@ npm test -- --watch=false
 - [x] Phase 2 — Core features (CRUD complet, affectations, WebSocket, auth)
 - [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
 - [x] Phase 4 — Finalisation (Swagger ✅, déploiement Railway ✅, diagramme architecture ✅, README screenshots ✅)
+- [ ] Phase 5 — Gestion des comptes (portail inscription public ✅, validation admin ✅, stockage fichiers ✅, mot de passe oublié 🔜, créneaux missions 🔜)
 
 ---
 

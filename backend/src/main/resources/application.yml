@@ -36,6 +36,8 @@ spring:
       mail.smtp.starttls.enable: false
 
 app:
+  uploads:
+    dir: ./uploads
   email:
     expediteur: noreply@festmanager.app
     nom-expediteur: FestManager

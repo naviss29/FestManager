@@ -45,6 +45,10 @@ public class Evenement {
     @JoinColumn(name = "organisateur_id", nullable = false)
     private Utilisateur organisateur;
 
+    /** URL relative de la bannière (ex: /api/fichiers/evenements/id.jpg). Null si aucune bannière. */
+    @Column(name = "banniere_url", length = 500)
+    private String banniereUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

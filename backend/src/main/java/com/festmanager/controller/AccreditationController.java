@@ -3,10 +3,13 @@ package com.festmanager.controller;
 import com.festmanager.dto.AccreditationRequest;
 import com.festmanager.dto.AccreditationResponse;
 import com.festmanager.service.AccreditationService;
+import com.festmanager.service.BadgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,7 @@ import java.util.UUID;
 public class AccreditationController {
 
     private final AccreditationService accreditationService;
+    private final BadgeService badgeService;
 
     @Operation(summary = "Créer une accréditation", description = "Génère automatiquement un QR code au format PNG encodé en base64.")
     @PostMapping
@@ -56,6 +60,35 @@ public class AccreditationController {
     @GetMapping("/benevole/{benevoleId}")
     public ResponseEntity<List<AccreditationResponse>> listerParBenevole(@PathVariable UUID benevoleId) {
         return ResponseEntity.ok(accreditationService.listerParBenevole(benevoleId));
+    }
+
+    @Operation(
+        summary = "Télécharger le badge PDF",
+        description = "Retourne un PDF A6 paysage avec prénom/nom, type, zones, QR code et dates de validité."
+    )
+    @GetMapping(value = "/{id}/badge", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> telechargerBadge(@PathVariable UUID id) {
+        byte[] pdf = badgeService.genererBadge(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(
+            ContentDisposition.attachment().filename("badge.pdf").build()
+        );
+        return ResponseEntity.ok().headers(headers).body(pdf);
+    }
+
+    @Operation(
+        summary = "Télécharger tous les badges (ZIP)",
+        description = "Génère un fichier ZIP contenant un badge PDF par accréditation de l'événement."
+    )
+    @GetMapping(value = "/evenement/{evenementId}/badges", produces = "application/zip")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANISATEUR')")
+    public ResponseEntity<byte[]> telechargerBadgesZip(@PathVariable UUID evenementId) {
+        byte[] zip = badgeService.genererBadgesZip(evenementId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(
+            ContentDisposition.attachment().filename("badges.zip").build()
+        );
+        return ResponseEntity.ok().headers(headers).body(zip);
     }
 
     @Operation(summary = "Supprimer une accréditation")

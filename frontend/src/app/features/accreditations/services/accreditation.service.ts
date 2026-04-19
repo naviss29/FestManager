@@ -35,4 +35,14 @@ export class AccreditationService {
   urlQrImage(id: string): string {
     return `${this.url}/${id}/qr`;
   }
+
+  /** Télécharge le badge PDF d'une accréditation individuelle */
+  telechargerBadge(id: string): Observable<Blob> {
+    return this.http.get(`${this.url}/${id}/badge`, { responseType: 'blob' });
+  }
+
+  /** Télécharge le ZIP de tous les badges d'un événement */
+  telechargerBadgesZip(evenementId: string): Observable<Blob> {
+    return this.http.get(`${this.url}/evenement/${evenementId}/badges`, { responseType: 'blob' });
+  }
 }

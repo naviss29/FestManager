@@ -1,22 +1,4 @@
-.formulaire {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-.champ-plein {
-  width: 100%;
-}
-
-.dates {
-  display: flex;
-  gap: 16px;
-
-  mat-form-field {
-    flex: 1;
-  }
-}
+// .form-grid, .row-2col, .full-width sont définis globalement dans styles.scss
 
 .qr-container {
   display: flex;

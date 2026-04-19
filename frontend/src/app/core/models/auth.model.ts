@@ -14,6 +14,13 @@ export interface LoginResponse {
   role: string;
 }
 
+export interface RegisterResponse {
+  email: string;
+  role: string;
+  token: string | null;
+  enAttenteValidation: boolean;
+}
+
 export interface UtilisateurCourant {
   id: string;
   email: string;

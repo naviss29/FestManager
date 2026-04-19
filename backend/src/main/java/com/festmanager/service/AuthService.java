@@ -4,12 +4,14 @@ import com.festmanager.config.JwtUtils;
 import com.festmanager.dto.LoginRequest;
 import com.festmanager.dto.LoginResponse;
 import com.festmanager.dto.RegisterRequest;
+import com.festmanager.dto.RegisterResponse;
 import com.festmanager.entity.Utilisateur;
 import com.festmanager.entity.enums.RoleUtilisateur;
 import com.festmanager.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,11 +29,17 @@ public class AuthService {
 
     /**
      * Connexion — retourne un JWT signé avec le rôle en claim.
+     * Lève 403 si le compte est inactif (en attente de validation admin).
      */
     public LoginResponse connecter(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.motDePasse())
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.motDePasse())
+            );
+        } catch (DisabledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Compte en attente de validation par un administrateur.");
+        }
 
         Utilisateur utilisateur = utilisateurRepository.findByEmail(request.email())
                 .orElseThrow();
@@ -42,29 +50,32 @@ public class AuthService {
 
     /**
      * Création de compte.
-     * - Premier compte créé → ADMIN (bootstrap).
-     * - Comptes suivants → ORGANISATEUR.
+     * - Premier compte créé → ADMIN, actif immédiatement (bootstrap).
+     * - Comptes suivants → ORGANISATEUR, actif = false (en attente de validation admin).
      */
     @Transactional
-    public LoginResponse inscrire(RegisterRequest request) {
+    public RegisterResponse inscrire(RegisterRequest request) {
         if (utilisateurRepository.existsByEmail(request.email())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Un compte existe déjà avec cet email.");
         }
 
-        RoleUtilisateur role = utilisateurRepository.count() == 0
-                ? RoleUtilisateur.ADMIN
-                : RoleUtilisateur.ORGANISATEUR;
+        boolean estPremierCompte = utilisateurRepository.count() == 0;
+        RoleUtilisateur role = estPremierCompte ? RoleUtilisateur.ADMIN : RoleUtilisateur.ORGANISATEUR;
 
         Utilisateur utilisateur = Utilisateur.builder()
                 .email(request.email())
                 .motDePasse(passwordEncoder.encode(request.motDePasse()))
                 .role(role)
-                .actif(true)
+                // Premier compte (admin) actif immédiatement ; les suivants attendent validation
+                .actif(estPremierCompte)
                 .build();
 
         utilisateurRepository.save(utilisateur);
 
-        String token = jwtUtils.genererToken(utilisateur);
-        return new LoginResponse(token, utilisateur.getEmail(), utilisateur.getRole().name());
+        if (estPremierCompte) {
+            String token = jwtUtils.genererToken(utilisateur);
+            return new RegisterResponse(utilisateur.getEmail(), role.name(), token, false);
+        }
+        return new RegisterResponse(utilisateur.getEmail(), role.name(), null, true);
     }
 }

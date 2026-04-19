@@ -17,7 +17,7 @@ Permettre à chaque organisateur de personnaliser l'apparence de son événement
 **Notes :**
 - Le running order pourrait être un simple fichier PDF uploadé, ou une saisie structurée (artiste / scène / horaire)
 - La couleur principale pourrait être un color picker avec fallback sur la couleur par défaut de l'app
-- Les images (bannière, affiche) nécessiteront un stockage fichier côté backend (ex : dossier `uploads/` ou bucket S3)
+- ~~Les images (bannière, affiche) nécessiteront un stockage fichier côté backend (ex : dossier `uploads/` ou bucket S3)~~ → **IMPLÉMENTÉ** (FichierService + photo bénévole + bannière événement)
 
 ---
 
@@ -36,7 +36,7 @@ Permettre à l'organisateur d'attacher des documents à un événement, consulta
 
 ---
 
-## Génération de badges imprimables
+## ✅ Génération de badges imprimables — IMPLÉMENTÉ
 
 Générer un badge PDF prêt à imprimer pour chaque bénévole accrédité, aux couleurs et à l'identité visuelle de l'événement.
 

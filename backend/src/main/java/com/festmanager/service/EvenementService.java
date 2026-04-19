@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class EvenementService {
     private final EvenementRepository evenementRepository;
     private final UtilisateurRepository utilisateurRepository;
     private final EvenementMapper evenementMapper;
+    private final FichierService fichierService;
 
     @Transactional(readOnly = true)
     public Page<EvenementResponse> listerEvenements(StatutEvenement statut, Pageable pageable) {
@@ -77,6 +79,21 @@ public class EvenementService {
         Evenement evenement = trouverParId(id);
         verifierDroitsModification(evenement);
         evenementRepository.delete(evenement);
+    }
+
+    // --- Bannière ---
+
+    /**
+     * Sauvegarde la bannière d'un événement et met à jour son URL en base.
+     * Toute bannière précédente est remplacée.
+     */
+    @Transactional
+    public EvenementResponse sauvegarderBanniere(UUID id, MultipartFile fichier) {
+        Evenement evenement = trouverParId(id);
+        verifierDroitsModification(evenement);
+        String url = fichierService.sauvegarder(fichier, "evenements", id.toString());
+        evenement.setBanniereUrl(url);
+        return evenementMapper.toResponse(evenementRepository.save(evenement));
     }
 
     // --- Méthodes privées ---

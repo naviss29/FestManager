@@ -17,6 +17,7 @@ public class EvenementResponse {
     private LocalDate dateFin;
     private String lieu;
     private StatutEvenement statut;
+    private String banniereUrl;
     private UUID organisateurId;
     private String organisateurEmail;
     private LocalDateTime createdAt;

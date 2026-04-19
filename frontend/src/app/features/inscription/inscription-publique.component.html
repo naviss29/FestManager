@@ -1,0 +1,110 @@
+<div class="inscription-container">
+  <mat-card class="inscription-card">
+
+    <!-- En-tête -->
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon class="titre-icon">volunteer_activism</mat-icon>
+        FestManager
+      </mat-card-title>
+      <mat-card-subtitle>Inscription bénévole</mat-card-subtitle>
+    </mat-card-header>
+
+    <!-- Écran de succès -->
+    <mat-card-content *ngIf="succes" class="succes">
+      <mat-icon class="succes-icon">check_circle</mat-icon>
+      <h2>Inscription envoyée !</h2>
+      <p>Votre demande a bien été reçue. L'équipe organisatrice va valider votre inscription et vous contactera par email.</p>
+      <a mat-stroked-button routerLink="/auth/login" class="lien-login">Se connecter</a>
+    </mat-card-content>
+
+    <!-- Formulaire -->
+    <mat-card-content *ngIf="!succes">
+      <form [formGroup]="form" (ngSubmit)="soumettre()" class="form-grid">
+
+        <div class="row-2col">
+          <mat-form-field appearance="outline">
+            <mat-label>Prénom</mat-label>
+            <input matInput formControlName="prenom" autocomplete="given-name" />
+            <mat-error *ngIf="form.get('prenom')?.hasError('required')">Obligatoire</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="nom" autocomplete="family-name" />
+            <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="form.get('email')?.hasError('required')">Obligatoire</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">Format invalide</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Téléphone</mat-label>
+          <input matInput formControlName="telephone" autocomplete="tel" />
+          <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+
+        <div class="row-2col">
+          <mat-form-field appearance="outline">
+            <mat-label>Taille T-shirt</mat-label>
+            <mat-select formControlName="tailleTshirt">
+              <mat-option [value]="null">—</mat-option>
+              <mat-option *ngFor="let t of tailles" [value]="t">{{ t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de naissance</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dateNaissance" />
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Compétences (secourisme, technique, accueil…)</mat-label>
+          <textarea matInput formControlName="competences" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Disponibilités (jours, créneaux souhaités…)</mat-label>
+          <textarea matInput formControlName="disponibilites" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-divider></mat-divider>
+
+        <div class="rgpd-consent">
+          <mat-checkbox formControlName="consentementRgpd">
+            J'accepte la collecte et le traitement de mes données personnelles
+            dans le cadre de l'organisation bénévole, conformément au RGPD.
+          </mat-checkbox>
+          <mat-error *ngIf="form.get('consentementRgpd')?.invalid && form.get('consentementRgpd')?.touched">
+            Le consentement RGPD est obligatoire pour s'inscrire.
+          </mat-error>
+        </div>
+
+        <mat-error *ngIf="erreur" class="erreur-globale">{{ erreur }}</mat-error>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="full-width btn-soumettre"
+                [disabled]="form.invalid || chargement">
+          <mat-spinner *ngIf="chargement" diameter="20"></mat-spinner>
+          <span *ngIf="!chargement">Envoyer ma candidature</span>
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!succes">
+      <a mat-button routerLink="/auth/login">Déjà un compte ? Se connecter</a>
+      <a mat-button routerLink="/mentions-legales">Mentions légales</a>
+    </mat-card-actions>
+
+  </mat-card>
+</div>

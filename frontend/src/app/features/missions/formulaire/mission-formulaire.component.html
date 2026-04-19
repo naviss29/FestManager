@@ -41,7 +41,7 @@
       <textarea matInput formControlName="materielRequis" rows="2"></textarea>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="half-width">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre de bénévoles requis</mat-label>
       <input matInput type="number" formControlName="nbBenevolesRequis" min="1" />
       <mat-icon matPrefix>people</mat-icon>
@@ -49,7 +49,7 @@
       <mat-error *ngIf="form.get('nbBenevolesRequis')?.hasError('required')">Obligatoire</mat-error>
     </mat-form-field>
 
-    <div class="checkboxes">
+    <div class="fm-checkboxes">
       <mat-checkbox formControlName="multiAffectationAutorisee">
         Multi-affectation autorisée
       </mat-checkbox>

@@ -42,6 +42,7 @@ public class BenevoleMapper {
         response.setDateNaissance(benevole.getDateNaissance());
         response.setDisponibilites(benevole.getDisponibilites());
         response.setStatutCompte(benevole.getStatutCompte());
+        response.setPhotoUrl(benevole.getPhotoUrl());
         response.setConsentementRgpd(benevole.getConsentementRgpd());
         response.setDateConsentement(benevole.getDateConsentement());
         response.setVersionCgu(benevole.getVersionCgu());

@@ -24,7 +24,24 @@ public class CreneauMapper {
                 .build();
     }
 
+    /**
+     * Conversion simple (1 créneau) : exécute une requête COUNT individuelle.
+     * À utiliser uniquement pour la lecture d'un créneau unique (obtenirCreneau, creerCreneau, modifierCreneau).
+     * Pour une liste de créneaux, préférer toResponse(creneau, nbAffectes) avec un batch count
+     * préalable dans le service afin d'éviter le problème N+1.
+     */
     public CreneauResponse toResponse(Creneau creneau) {
+        int count = affectationRepository.countByCreneauIdAndStatut(creneau.getId(), StatutAffectation.CONFIRME);
+        return toResponse(creneau, count);
+    }
+
+    /**
+     * Conversion avec le nombre d'affectés fourni en paramètre.
+     * Cette surcharge est utilisée par CreneauService.listerCreneaux() qui calcule
+     * les counts en une seule requête groupée pour tous les créneaux, puis les passe ici.
+     * Cela évite d'exécuter une requête COUNT par créneau dans la boucle (N+1).
+     */
+    public CreneauResponse toResponse(Creneau creneau, int nbAffectes) {
         CreneauResponse response = new CreneauResponse();
         response.setId(creneau.getId());
         response.setMissionId(creneau.getMission().getId());
@@ -32,9 +49,7 @@ public class CreneauMapper {
         response.setDebut(creneau.getDebut());
         response.setFin(creneau.getFin());
         response.setNbBenevolesRequis(creneau.getNbBenevolesRequis());
-        response.setNbBenevolesAffectes(
-                affectationRepository.countByCreneauIdAndStatut(creneau.getId(), StatutAffectation.CONFIRME)
-        );
+        response.setNbBenevolesAffectes(nbAffectes);
         return response;
     }
 }

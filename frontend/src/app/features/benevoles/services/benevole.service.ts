@@ -22,6 +22,11 @@ export class BenevoleService {
     return this.http.get<Benevole>(`${this.url}/${id}`);
   }
 
+  /** Inscription libre (endpoint public — pas de token requis). */
+  inscrire(request: BenevoleRequest): Observable<Benevole> {
+    return this.http.post<Benevole>(`${this.url}/inscription`, request);
+  }
+
   creer(request: BenevoleRequest): Observable<Benevole> {
     return this.http.post<Benevole>(this.url, request);
   }
@@ -52,5 +57,12 @@ export class BenevoleService {
 
   listerAffectations(id: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.url}/${id}/affectations`);
+  }
+
+  /** Upload (ou remplacement) de la photo de profil. Envoie le fichier en multipart. */
+  uploadPhoto(id: string, fichier: File): Observable<Benevole> {
+    const formData = new FormData();
+    formData.append('fichier', fichier);
+    return this.http.post<Benevole>(`${this.url}/${id}/photo`, formData);
   }
 }

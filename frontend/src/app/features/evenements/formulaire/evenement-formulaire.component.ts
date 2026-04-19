@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EvenementService } from '../services/evenement.service';
 import { Evenement } from '../models/evenement.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-evenement-formulaire',
@@ -14,6 +15,10 @@ export class EvenementFormulaireComponent implements OnInit {
   form: FormGroup;
   chargement = false;
   estModification: boolean;
+
+  apiUrl = environment.apiUrl.replace('/api', '');
+  fichierSelectionne: File | null = null;
+  photoPreview: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -51,7 +56,16 @@ export class EvenementFormulaireComponent implements OnInit {
       : this.evenementService.creer(request);
 
     op$.subscribe({
-      next: evenement => this.dialogRef.close(evenement),
+      next: evenement => {
+        if (this.fichierSelectionne) {
+          this.evenementService.uploadBanniere(evenement.id, this.fichierSelectionne).subscribe({
+            next: r => this.dialogRef.close(r),
+            error: () => this.dialogRef.close(evenement)
+          });
+        } else {
+          this.dialogRef.close(evenement);
+        }
+      },
       error: () => { this.chargement = false; }
     });
   }
@@ -60,7 +74,21 @@ export class EvenementFormulaireComponent implements OnInit {
     this.dialogRef.close(null);
   }
 
+  onFichierChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const fichier = input.files?.[0];
+    if (!fichier) return;
+    this.fichierSelectionne = fichier;
+    const reader = new FileReader();
+    reader.onload = e => { this.photoPreview = e.target?.result as string; };
+    reader.readAsDataURL(fichier);
+  }
+
+  // Utilise les accesseurs locaux pour éviter le décalage UTC de toISOString()
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 }

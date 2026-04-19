@@ -38,4 +38,11 @@ export class EvenementService {
   supprimer(id: string): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
+
+  /** Upload (ou remplacement) de la bannière de l'événement. Envoie le fichier en multipart. */
+  uploadBanniere(id: string, fichier: File): Observable<Evenement> {
+    const formData = new FormData();
+    formData.append('fichier', fichier);
+    return this.http.post<Evenement>(`${this.url}/${id}/banniere`, formData);
+  }
 }

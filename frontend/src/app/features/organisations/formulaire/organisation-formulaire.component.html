@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ estModification ? 'Modifier' : 'Nouvelle' }} organisation</h2>
 <mat-dialog-content>
-  <form [formGroup]="form" class="form-col">
+  <form [formGroup]="form" class="form-grid">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nom</mat-label><input matInput formControlName="nom" />
       <mat-error *ngIf="form.get('nom')?.hasError('required')">Obligatoire</mat-error>

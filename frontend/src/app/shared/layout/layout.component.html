@@ -12,6 +12,11 @@
         <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
         <span matListItemTitle>{{ item.label }}</span>
       </a>
+      <a mat-list-item *ngIf="utilisateur?.role === 'ADMIN'"
+         routerLink="/admin/comptes" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>manage_accounts</mat-icon>
+        <span matListItemTitle>Gestion comptes</span>
+      </a>
     </mat-nav-list>
 
     <div class="sidenav-footer" *ngIf="utilisateur">

@@ -21,6 +21,7 @@ export class AccreditationsListeComponent implements OnInit {
   peutGerer = false;
 
   colonnes = ['benevole', 'type', 'zones', 'validite', 'valide', 'actions'];
+  telechargementZipEnCours = false;
 
   constructor(
     private accreditationService: AccreditationService,
@@ -84,5 +85,41 @@ export class AccreditationsListeComponent implements OnInit {
       GENERAL: 'Général', SCENE: 'Scène', BACKSTAGE: 'Backstage', VIP: 'VIP'
     };
     return labels[zone] ?? zone;
+  }
+
+  /** Télécharge le badge PDF d'une accréditation et déclenche le téléchargement navigateur */
+  telechargerBadge(accreditation: AccreditationResponse): void {
+    this.accreditationService.telechargerBadge(accreditation.id).subscribe({
+      next: blob => {
+        const nom = `badge_${accreditation.benevoleNom}_${accreditation.benevolePrenom}.pdf`;
+        this.declencherTelechargement(blob, nom);
+      },
+      error: () => this.snackBar.open('Erreur lors du téléchargement du badge', 'Fermer', { duration: 3000 })
+    });
+  }
+
+  /** Télécharge le ZIP de tous les badges de l'événement */
+  telechargerTousLesBadges(): void {
+    this.telechargementZipEnCours = true;
+    this.accreditationService.telechargerBadgesZip(this.evenementId).subscribe({
+      next: blob => {
+        this.declencherTelechargement(blob, 'badges.zip');
+        this.telechargementZipEnCours = false;
+      },
+      error: () => {
+        this.snackBar.open('Erreur lors du téléchargement des badges', 'Fermer', { duration: 3000 });
+        this.telechargementZipEnCours = false;
+      }
+    });
+  }
+
+  /** Crée un lien temporaire pour forcer le téléchargement d'un Blob */
+  private declencherTelechargement(blob: Blob, nomFichier: string): void {
+    const url = URL.createObjectURL(blob);
+    const lien = document.createElement('a');
+    lien.href = url;
+    lien.download = nomFichier;
+    lien.click();
+    URL.revokeObjectURL(url);
   }
 }

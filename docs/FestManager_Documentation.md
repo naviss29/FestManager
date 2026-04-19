@@ -1,9 +1,9 @@
 # FestManager — Documentation du projet
 
-> Version : 0.5  
+> Version : 0.6  
 > Auteur : Alan  
 > Date : Avril 2026  
-> Statut : **Phase 3 complète — Phase 4 en cours**
+> Statut : **Phase 4 complète — Phase 5 en cours**
 
 ---
 
@@ -16,6 +16,7 @@
 | 0.3 | Avril 2026 | Phases 1 et 2 complétées — backend + frontend fonctionnels |
 | 0.4 | Avril 2026 | Dockerisation complète — ajout section lancement et prérequis |
 | 0.5 | Avril 2026 | Phase 3 complète — QR codes, dashboard, exports, RGPD, email, mentions légales |
+| 0.6 | Avril 2026 | Phase 5 — Portail inscription public, validation admin, stockage fichiers (photos/bannières) |
 
 ---
 
@@ -378,7 +379,32 @@ POSTGRES_PASSWORD=mon_mot_de_passe_securise
 
 ---
 
-## 7. Architecture applicative
+## 7. Performances — Optimisations N+1
+
+### Problème N+1 expliqué
+
+Le problème N+1 survient quand on charge une liste de N entités puis qu'on accède à une association lazy (ex: `mission.getCreneaux()`) pour chacune : Hibernate exécute 1 requête pour la liste + N requêtes pour les associations = N+1 requêtes. Sur 20 missions, cela représente 21 requêtes là où une seule suffit.
+
+### Corrections appliquées
+
+| Fichier | Problème corrigé | Solution |
+|---------|-----------------|----------|
+| `AffectationRepository` | Export CSV/PDF : native query sans fetch sur `benevole` et `mission` | JPQL avec `JOIN FETCH` benevole + creneau + mission |
+| `MissionRepository` | `findByEvenementId(UUID)` sans `@EntityGraph` — `getCreneaux()` déclenchait N requêtes | `@EntityGraph({"creneaux", ...})` sur la version non paginée |
+| `DashboardService` | `findByEvenementId` appelé 2× + `getCreneaux()` lazy dans la boucle | Chargement unique réutilisé ; creneaux pré-chargés via EntityGraph |
+| `CreneauMapper` | 1 `COUNT` SQL par créneau dans `listerCreneaux` | Surcharge `toResponse(creneau, int)` + batch `GROUP BY` en 1 requête dans `CreneauService` |
+| `JournalAuditRepository` | `utilisateur` LAZY non chargé lors du mapping | `@EntityGraph({"utilisateur"})` sur les deux méthodes |
+
+### Règles pour les futurs développements
+
+1. **Toujours mettre `@EntityGraph`** sur les méthodes de repository retournant des listes, quand les associations sont accédées dans le mapper.
+2. **Ne jamais appeler un repository dans un mapper pour une liste** — calculer les données en batch dans le service et les passer en paramètre.
+3. **Réutiliser une liste déjà chargée** plutôt que rappeler le même `findBy...` deux fois dans la même méthode.
+4. **Préférer JPQL avec `JOIN FETCH`** aux requêtes natives quand on a besoin de pre-fetch (`@EntityGraph` ne fonctionne pas avec `nativeQuery = true`).
+
+---
+
+## 8. Architecture applicative
 
 ### Vue d'ensemble
 
@@ -486,8 +512,9 @@ festmanager-frontend/
 
 ### Qualité
 
-- Couverture de tests backend : objectif 70% minimum sur les services
-- Aucun endpoint REST sans test d'intégration
+- Couverture de tests backend : **95 tests Mockito** couvrant tous les services (Auth, Bénévoles, Événements, Missions, Organisations, Créneaux, Affectations, Journal d'audit, Audit, Export, Badges)
+- Couverture de tests frontend : **56 tests Jasmine** couvrant tous les services HTTP (9 services)
+- Aucun endpoint REST sans test unitaire service
 - Code commenté en français
 
 ---
@@ -543,12 +570,13 @@ festmanager-frontend/
 | T03-04 | Job automatique d'anonymisation (purge RGPD) | ✅ Validé |
 | T03-05 | Notifications email (SMTP) | ✅ Validé |
 | T03-06 | Page Mentions Légales | ✅ Validé |
+| T03-07 | Génération de badges PDF imprimables (A6, QR code, ZIP multi-badges) | ✅ Validé |
 
 ### Phase 4 — Finition recruteur
 
 | ID | Tâche | Statut |
 |---|---|---|
-| T04-01 | Tests unitaires et d'intégration complets | 🔲 À faire |
+| T04-01 | Tests unitaires et d'intégration complets | ✅ Validé |
 | T04-02 | Documentation API (Swagger / OpenAPI) | ✅ Validé |
 | T04-03 | Déploiement démo en ligne (Railway) | ✅ Validé |
 | T04-04 | README final avec screenshots et lien démo | ✅ Validé |

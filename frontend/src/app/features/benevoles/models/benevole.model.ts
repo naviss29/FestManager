@@ -12,6 +12,7 @@ export interface Benevole {
   dateNaissance?: string;
   disponibilites?: string;
   statutCompte: StatutCompteBenevole;
+  photoUrl?: string;
   consentementRgpd: boolean;
   dateConsentement: string;
   versionCgu: string;

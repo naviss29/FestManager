@@ -26,29 +26,29 @@
 <ng-container *ngIf="!modeAffichage">
   <h2 mat-dialog-title>Nouvelle accréditation</h2>
   <mat-dialog-content>
-    <form [formGroup]="form" class="formulaire">
+    <form [formGroup]="form" class="form-grid">
 
-      <mat-form-field appearance="outline" class="champ-plein">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>ID du bénévole</mat-label>
         <input matInput formControlName="benevoleId" placeholder="UUID du bénévole" />
         <mat-error *ngIf="form.get('benevoleId')?.hasError('required')">Obligatoire</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="champ-plein">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Type d'accréditation</mat-label>
         <mat-select formControlName="type">
           <mat-option *ngFor="let t of typesOptions" [value]="t.valeur">{{ t.label }}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="champ-plein">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Zones d'accès</mat-label>
         <mat-select formControlName="zonesAcces" multiple>
           <mat-option *ngFor="let z of zonesOptions" [value]="z.valeur">{{ z.label }}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <div class="dates">
+      <div class="row-2col">
         <mat-form-field appearance="outline">
           <mat-label>Début de validité</mat-label>
           <input matInput [matDatepicker]="pickerDebut" formControlName="dateDebutValidite" />

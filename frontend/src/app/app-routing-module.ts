@@ -13,6 +13,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/mentions-legales/mentions-legales.module').then(m => m.MentionsLegalesModule)
   },
   {
+    path: 'inscription',
+    loadChildren: () => import('./features/inscription/inscription.module').then(m => m.InscriptionModule)
+  },
+  {
     path: '',
     component: LayoutComponent,
     canActivate: [AuthGuard],
@@ -24,6 +28,7 @@ const routes: Routes = [
       { path: 'missions',        loadChildren: () => import('./features/missions/missions.module').then(m => m.MissionsModule) },
       { path: 'planning',        loadChildren: () => import('./features/planning/planning.module').then(m => m.PlanningModule) },
       { path: 'accreditations',  loadChildren: () => import('./features/accreditations/accreditations.module').then(m => m.AccreditationsModule) },
+      { path: 'admin',           loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

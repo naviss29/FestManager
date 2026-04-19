@@ -40,6 +40,14 @@ describe('BenevoleService', () => {
     req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20 });
   });
 
+  it('inscrire() appelle POST /benevoles/inscription (endpoint public)', () => {
+    const payload = { nom: 'Dupont', prenom: 'Jean', email: 'jean@test.fr', consentementRgpd: true };
+    service.inscrire(payload).subscribe(r => expect(r).toEqual(BENEVOLE));
+    const req = http.expectOne(`${BASE}/inscription`);
+    expect(req.request.method).toBe('POST');
+    req.flush(BENEVOLE);
+  });
+
   it('creer() appelle POST /benevoles', () => {
     const payload = { nom: 'Dupont', prenom: 'Jean', email: 'jean@test.fr', consentementRgpd: true };
     service.creer(payload).subscribe(r => expect(r).toEqual(BENEVOLE));
@@ -82,5 +90,14 @@ describe('BenevoleService', () => {
     const req = http.expectOne(`${BASE}/b1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+  });
+
+  it('uploadPhoto() appelle POST /benevoles/:id/photo avec FormData', () => {
+    const fichier = new File(['data'], 'photo.jpg', { type: 'image/jpeg' });
+    service.uploadPhoto('b1', fichier).subscribe(r => expect(r).toEqual(BENEVOLE));
+    const req = http.expectOne(`${BASE}/b1/photo`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toBeInstanceOf(FormData);
+    req.flush(BENEVOLE);
   });
 });

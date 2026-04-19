@@ -23,8 +23,6 @@
   max-width: 400px;
 }
 
-.full-width { width: 100%; }
-
 .sub-text {
   font-size: 0.8rem;
   color: #757575;
@@ -71,25 +69,3 @@
 }
 
 .danger { color: #f44336; }
-
-// Formulaire
-.form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-.row-2col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.half-width { width: 50%; }
-
-.checkboxes {
-  display: flex;
-  gap: 24px;
-  padding: 4px 0;
-}

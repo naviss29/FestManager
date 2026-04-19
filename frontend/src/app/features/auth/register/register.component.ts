@@ -21,6 +21,7 @@ export class RegisterComponent {
   chargement = false;
   erreur: string | null = null;
   motDePasseVisible = false;
+  enAttenteValidation = false;
 
   constructor(
     private fb: FormBuilder,
@@ -43,7 +44,14 @@ export class RegisterComponent {
       email:    this.form.value.email,
       password: this.form.value.password
     }).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: response => {
+        if (response.enAttenteValidation) {
+          this.enAttenteValidation = true;
+          this.chargement = false;
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+      },
       error: err => {
         this.erreur = err.error?.detail ?? err.error?.message ?? 'Erreur lors de la création du compte.';
         this.chargement = false;

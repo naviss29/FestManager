@@ -3,6 +3,7 @@ package com.festmanager.controller;
 import com.festmanager.dto.LoginRequest;
 import com.festmanager.dto.LoginResponse;
 import com.festmanager.dto.RegisterRequest;
+import com.festmanager.dto.RegisterResponse;
 import com.festmanager.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -29,10 +30,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirements
-    @Operation(summary = "Inscription", description = "Crée un compte organisateur. Retourne un token JWT.")
-    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.inscrire(request));
+    @Operation(
+        summary = "Inscription",
+        description = "Premier compte → ADMIN actif immédiatement (token fourni). " +
+                      "Comptes suivants → ORGANISATEUR en attente de validation admin (pas de token).")
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.inscrire(request);
+        int status = response.enAttenteValidation() ? 202 : 201;
+        return ResponseEntity.status(status).body(response);
     }
 }

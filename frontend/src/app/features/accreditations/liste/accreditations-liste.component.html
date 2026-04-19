@@ -2,9 +2,18 @@
 
   <div class="entete">
     <h2>Accréditations</h2>
-    <button mat-raised-button color="primary" *ngIf="peutGerer" (click)="ouvrirFormulaire()">
-      <mat-icon>add</mat-icon> Nouvelle accréditation
-    </button>
+    <div class="actions-entete">
+      <button mat-stroked-button *ngIf="peutGerer && accreditations.length > 0"
+              (click)="telechargerTousLesBadges()"
+              [disabled]="telechargementZipEnCours"
+              matTooltip="Télécharger tous les badges en ZIP">
+        <mat-icon>download</mat-icon>
+        {{ telechargementZipEnCours ? 'Génération…' : 'Tous les badges' }}
+      </button>
+      <button mat-raised-button color="primary" *ngIf="peutGerer" (click)="ouvrirFormulaire()">
+        <mat-icon>add</mat-icon> Nouvelle accréditation
+      </button>
+    </div>
   </div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="chargement"></mat-progress-bar>
@@ -60,6 +69,9 @@
       <mat-cell *matCellDef="let a">
         <button mat-icon-button (click)="afficherQr(a)" matTooltip="Voir le QR code">
           <mat-icon>qr_code_2</mat-icon>
+        </button>
+        <button mat-icon-button (click)="telechargerBadge(a)" matTooltip="Télécharger le badge PDF">
+          <mat-icon>badge</mat-icon>
         </button>
         <button mat-icon-button color="warn" *ngIf="peutGerer" (click)="supprimer(a.id)" matTooltip="Supprimer">
           <mat-icon>delete</mat-icon>
