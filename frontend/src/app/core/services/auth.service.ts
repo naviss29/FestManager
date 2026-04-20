@@ -47,6 +47,14 @@ export class AuthService {
     );
   }
 
+  motDePasseOublie(email: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/mot-de-passe-oublie`, { email });
+  }
+
+  resetMotDePasse(token: string, nouveauMotDePasse: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/reset-mot-de-passe`, { token, nouveauMotDePasse });
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     this.utilisateurCourant$.next(null);

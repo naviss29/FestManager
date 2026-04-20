@@ -1,0 +1,61 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>FestManager</mat-card-title>
+      <mat-card-subtitle>Nouveau mot de passe</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div *ngIf="tokenManquant" class="erreur-msg">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>Lien invalide. Veuillez refaire une demande de réinitialisation.</p>
+        <a mat-stroked-button routerLink="/auth/mot-de-passe-oublie">Nouvelle demande</a>
+      </div>
+
+      <div *ngIf="succes" class="succes-msg">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <p>Votre mot de passe a été modifié avec succès.</p>
+        <a mat-raised-button color="primary" routerLink="/auth/login">Se connecter</a>
+      </div>
+
+      <form *ngIf="!tokenManquant && !succes" [formGroup]="form" (ngSubmit)="soumettre()">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nouveau mot de passe</mat-label>
+          <input matInput [type]="motDePasseVisible ? 'text' : 'password'"
+                 formControlName="nouveauMotDePasse" autocomplete="new-password" />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button"
+                  (click)="motDePasseVisible = !motDePasseVisible">
+            <mat-icon>{{ motDePasseVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="form.get('nouveauMotDePasse')?.hasError('required')">Obligatoire</mat-error>
+          <mat-error *ngIf="form.get('nouveauMotDePasse')?.hasError('minlength')">8 caractères minimum</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input matInput [type]="motDePasseVisible ? 'text' : 'password'"
+                 formControlName="confirmation" autocomplete="new-password" />
+          <mat-icon matPrefix>lock_reset</mat-icon>
+          <mat-error *ngIf="form.hasError('nonIdentiques')">Les mots de passe ne correspondent pas</mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="erreur" class="erreur-globale">{{ erreur }}</mat-error>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="full-width" [disabled]="form.invalid || chargement">
+          <mat-spinner *ngIf="chargement" diameter="20"></mat-spinner>
+          <span *ngIf="!chargement">Enregistrer le nouveau mot de passe</span>
+        </button>
+
+      </form>
+
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!succes && !tokenManquant">
+      <a mat-button routerLink="/auth/login">Retour à la connexion</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

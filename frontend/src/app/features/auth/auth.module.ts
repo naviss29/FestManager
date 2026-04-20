@@ -12,14 +12,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { MotDePasseOublieComponent } from './mot-de-passe-oublie/mot-de-passe-oublie.component';
+import { ResetMotDePasseComponent } from './reset-mot-de-passe/reset-mot-de-passe.component';
 
 const routes: Routes = [
-  { path: 'login',    component: LoginComponent },
-  { path: 'register', component: RegisterComponent }
+  { path: 'login',                 component: LoginComponent },
+  { path: 'register',              component: RegisterComponent },
+  { path: 'mot-de-passe-oublie',   component: MotDePasseOublieComponent },
+  { path: 'reset-mot-de-passe',    component: ResetMotDePasseComponent }
 ];
 
 @NgModule({
-  declarations: [LoginComponent, RegisterComponent],
+  declarations: [LoginComponent, RegisterComponent, MotDePasseOublieComponent, ResetMotDePasseComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

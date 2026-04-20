@@ -1,0 +1,41 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>FestManager</mat-card-title>
+      <mat-card-subtitle>Mot de passe oublié</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div *ngIf="succes" class="succes-msg">
+        <mat-icon color="primary">mark_email_read</mat-icon>
+        <p>Si un compte correspond à cet email, vous recevrez un lien de réinitialisation dans quelques minutes.</p>
+      </div>
+
+      <form *ngIf="!succes" [formGroup]="form" (ngSubmit)="soumettre()">
+        <p class="instruction">Saisissez votre adresse email. Nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="form.get('email')?.hasError('required')">L'email est obligatoire</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">Format d'email invalide</mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="erreur" class="erreur-globale">{{ erreur }}</mat-error>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="full-width" [disabled]="form.invalid || chargement">
+          <mat-spinner *ngIf="chargement" diameter="20"></mat-spinner>
+          <span *ngIf="!chargement">Envoyer le lien</span>
+        </button>
+      </form>
+
+    </mat-card-content>
+
+    <mat-card-actions>
+      <a mat-button routerLink="/auth/login">Retour à la connexion</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

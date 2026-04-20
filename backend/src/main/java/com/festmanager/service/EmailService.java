@@ -112,6 +112,27 @@ public class EmailService {
     }
 
     // -------------------------------------------------------------------------
+    // Mot de passe oublié
+    // -------------------------------------------------------------------------
+
+    @Async
+    public void envoyerResetMotDePasse(String destinataire, String lienReset) {
+        String sujet = "[FestManager] Réinitialisation de votre mot de passe";
+        String corps = construireHtml(
+            "Réinitialisation du mot de passe",
+            "Bonjour,",
+            "<p>Vous avez demandé la réinitialisation de votre mot de passe FestManager.</p>" +
+            "<p>Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :</p>" +
+            "<p style='text-align:center;margin:24px 0'>" +
+            "<a href='" + lienReset + "' style='background:#1a237e;color:white;padding:12px 24px;" +
+            "border-radius:4px;text-decoration:none;font-weight:bold'>Réinitialiser mon mot de passe</a></p>" +
+            "<p style='color:#888;font-size:0.85rem'>Ce lien est valable 1 heure. " +
+            "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>"
+        );
+        envoyer(destinataire, sujet, corps);
+    }
+
+    // -------------------------------------------------------------------------
     // Méthodes privées
     // -------------------------------------------------------------------------
 

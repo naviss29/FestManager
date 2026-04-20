@@ -17,4 +17,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, UUID> 
     boolean existsByEmail(String email);
 
     Page<Utilisateur> findByActif(boolean actif, Pageable pageable);
+
+    Optional<Utilisateur> findByResetToken(String resetToken);
 }

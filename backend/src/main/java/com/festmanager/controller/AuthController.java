@@ -2,8 +2,10 @@ package com.festmanager.controller;
 
 import com.festmanager.dto.LoginRequest;
 import com.festmanager.dto.LoginResponse;
+import com.festmanager.dto.MotDePasseOublieRequest;
 import com.festmanager.dto.RegisterRequest;
 import com.festmanager.dto.RegisterResponse;
+import com.festmanager.dto.ResetMotDePasseRequest;
 import com.festmanager.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -39,5 +41,23 @@ public class AuthController {
         RegisterResponse response = authService.inscrire(request);
         int status = response.enAttenteValidation() ? 202 : 201;
         return ResponseEntity.status(status).body(response);
+    }
+
+    @PostMapping("/mot-de-passe-oublie")
+    @SecurityRequirements
+    @Operation(summary = "Mot de passe oublié",
+               description = "Envoie un email de réinitialisation. Répond toujours 200 même si l'email est inconnu.")
+    public ResponseEntity<Void> motDePasseOublie(@Valid @RequestBody MotDePasseOublieRequest request) {
+        authService.demanderResetMotDePasse(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-mot-de-passe")
+    @SecurityRequirements
+    @Operation(summary = "Réinitialiser le mot de passe",
+               description = "Valide le token et met à jour le mot de passe. Token valable 1h.")
+    public ResponseEntity<Void> resetMotDePasse(@Valid @RequestBody ResetMotDePasseRequest request) {
+        authService.resetMotDePasse(request);
+        return ResponseEntity.ok().build();
     }
 }

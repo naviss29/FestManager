@@ -49,6 +49,12 @@ public class Utilisateur implements UserDetails {
     @Column(name = "derniere_connexion")
     private LocalDateTime derniereConnexion;
 
+    @Column(name = "reset_token", length = 255)
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

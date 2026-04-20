@@ -38,6 +38,8 @@ spring:
 app:
   uploads:
     dir: ./uploads
+  frontend:
+    url: http://localhost:4200
   email:
     expediteur: noreply@festmanager.app
     nom-expediteur: FestManager
