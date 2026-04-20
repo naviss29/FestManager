@@ -77,6 +77,12 @@ export class MissionsListeComponent implements OnInit {
     });
   }
 
+  onFiltreCategorieChange(valeur: string): void {
+    this.filtreCategorie = valeur;
+    this.pageIndex = 0;
+    this.charger();
+  }
+
   onPage(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;

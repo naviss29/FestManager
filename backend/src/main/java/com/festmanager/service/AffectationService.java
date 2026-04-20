@@ -61,7 +61,9 @@ public class AffectationService {
         Benevole benevole = benevoleRepository.findById(request.getBenevoleId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bénévole introuvable"));
 
-        Creneau creneau = creneauRepository.findById(request.getCreneauId())
+        // findByIdWithMissionAndEvenement charge mission + evenement en un seul JOIN
+        // pour éviter les lazy loads lors des vérifications de conflits horaires (lignes 84-85)
+        Creneau creneau = creneauRepository.findByIdWithMissionAndEvenement(request.getCreneauId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Créneau introuvable"));
 
         // Vérification : bénévole non anonymisé
@@ -147,7 +149,9 @@ public class AffectationService {
     // --- Méthodes privées ---
 
     private Affectation trouverParId(UUID id) {
-        return affectationRepository.findById(id)
+        // findByIdWithAssociations charge toute la chaîne (benevole, creneau, mission, evenement)
+        // en un seul JOIN pour le mapper et les notifications WebSocket
+        return affectationRepository.findByIdWithAssociations(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Affectation introuvable"));
     }
 }

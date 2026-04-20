@@ -18,6 +18,11 @@ public interface AffectationRepository extends JpaRepository<Affectation, UUID> 
     // @EntityGraph charge en une seule requête SQL (JOIN) toute la chaîne
     // benevole → creneau → mission → evenement, évitant le problème N+1
     // (sans ça, Hibernate ferait 1 requête par association accédée dans la boucle).
+    // Charge toute la chaîne d'associations en un seul JOIN
+    // Utilisé par trouverParId() pour éviter les lazy loads dans le mapper et les notifications WebSocket
+    @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
+    Optional<Affectation> findByIdWithAssociations(UUID id);
+
     @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
     List<Affectation> findByBenevoleId(UUID benevoleId);
 
@@ -61,4 +66,11 @@ public interface AffectationRepository extends JpaRepository<Affectation, UUID> 
     // Compte les affectations d'une mission par statut (utilisé dans le dashboard pour le taux de remplissage par mission)
     @Query(value = "SELECT COUNT(a.id) FROM affectation a JOIN creneau c ON a.creneau_id = c.id WHERE c.mission_id = :missionId AND a.statut = :statut", nativeQuery = true)
     long countParMissionEtStatut(@Param("missionId") UUID missionId, @Param("statut") String statut);
+
+    // Retourne le compte d'affectations par mission en une seule requête GROUP BY.
+    // Remplace N appels à countParMissionEtStatut() dans DashboardService.snapshot()
+    // pour éviter le problème N+1 (1 requête COUNT par mission → 1 requête groupée).
+    // Retourne des Object[] : [0] = UUID de la mission, [1] = Long count.
+    @Query("SELECT c.mission.id, COUNT(a) FROM Affectation a JOIN a.creneau c WHERE c.mission.id IN :missionIds AND a.statut = :statut GROUP BY c.mission.id")
+    List<Object[]> countParMissionsGrouped(@Param("missionIds") List<UUID> missionIds, @Param("statut") StatutAffectation statut);
 }

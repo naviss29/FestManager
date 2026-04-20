@@ -53,6 +53,12 @@ export class OrganisationsListeComponent implements OnInit {
       .subscribe({ next: p => { this.organisations = p.content; this.totalElements = p.totalElements; this.chargement = false; }, error: () => { this.chargement = false; } });
   }
 
+  onFiltreTypeChange(valeur: TypeOrganisation | ''): void {
+    this.filtreType = valeur;
+    this.pageIndex = 0;
+    this.charger();
+  }
+
   onPage(e: PageEvent): void { this.pageIndex = e.pageIndex; this.pageSize = e.pageSize; this.charger(); }
 
   ouvrirFormulaire(org?: Organisation): void {

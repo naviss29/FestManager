@@ -8,6 +8,7 @@
 ![Angular](https://img.shields.io/badge/Angular-21-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
 ![Tests](https://img.shields.io/badge/tests-153%20passing-brightgreen)
+![N+1 Free](https://img.shields.io/badge/N%2B1-éliminé-brightgreen)
 ![Swagger](https://img.shields.io/badge/API-Swagger%20OpenAPI%203-85EA2D)
 ![RGPD](https://img.shields.io/badge/RGPD-conforme-green)
 
@@ -40,14 +41,16 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Fonctionnalité | Statut |
 |---|---|
 | Authentification JWT (login + inscription) | ✅ |
-| Gestion des événements (CRUD) | ✅ |
-| Gestion des missions et créneaux | ✅ |
+| Récupération de mot de passe (token email, durée 1h) | ✅ |
+| Gestion des événements (CRUD + bannière) | ✅ |
+| Gestion des missions et créneaux horaires (CRUD) | ✅ |
 | Inscription bénévoles (3 flux : libre, manuelle, invitation email) | ✅ |
 | Affectation bénévoles avec contrôle des conflits horaires | ✅ |
 | Tableau de bord temps réel (WebSocket STOMP) | ✅ |
 | Gestion des organisations prestataires + espace référent | ✅ |
 | Journal d'audit RGPD | ✅ |
 | Accréditations avec génération de QR code | ✅ |
+| Badges PDF (A6 paysage, photo, QR code, zones d'accès) + export ZIP | ✅ |
 | Export planning CSV et PDF | ✅ |
 | Notifications email (confirmation affectation, invitation, rappel) | ✅ |
 | Anonymisation automatique RGPD (job nocturne, Art. 17) | ✅ |
@@ -239,7 +242,7 @@ npm test -- --watch=false
 - [x] Phase 2 — Core features (CRUD complet, affectations, WebSocket, auth)
 - [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
 - [x] Phase 4 — Finalisation (Swagger ✅, déploiement Railway ✅, diagramme architecture ✅, README screenshots ✅)
-- [ ] Phase 5 — Gestion des comptes (portail inscription public ✅, validation admin ✅, stockage fichiers ✅, mot de passe oublié 🔜, créneaux missions 🔜)
+- [x] Phase 5 — Gestion des comptes (portail inscription public ✅, validation admin ✅, stockage fichiers ✅, mot de passe oublié ✅, créneaux horaires ✅)
 
 ---
 

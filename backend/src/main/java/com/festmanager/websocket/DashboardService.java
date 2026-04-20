@@ -16,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service WebSocket : pousse les mises à jour du dashboard
@@ -60,9 +62,16 @@ public class DashboardService {
         long nbBenevoles    = affectationRepository.countBenevolesDistinctsParEvenement(evenementId);
         double taux         = nbPlaces > 0 ? Math.round((double) nbConfirmes / nbPlaces * 1000.0) / 10.0 : 0.0;
 
-        // Réutilisation de la liste déjà chargée pour les stats détaillées par mission
+        // Pré-calcul des counts confirmés par mission en une seule requête GROUP BY
+        // (évite le N+1 : avant = 1 COUNT SQL par mission, maintenant = 1 requête pour toutes)
+        List<UUID> missionIds = missions.stream().map(Mission::getId).toList();
+        Map<UUID, Long> confirmesParMission = affectationRepository
+                .countParMissionsGrouped(missionIds, StatutAffectation.CONFIRME)
+                .stream()
+                .collect(Collectors.toMap(row -> (UUID) row[0], row -> (Long) row[1]));
+
         List<DashboardSnapshotResponse.MissionStat> statsParMission = missions.stream()
-                .map(this::missionStat)
+                .map(m -> missionStat(m, confirmesParMission.getOrDefault(m.getId(), 0L)))
                 .toList();
 
         DashboardSnapshotResponse snapshot = new DashboardSnapshotResponse();
@@ -83,18 +92,15 @@ public class DashboardService {
 
     /**
      * Calcule les statistiques d'une mission individuelle pour le dashboard.
-     *
-     * mission.getCreneaux() est safe ici car findByEvenementId() charge les créneaux
-     * via @EntityGraph — aucune requête supplémentaire n'est déclenchée.
+     * Le paramètre confirmes est pré-calculé en amont par countParMissionsGrouped()
+     * pour éviter le N+1 (avant : 1 COUNT SQL par mission).
      */
-    private DashboardSnapshotResponse.MissionStat missionStat(Mission mission) {
+    private DashboardSnapshotResponse.MissionStat missionStat(Mission mission, long confirmes) {
         // Les créneaux sont déjà chargés en mémoire (JOIN FETCH dans le repository)
-        long places    = mission.getCreneaux() != null
+        long places = mission.getCreneaux() != null
             ? mission.getCreneaux().stream().mapToLong(c -> c.getNbBenevolesRequis()).sum()
             : 0;
-        // Cette requête COUNT est exécutée par mission — acceptable car c'est un COUNT léger en base
-        long confirmes = affectationRepository.countParMissionEtStatut(mission.getId(), StatutAffectation.CONFIRME.name());
-        double taux    = places > 0 ? Math.round((double) confirmes / places * 1000.0) / 10.0 : 0.0;
+        double taux = places > 0 ? Math.round((double) confirmes / places * 1000.0) / 10.0 : 0.0;
 
         DashboardSnapshotResponse.MissionStat stat = new DashboardSnapshotResponse.MissionStat();
         stat.setMissionId(mission.getId());

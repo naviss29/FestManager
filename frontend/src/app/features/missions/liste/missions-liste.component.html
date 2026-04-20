@@ -22,7 +22,7 @@
 
   <!-- Filtre catégorie -->
   <mat-card class="filtre-card" *ngIf="evenementSelectionne">
-    <mat-button-toggle-group [(ngModel)]="filtreCategorie" (change)="pageIndex=0; charger()">
+    <mat-button-toggle-group [ngModel]="filtreCategorie" (ngModelChange)="onFiltreCategorieChange($event)">
       <mat-button-toggle *ngFor="let cat of categoriesSuggestions" [value]="cat">
         {{ cat || 'Toutes' }}
       </mat-button-toggle>

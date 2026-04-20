@@ -7,7 +7,7 @@
   </div>
 
   <mat-card class="filtre-card">
-    <mat-button-toggle-group [(ngModel)]="filtreType" (change)="pageIndex=0; charger()">
+    <mat-button-toggle-group [ngModel]="filtreType" (ngModelChange)="onFiltreTypeChange($event)">
       <mat-button-toggle *ngFor="let opt of typeOptions" [value]="opt.valeur">{{ opt.label }}</mat-button-toggle>
     </mat-button-toggle-group>
   </mat-card>

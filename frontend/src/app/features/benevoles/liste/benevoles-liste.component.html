@@ -20,7 +20,7 @@
   </div>
 
   <mat-card class="filtre-card">
-    <mat-button-toggle-group [(ngModel)]="filtreStatut" (change)="pageIndex=0; charger()">
+    <mat-button-toggle-group [ngModel]="filtreStatut" (ngModelChange)="onFiltreStatutChange($event)">
       <mat-button-toggle *ngFor="let opt of statutOptions" [value]="opt.valeur">{{ opt.label }}</mat-button-toggle>
     </mat-button-toggle-group>
   </mat-card>

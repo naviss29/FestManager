@@ -59,6 +59,12 @@ export class BenevolesListeComponent implements OnInit {
       });
   }
 
+  onFiltreStatutChange(valeur: StatutCompteBenevole | ''): void {
+    this.filtreStatut = valeur;
+    this.pageIndex = 0;
+    this.charger();
+  }
+
   onPage(e: PageEvent): void { this.pageIndex = e.pageIndex; this.pageSize = e.pageSize; this.charger(); }
 
   ouvrirCreation(mode: ModeCreation): void {

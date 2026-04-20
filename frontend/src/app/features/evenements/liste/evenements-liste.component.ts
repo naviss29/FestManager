@@ -60,6 +60,12 @@ export class EvenementsListeComponent implements OnInit {
     });
   }
 
+  onFiltreStatutChange(valeur: StatutEvenement | ''): void {
+    this.filtreStatut = valeur;
+    this.pageIndex = 0;
+    this.charger();
+  }
+
   onPage(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
