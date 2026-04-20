@@ -1,0 +1,96 @@
+<h2 mat-dialog-title>
+  <mat-icon>schedule</mat-icon>
+  Créneaux — {{ data.mission.nom }}
+</h2>
+
+<mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="chargement"></mat-progress-bar>
+
+  <!-- Tableau des créneaux existants -->
+  <table mat-table [dataSource]="creneaux" class="full-width" *ngIf="creneaux.length > 0">
+
+    <ng-container matColumnDef="debut">
+      <th mat-header-cell *matHeaderCellDef>Début</th>
+      <td mat-cell *matCellDef="let c">{{ formatDate(c.debut) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fin">
+      <th mat-header-cell *matHeaderCellDef>Fin</th>
+      <td mat-cell *matCellDef="let c">{{ formatDate(c.fin) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="benevoles">
+      <th mat-header-cell *matHeaderCellDef>Bénévoles</th>
+      <td mat-cell *matCellDef="let c">
+        <mat-chip [color]="c.nbBenevolesAffectes >= c.nbBenevolesRequis ? 'primary' : 'warn'" highlighted>
+          {{ c.nbBenevolesAffectes }} / {{ c.nbBenevolesRequis }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let c">
+        <button mat-icon-button (click)="ouvrirFormulaire(c)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="supprimer(c)" matTooltip="Supprimer" color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+    <tr mat-row *matRowDef="let row; columns: colonnes;"></tr>
+  </table>
+
+  <p class="vide" *ngIf="creneaux.length === 0 && !chargement">
+    Aucun créneau. Ajoutez-en un ci-dessous.
+  </p>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <!-- Bouton d'ajout -->
+  <button mat-stroked-button color="primary" *ngIf="!formulaireVisible"
+          (click)="ouvrirFormulaire()" class="btn-ajouter">
+    <mat-icon>add</mat-icon> Ajouter un créneau
+  </button>
+
+  <!-- Formulaire inline ajout / édition -->
+  <form *ngIf="formulaireVisible" [formGroup]="form" (ngSubmit)="soumettre()" class="form-creneau">
+    <h3>{{ creneauEnEdition ? 'Modifier le créneau' : 'Nouveau créneau' }}</h3>
+
+    <div class="row-2col">
+      <mat-form-field appearance="outline">
+        <mat-label>Début</mat-label>
+        <input matInput type="datetime-local" formControlName="debut" />
+        <mat-error *ngIf="form.get('debut')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fin</mat-label>
+        <input matInput type="datetime-local" formControlName="fin" />
+        <mat-error *ngIf="form.get('fin')?.hasError('required')">Obligatoire</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Bénévoles requis</mat-label>
+      <input matInput type="number" formControlName="nbBenevolesRequis" min="1" />
+      <mat-icon matPrefix>people</mat-icon>
+      <mat-error *ngIf="form.get('nbBenevolesRequis')?.hasError('min')">Minimum 1</mat-error>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-button type="button" (click)="annulerFormulaire()">Annuler</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        {{ creneauEnEdition ? 'Enregistrer' : 'Ajouter' }}
+      </button>
+    </div>
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="fermer()">Fermer</button>
+</mat-dialog-actions>

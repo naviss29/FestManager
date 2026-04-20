@@ -19,6 +19,22 @@ export interface Mission {
   createdAt: string;
 }
 
+export interface Creneau {
+  id: string;
+  missionId: string;
+  missionNom: string;
+  debut: string;
+  fin: string;
+  nbBenevolesRequis: number;
+  nbBenevolesAffectes: number;
+}
+
+export interface CreneauRequest {
+  debut: string;
+  fin: string;
+  nbBenevolesRequis: number;
+}
+
 export interface MissionRequest {
   nom: string;
   description?: string;

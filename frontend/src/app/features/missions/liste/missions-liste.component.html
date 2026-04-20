@@ -77,6 +77,10 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="gererCreneaux(m)">
+              <mat-icon>schedule</mat-icon> Gérer les créneaux
+            </button>
+            <mat-divider></mat-divider>
             <button mat-menu-item (click)="ouvrirFormulaire(m)">
               <mat-icon>edit</mat-icon> Modifier
             </button>

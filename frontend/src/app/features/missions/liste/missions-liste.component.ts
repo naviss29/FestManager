@@ -5,6 +5,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MissionService } from '../services/mission.service';
 import { Mission, CATEGORIES_SUGGESTIONS } from '../models/mission.model';
 import { MissionFormulaireComponent } from '../formulaire/mission-formulaire.component';
+import { GestionCreneauxComponent } from '../gestion-creneaux/gestion-creneaux.component';
 import { EvenementService } from '../../evenements/services/evenement.service';
 import { Evenement } from '../../evenements/models/evenement.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -99,6 +100,13 @@ export class MissionsListeComponent implements OnInit {
         this.snackBar.open('Mission supprimée', 'Fermer', { duration: 2000 });
         this.charger();
       }
+    });
+  }
+
+  gererCreneaux(mission: Mission): void {
+    this.dialog.open(GestionCreneauxComponent, {
+      width: '720px',
+      data: { mission }
     });
   }
 

@@ -1,0 +1,39 @@
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  mat-icon { color: #1a237e; }
+}
+
+.full-width { width: 100%; }
+.half-width { width: 280px; }
+
+.vide {
+  text-align: center;
+  color: #888;
+  padding: 16px 0;
+}
+
+.divider { margin: 16px 0; }
+
+.btn-ajouter { margin-top: 8px; }
+
+.form-creneau {
+  margin-top: 16px;
+  h3 { margin: 0 0 16px; font-size: 1rem; color: #1a237e; }
+}
+
+.row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+mat-table { margin-bottom: 8px; }

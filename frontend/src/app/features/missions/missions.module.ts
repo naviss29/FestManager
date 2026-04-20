@@ -21,9 +21,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MissionsListeComponent } from './liste/missions-liste.component';
 import { MissionFormulaireComponent } from './formulaire/mission-formulaire.component';
+import { GestionCreneauxComponent } from './gestion-creneaux/gestion-creneaux.component';
 
 const routes: Routes = [
   { path: '', component: MissionsListeComponent }
@@ -32,7 +34,8 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     MissionsListeComponent,
-    MissionFormulaireComponent
+    MissionFormulaireComponent,
+    GestionCreneauxComponent
   ],
   imports: [
     CommonModule,
@@ -56,7 +59,8 @@ const routes: Routes = [
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDividerModule
+    MatDividerModule,
+    MatTooltipModule
   ]
 })
 export class MissionsModule {}
