@@ -15,6 +15,7 @@ import java.util.UUID;
 @Repository
 public interface CreneauRepository extends JpaRepository<Creneau, UUID> {
 
+
     @EntityGraph(attributePaths = {"mission"})
     List<Creneau> findByMissionId(UUID missionId);
 
