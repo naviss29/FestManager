@@ -20,8 +20,9 @@ public interface AffectationRepository extends JpaRepository<Affectation, UUID> 
     // (sans ça, Hibernate ferait 1 requête par association accédée dans la boucle).
     // Charge toute la chaîne d'associations en un seul JOIN
     // Utilisé par trouverParId() pour éviter les lazy loads dans le mapper et les notifications WebSocket
+    @Query("SELECT a FROM Affectation a WHERE a.id = :id")
     @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
-    Optional<Affectation> findByIdWithAssociations(UUID id);
+    Optional<Affectation> findByIdWithAssociations(@Param("id") UUID id);
 
     @EntityGraph(attributePaths = {"benevole", "creneau", "creneau.mission", "creneau.mission.evenement"})
     List<Affectation> findByBenevoleId(UUID benevoleId);

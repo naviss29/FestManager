@@ -21,8 +21,9 @@ public interface CreneauRepository extends JpaRepository<Creneau, UUID> {
 
     // Charge mission + evenement en un seul JOIN pour éviter les lazy loads chaînés
     // dans AffectationService.affecter() (vérification conflits horaires et multi-affectation)
+    @Query("SELECT c FROM Creneau c WHERE c.id = :id")
     @EntityGraph(attributePaths = {"mission", "mission.evenement"})
-    Optional<Creneau> findByIdWithMissionAndEvenement(UUID id);
+    Optional<Creneau> findByIdWithMissionAndEvenement(@Param("id") UUID id);
 
     // Recherche les chevauchements horaires pour un bénévole sur un événement donné
     @Query(value = """
