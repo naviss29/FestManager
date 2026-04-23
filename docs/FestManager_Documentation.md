@@ -1,9 +1,9 @@
 # FestManager — Documentation du projet
 
-> Version : 0.7  
+> Version : 0.8  
 > Auteur : Alan  
 > Date : Avril 2026  
-> Statut : **Phase 5 complète**
+> Statut : **Phase 6 en cours — pipeline de recette**
 
 ---
 
@@ -18,6 +18,7 @@
 | 0.5 | Avril 2026 | Phase 3 complète — QR codes, dashboard, exports, RGPD, email, mentions légales |
 | 0.6 | Avril 2026 | Phase 5 — Portail inscription public, validation admin, stockage fichiers (photos/bannières) |
 | 0.7 | Avril 2026 | Phase 5 terminée — Reset mot de passe, créneaux horaires CRUD, élimination N+1 dashboard/affectations |
+| 0.8 | Avril 2026 | Phase 6 — Pipeline de recette : branche develop, deploy staging automatique, approbation manuelle prod |
 
 ---
 
@@ -57,7 +58,7 @@ Ce projet est né d'un besoin terrain identifié par son créateur, président d
 | Temps réel | WebSocket (STOMP over SockJS) | Mise à jour live des affectations sans polling |
 | Auth | Spring Security + JWT | Standard industriel |
 | Containerisation | Docker + Docker Compose | Déploiement simplifié, démo facilement reproductible |
-| CI/CD | GitHub Actions | Intégration native GitHub, gratuit pour projets publics |
+| CI/CD | GitHub Actions | CI (tests) + pipeline de recette (staging auto / prod sur approbation) |
 | Hébergement démo | Railway ou Render | Gratuit pour démo recruteur |
 | Tests backend | JUnit 5 + Mockito | Standard Spring Boot |
 | Tests frontend | Jasmine + Karma | Standard Angular |
@@ -511,10 +512,10 @@ festmanager-frontend/
 
 ### Git
 
-- Branche principale : `main` (toujours stable et déployable)
-- Branche de développement : `develop`
-- Branches de fonctionnalités : `feature/nom-de-la-feature`
-- Chaque feature est mergée via Pull Request avec description
+- Branche principale : `main` (toujours stable, déployable — protégée)
+- Branche de développement : `develop` → déploiement automatique en staging après CI vert
+- Branches de fonctionnalités : `feature/nom-de-la-feature` → mergées dans `develop` via PR
+- `develop` → `main` uniquement via PR + CI vert + approbation manuelle → déclenche le déploiement production
 - Commits en français, conventionnels : `feat:`, `fix:`, `docs:`, `refactor:`
 
 ### Validation
@@ -675,8 +676,52 @@ Cette URL ne transite pas par le CDN Railway — la communication reste interne 
 | T05-06 | Élimination N+1 : dashboard (batch GROUP BY), affectations (EntityGraph chaîné) | ✅ Validé |
 | T05-07 | Fix filtre Angular (ngModelChange) sur toutes les pages de liste | ✅ Validé |
 
+### Phase 6 — Pipeline de recette
+
+| ID | Tâche | Statut |
+|---|---|---|
+| T06-01 | Créer la branche `develop` | ✅ Validé |
+| T06-02 | Workflow `deploy.yml` : staging auto sur CI vert de `develop` | ✅ Validé |
+| T06-03 | Workflow `deploy.yml` : production sur approbation manuelle (GitHub Environment) | ✅ Validé |
+| T06-04 | Configurer Railway staging environment + désactiver auto-deploy | ⏳ En attente |
+| T06-05 | Configurer GitHub secrets (`RAILWAY_TOKEN`) et variables de service | ⏳ En attente |
+| T06-06 | Activer la protection de branche `main` (CI requis + approbation PR) | ⏳ En attente |
+
 ---
 
-## 12. Prochaine étape immédiate
+## 12. Pipeline de recette
 
-> **Phase 5 complète. Projet portfolio terminé.**
+### Architecture
+
+```
+feature/* ──► develop ──[CI vert]──► staging (auto)
+                                         │
+                                    validation
+                                         │
+develop ──► PR ──► main ──[CI vert + approbation]──► production
+```
+
+### Composants
+
+| Composant | Rôle |
+|---|---|
+| `.github/workflows/ci.yml` | Build + tests backend (Maven) et frontend (Angular) sur push/PR |
+| `.github/workflows/deploy.yml` | Déploiement conditionnel via Railway CLI, déclenché après CI |
+| GitHub Environment `staging` | Aucune protection — déploiement automatique |
+| GitHub Environment `production` | Approbation manuelle requise — protège la prod pendant les présentations |
+| Railway environment `staging` | Services liés à `develop`, auto-deploy Railway désactivé |
+| Railway environment `production` | Services liés à `main`, auto-deploy Railway désactivé |
+
+### Secrets et variables GitHub requis
+
+| Type | Nom | Description |
+|---|---|---|
+| Secret | `RAILWAY_TOKEN` | Token projet Railway (Settings → Tokens) |
+| Variable | `RAILWAY_BACKEND_SERVICE` | Nom du service backend dans Railway |
+| Variable | `RAILWAY_FRONTEND_SERVICE` | Nom du service frontend dans Railway |
+
+---
+
+## 13. Prochaine étape immédiate
+
+> Finaliser la configuration Railway (environment staging) et GitHub (secrets, branch protection).

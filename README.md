@@ -2,7 +2,7 @@
 
 > Application web de gestion de bénévoles et de logistique pour festivals et événements culturels.
 
-![Status](https://img.shields.io/badge/status-Phase%205%20en%20cours-orange)
+![Status](https://img.shields.io/badge/status-Phase%206%20pipeline%20recette-blue)
 ![Java](https://img.shields.io/badge/Java-17-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
 ![Angular](https://img.shields.io/badge/Angular-21-red)
@@ -143,8 +143,8 @@ FestManager/
 | Email | Spring Boot Mail (SMTP, async) |
 | Documentation API | springdoc-openapi 2.8.3 (OpenAPI 3) |
 | Containerisation | Docker + Docker Compose |
-| Déploiement | Railway |
-| CI/CD | GitHub Actions |
+| Déploiement | Railway (staging + production) |
+| CI/CD | GitHub Actions (CI + pipeline de recette) |
 
 ---
 
@@ -243,6 +243,7 @@ npm test -- --watch=false
 - [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
 - [x] Phase 4 — Finalisation (Swagger ✅, déploiement Railway ✅, diagramme architecture ✅, README screenshots ✅)
 - [x] Phase 5 — Gestion des comptes (portail inscription public ✅, validation admin ✅, stockage fichiers ✅, mot de passe oublié ✅, créneaux horaires ✅)
+- [ ] Phase 6 — Pipeline de recette (branche `develop` ✅, deploy staging auto ✅, approbation manuelle prod ✅)
 
 ---
 
