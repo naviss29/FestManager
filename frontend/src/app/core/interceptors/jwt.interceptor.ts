@@ -17,12 +17,15 @@ export class JwtInterceptor implements HttpInterceptor {
       : req;
 
     // Angular 21 + provideBrowserGlobalErrorListeners() exécute les callbacks
-    // RxJS hors de la zone Angular — on force le retour dans la zone pour que
-    // les mises à jour de propriétés déclenchent bien la détection de changements
-    return new Observable(observer =>
-      this.ngZone.run(() =>
-        next.handle(requete).subscribe(observer)
-      )
-    );
+    // XHR hors de la zone Angular. On réinjecte chaque émission dans la zone
+    // pour que les mises à jour de propriétés déclenchent le change detection.
+    return new Observable(observer => {
+      const sub = next.handle(requete).subscribe({
+        next:     v  => this.ngZone.run(() => observer.next(v)),
+        error:    e  => this.ngZone.run(() => observer.error(e)),
+        complete: () => this.ngZone.run(() => observer.complete())
+      });
+      return () => sub.unsubscribe();
+    });
   }
 }
