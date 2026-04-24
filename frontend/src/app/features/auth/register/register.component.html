@@ -55,7 +55,10 @@
           Les suivants sont en attente de validation par l'administrateur.
         </p>
 
-        <mat-error *ngIf="erreur" class="erreur-globale">{{ erreur }}</mat-error>
+        <div *ngIf="erreur" class="erreur-globale">
+          <mat-icon>error_outline</mat-icon>
+          {{ erreur }}
+        </div>
 
         <button mat-raised-button color="primary" type="submit"
                 class="full-width" [disabled]="form.invalid || chargement">

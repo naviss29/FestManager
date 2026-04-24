@@ -28,7 +28,10 @@
           <mat-error *ngIf="form.get('password')?.hasError('required')">Le mot de passe est obligatoire</mat-error>
         </mat-form-field>
 
-        <mat-error *ngIf="erreur" class="erreur-globale">{{ erreur }}</mat-error>
+        <div *ngIf="erreur" class="erreur-globale">
+          <mat-icon>error_outline</mat-icon>
+          {{ erreur }}
+        </div>
 
         <button mat-raised-button color="primary" type="submit"
                 class="full-width" [disabled]="form.invalid || chargement">

@@ -24,9 +24,14 @@
 }
 
 .erreur-globale {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 12px;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
+  color: #f44336;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
 }
 
 button[type="submit"] {
