@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -24,7 +25,8 @@ export class ResetMotDePasseComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       nouveauMotDePasse: ['', [Validators.required, Validators.minLength(8)]],
@@ -42,13 +44,14 @@ export class ResetMotDePasseComponent implements OnInit {
     this.chargement = true;
     this.erreur = null;
 
-    this.authService.resetMotDePasse(this.token, this.form.value.nouveauMotDePasse).subscribe({
-      next: () => { this.succes = true; this.chargement = false; },
+    this.authService.resetMotDePasse(this.token, this.form.value.nouveauMotDePasse).pipe(
+      finalize(() => { this.chargement = false; this.cdr.detectChanges(); })
+    ).subscribe({
+      next: () => { this.succes = true; },
       error: (err) => {
         this.erreur = err.status === 400
           ? 'Ce lien est invalide ou a expiré. Faites une nouvelle demande.'
           : 'Une erreur est survenue. Veuillez réessayer.';
-        this.chargement = false;
       }
     });
   }

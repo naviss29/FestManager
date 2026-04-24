@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -27,7 +27,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       email:        ['', [Validators.required, Validators.email]],
@@ -45,7 +46,7 @@ export class RegisterComponent {
       email:    this.form.value.email,
       password: this.form.value.password
     }).pipe(
-      finalize(() => this.chargement = false)
+      finalize(() => { this.chargement = false; this.cdr.detectChanges(); })
     ).subscribe({
       next: response => {
         if (response.enAttenteValidation) {

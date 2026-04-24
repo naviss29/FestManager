@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -15,7 +16,11 @@ export class MotDePasseOublieComponent {
   succes = false;
   erreur: string | null = null;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
@@ -26,11 +31,12 @@ export class MotDePasseOublieComponent {
     this.chargement = true;
     this.erreur = null;
 
-    this.authService.motDePasseOublie(this.form.value.email).subscribe({
-      next: () => { this.succes = true; this.chargement = false; },
+    this.authService.motDePasseOublie(this.form.value.email).pipe(
+      finalize(() => { this.chargement = false; this.cdr.detectChanges(); })
+    ).subscribe({
+      next: () => { this.succes = true; },
       error: () => {
         this.erreur = 'Une erreur est survenue. Veuillez réessayer.';
-        this.chargement = false;
       }
     });
   }

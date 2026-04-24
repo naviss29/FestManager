@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -19,7 +20,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -33,13 +35,14 @@ export class LoginComponent {
     this.chargement = true;
     this.erreur = null;
 
-    this.authService.login(this.form.value).subscribe({
+    this.authService.login(this.form.value).pipe(
+      finalize(() => { this.chargement = false; this.cdr.detectChanges(); })
+    ).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.erreur = err.status === 403
           ? 'Votre compte est en attente de validation par un administrateur.'
           : 'Email ou mot de passe incorrect.';
-        this.chargement = false;
       }
     });
   }
