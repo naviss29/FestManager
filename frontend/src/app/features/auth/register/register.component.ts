@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 function motsDePasseIdentiques(control: AbstractControl): ValidationErrors | null {
@@ -43,18 +44,18 @@ export class RegisterComponent {
     this.authService.register({
       email:    this.form.value.email,
       password: this.form.value.password
-    }).subscribe({
+    }).pipe(
+      finalize(() => this.chargement = false)
+    ).subscribe({
       next: response => {
         if (response.enAttenteValidation) {
           this.enAttenteValidation = true;
-          this.chargement = false;
         } else {
           this.router.navigate(['/dashboard']);
         }
       },
       error: err => {
         this.erreur = err.error?.detail ?? err.error?.message ?? 'Erreur lors de la création du compte.';
-        this.chargement = false;
       }
     });
   }
