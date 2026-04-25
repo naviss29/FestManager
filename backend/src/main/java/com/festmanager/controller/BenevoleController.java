@@ -1,6 +1,9 @@
 package com.festmanager.controller;
 
 import com.festmanager.dto.BenevoleInvitationRequest;
+import com.festmanager.dto.BenevoleProfilDemandeRequest;
+import com.festmanager.dto.BenevoleProfilResponse;
+import com.festmanager.dto.BenevoleProfilUpdateRequest;
 import com.festmanager.dto.BenevoleRequest;
 import com.festmanager.dto.BenevoleResponse;
 import com.festmanager.entity.enums.StatutCompteBenevole;
@@ -125,5 +128,43 @@ public class BenevoleController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void anonymiser(@PathVariable UUID id, HttpServletRequest request) {
         benevoleService.anonymiser(id, request.getRemoteAddr());
+    }
+
+    // --- Profil bénévole en auto-édition (magic link, endpoints publics) ---
+
+    @Operation(summary = "Demander un lien de modification de profil",
+               description = "Envoie un lien magique valable 24h à l'email fourni. Répond toujours 200 (anti-énumération).")
+    @SecurityRequirements
+    @PostMapping("/profil/demander-lien")
+    public ResponseEntity<Void> demanderLienProfil(@Valid @RequestBody BenevoleProfilDemandeRequest request) {
+        benevoleService.demanderLienProfil(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Consulter son profil via lien magique")
+    @SecurityRequirements
+    @GetMapping("/profil/{token}")
+    public ResponseEntity<BenevoleProfilResponse> obtenirProfil(@PathVariable String token) {
+        return ResponseEntity.ok(benevoleService.obtenirProfilParToken(token));
+    }
+
+    @Operation(summary = "Modifier son profil via lien magique",
+               description = "Champs éditables : taille t-shirt, téléphone, compétences, disponibilités.")
+    @SecurityRequirements
+    @PutMapping("/profil/{token}")
+    public ResponseEntity<BenevoleProfilResponse> modifierProfil(
+            @PathVariable String token,
+            @Valid @RequestBody BenevoleProfilUpdateRequest request) {
+        return ResponseEntity.ok(benevoleService.modifierProfilParToken(token, request));
+    }
+
+    @Operation(summary = "Uploader sa photo de profil (self-service)",
+               description = "Le bénévole uploade sa propre photo via son token de session. Utilisée pour le badge.")
+    @SecurityRequirements
+    @PostMapping(value = "/profil/{token}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BenevoleProfilResponse> uploadPhotoProfil(
+            @PathVariable String token,
+            @RequestParam("fichier") MultipartFile fichier) {
+        return ResponseEntity.ok(benevoleService.sauvegarderPhotoParToken(token, fichier));
     }
 }

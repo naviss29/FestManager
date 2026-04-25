@@ -49,6 +49,9 @@ public class Utilisateur implements UserDetails {
     @Column(name = "derniere_connexion")
     private LocalDateTime derniereConnexion;
 
+    @Column(name = "google_id", unique = true, length = 255)
+    private String googleId;
+
     @Column(name = "reset_token", length = 255)
     private String resetToken;
 

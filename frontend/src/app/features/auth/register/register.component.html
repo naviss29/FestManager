@@ -69,6 +69,17 @@
       </form>
     </mat-card-content>
 
+    <mat-card-content *ngIf="!enAttenteValidation">
+      <ng-container *ngIf="googleDisponible">
+        <div class="separateur">
+          <span>ou s'inscrire avec</span>
+        </div>
+        <div #googleBtn class="google-btn-wrapper">
+          <mat-spinner *ngIf="chargementGoogle" diameter="24"></mat-spinner>
+        </div>
+      </ng-container>
+    </mat-card-content>
+
     <mat-card-actions *ngIf="!enAttenteValidation">
       <a mat-button routerLink="/auth/login">Déjà un compte ? Se connecter</a>
     </mat-card-actions>

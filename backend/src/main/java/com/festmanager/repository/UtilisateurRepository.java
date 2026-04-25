@@ -18,5 +18,7 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, UUID> 
 
     Page<Utilisateur> findByActif(boolean actif, Pageable pageable);
 
+    Optional<Utilisateur> findByGoogleId(String googleId);
+
     Optional<Utilisateur> findByResetToken(String resetToken);
 }

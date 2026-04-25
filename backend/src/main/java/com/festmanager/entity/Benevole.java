@@ -76,6 +76,13 @@ public class Benevole {
     @Column(name = "photo_url", length = 500)
     private String photoUrl;
 
+    /** Token de lien magique pour l'auto-édition du profil (valable 24h). */
+    @Column(name = "profil_token", unique = true, length = 255)
+    private String profilToken;
+
+    @Column(name = "profil_token_expiry")
+    private LocalDateTime profilTokenExpiry;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

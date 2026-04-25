@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
@@ -40,7 +40,8 @@ export class BenevolesListeComponent implements OnInit {
     private benevoleService: BenevoleService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -54,8 +55,8 @@ export class BenevolesListeComponent implements OnInit {
     this.chargement = true;
     this.benevoleService.lister(this.pageIndex, this.pageSize, this.filtreStatut || undefined)
       .subscribe({
-        next: p => { this.benevoles = p.content; this.totalElements = p.totalElements; this.chargement = false; },
-        error: () => { this.chargement = false; }
+        next: p => { this.benevoles = p.content; this.totalElements = p.totalElements; this.chargement = false; this.cdr.detectChanges(); },
+        error: () => { this.chargement = false; this.cdr.detectChanges(); }
       });
   }
 

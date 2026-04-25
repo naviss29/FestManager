@@ -31,7 +31,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let c">
-        <button mat-icon-button (click)="ouvrirFormulaire(c)" matTooltip="Modifier">
+        <button mat-icon-button (click)="ouvrirEdition(c)" matTooltip="Modifier">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button (click)="supprimer(c)" matTooltip="Supprimer" color="warn">
@@ -45,46 +45,88 @@
   </table>
 
   <p class="vide" *ngIf="creneaux.length === 0 && !chargement">
-    Aucun créneau. Ajoutez-en un ci-dessous.
+    Aucun créneau. Ajoutez-en ci-dessous.
   </p>
 
   <mat-divider class="divider"></mat-divider>
 
-  <!-- Bouton d'ajout -->
   <button mat-stroked-button color="primary" *ngIf="!formulaireVisible"
-          (click)="ouvrirFormulaire()" class="btn-ajouter">
-    <mat-icon>add</mat-icon> Ajouter un créneau
+          (click)="ouvrirAjout()" class="btn-ajouter">
+    <mat-icon>add</mat-icon> Ajouter des créneaux
   </button>
 
-  <!-- Formulaire inline ajout / édition -->
-  <form *ngIf="formulaireVisible" [formGroup]="form" (ngSubmit)="soumettre()" class="form-creneau">
-    <h3>{{ creneauEnEdition ? 'Modifier le créneau' : 'Nouveau créneau' }}</h3>
+  <!-- Formulaire ajout (batch) / édition (single) -->
+  <form *ngIf="formulaireVisible" (ngSubmit)="soumettre()" class="form-creneau">
+    <h3>{{ creneauEnEdition ? 'Modifier le créneau' : 'Nouveaux créneaux' }}</h3>
 
-    <div class="row-2col">
-      <mat-form-field appearance="outline">
-        <mat-label>Début</mat-label>
-        <input matInput type="datetime-local" formControlName="debut" />
-        <mat-error *ngIf="form.get('debut')?.hasError('required')">Obligatoire</mat-error>
-      </mat-form-field>
+    <div *ngFor="let ligne of lignesArray; let i = index"
+         [formGroup]="ligne" class="ligne-creneau">
 
-      <mat-form-field appearance="outline">
-        <mat-label>Fin</mat-label>
-        <input matInput type="datetime-local" formControlName="fin" />
-        <mat-error *ngIf="form.get('fin')?.hasError('required')">Obligatoire</mat-error>
-      </mat-form-field>
+      <!-- Numéro + bouton suppression -->
+      <div class="ligne-header" *ngIf="!creneauEnEdition">
+        <span class="ligne-numero">Créneau {{ i + 1 }}</span>
+        <button mat-icon-button type="button" color="warn"
+                *ngIf="lignesArray.length > 1"
+                (click)="supprimerLigne(i)"
+                matTooltip="Supprimer cette ligne">
+          <mat-icon>remove_circle_outline</mat-icon>
+        </button>
+      </div>
+
+      <!-- Ligne 1 : dates et heures -->
+      <div class="ligne-datetimes">
+        <mat-form-field appearance="outline">
+          <mat-label>Date début</mat-label>
+          <input matInput [matDatepicker]="pickerDebut" formControlName="debutDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDebut></mat-datepicker>
+          <mat-error *ngIf="ligne.get('debutDate')?.hasError('required')">Obligatoire</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Heure début</mat-label>
+          <input matInput type="time" formControlName="debutHeure" />
+          <mat-error *ngIf="ligne.get('debutHeure')?.hasError('required')">Obligatoire</mat-error>
+        </mat-form-field>
+
+        <span class="separateur">→</span>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date fin</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="finDate" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+          <mat-error *ngIf="ligne.get('finDate')?.hasError('required')">Obligatoire</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Heure fin</mat-label>
+          <input matInput type="time" formControlName="finHeure" />
+          <mat-error *ngIf="ligne.get('finHeure')?.hasError('required')">Obligatoire</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Ligne 2 : nombre de bénévoles -->
+      <div class="ligne-options">
+        <mat-form-field appearance="outline" class="champ-nb">
+          <mat-label>Bénévoles requis</mat-label>
+          <input matInput type="number" formControlName="nbBenevolesRequis" min="1" />
+          <mat-icon matPrefix>people</mat-icon>
+          <mat-error *ngIf="ligne.get('nbBenevolesRequis')?.hasError('min')">Minimum 1</mat-error>
+        </mat-form-field>
+      </div>
+
     </div>
 
-    <mat-form-field appearance="outline" class="half-width">
-      <mat-label>Bénévoles requis</mat-label>
-      <input matInput type="number" formControlName="nbBenevolesRequis" min="1" />
-      <mat-icon matPrefix>people</mat-icon>
-      <mat-error *ngIf="form.get('nbBenevolesRequis')?.hasError('min')">Minimum 1</mat-error>
-    </mat-form-field>
+    <button mat-button type="button" color="primary" *ngIf="!creneauEnEdition"
+            (click)="ajouterLigne()" class="btn-ajouter-ligne">
+      <mat-icon>add</mat-icon> Ajouter une ligne
+    </button>
 
     <div class="form-actions">
       <button mat-button type="button" (click)="annulerFormulaire()">Annuler</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-        {{ creneauEnEdition ? 'Enregistrer' : 'Ajouter' }}
+      <button mat-raised-button color="primary" type="submit" [disabled]="lignes.invalid">
+        {{ creneauEnEdition ? 'Enregistrer' : ('Ajouter ' + (lignesArray.length > 1 ? lignesArray.length + ' créneaux' : 'le créneau')) }}
       </button>
     </div>
   </form>

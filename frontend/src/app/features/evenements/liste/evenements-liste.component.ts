@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
@@ -37,7 +37,8 @@ export class EvenementsListeComponent implements OnInit {
     private evenementService: EvenementService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -55,8 +56,9 @@ export class EvenementsListeComponent implements OnInit {
         this.evenements = page.content;
         this.totalElements = page.totalElements;
         this.chargement = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DashboardSnapshot, DashboardEvent, LogEntry, MissionStat } from '../models/dashboard.model';
 import { DashboardRestService } from '../services/dashboard.service';
@@ -27,7 +27,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardService: DashboardRestService,
     private wsService: WebSocketService,
-    private evenementService: EvenementService
+    private evenementService: EvenementService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -47,8 +48,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chargerSnapshot(evenementId: string): void {
     this.chargement = true;
     this.dashboardService.snapshot(evenementId).subscribe({
-      next: data => { this.snapshot = data; this.chargement = false; },
-      error: () => { this.chargement = false; }
+      next: data => { this.snapshot = data; this.chargement = false; this.cdr.detectChanges(); },
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

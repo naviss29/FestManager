@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
@@ -39,7 +39,8 @@ export class MissionsListeComponent implements OnInit {
     private evenementService: EvenementService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -72,8 +73,9 @@ export class MissionsListeComponent implements OnInit {
         this.missions = page.content;
         this.totalElements = page.totalElements;
         this.chargement = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -111,7 +113,8 @@ export class MissionsListeComponent implements OnInit {
 
   gererCreneaux(mission: Mission): void {
     this.dialog.open(GestionCreneauxComponent, {
-      width: '720px',
+      width: '780px',
+      maxWidth: '95vw',
       data: { mission }
     });
   }

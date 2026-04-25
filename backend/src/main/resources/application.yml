@@ -40,6 +40,9 @@ app:
     dir: ./uploads
   frontend:
     url: http://localhost:4200
+  google:
+    # Client ID Google OAuth — obtenu sur console.cloud.google.com → APIs & Services → Credentials
+    client-id: ${GOOGLE_CLIENT_ID:}
   email:
     expediteur: noreply@festmanager.app
     nom-expediteur: FestManager

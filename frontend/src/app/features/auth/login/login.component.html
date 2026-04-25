@@ -1,11 +1,14 @@
 <div class="login-container">
   <mat-card class="login-card">
+
     <mat-card-header>
       <mat-card-title>FestManager</mat-card-title>
       <mat-card-subtitle>Connexion à votre espace</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
+
+      <!-- Formulaire email / mot de passe -->
       <form [formGroup]="form" (ngSubmit)="soumettre()">
 
         <mat-form-field appearance="outline" class="full-width">
@@ -33,19 +36,51 @@
           {{ erreur }}
         </div>
 
-        <button mat-raised-button color="primary" type="submit"
-                class="full-width" [disabled]="form.invalid || chargement">
+        <button mat-raised-button color="primary" type="submit" class="full-width"
+                [disabled]="form.invalid || chargement">
           <mat-spinner *ngIf="chargement" diameter="20"></mat-spinner>
           <span *ngIf="!chargement">Se connecter</span>
         </button>
 
       </form>
+
+      <!-- Séparateur -->
+      <div class="separateur"><span>ou</span></div>
+
+      <!-- Bouton Google -->
+      <div class="google-zone">
+        <ng-container *ngIf="googleClientIdConfigured; else googleNonConfigure">
+          <div #googleBtn class="google-btn-host">
+            <mat-spinner *ngIf="chargementGoogle" diameter="24"></mat-spinner>
+          </div>
+        </ng-container>
+        <ng-template #googleNonConfigure>
+          <div class="google-btn-placeholder">
+            <svg class="google-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#EA4335" d="M5.27 9.76A7.08 7.08 0 0 1 12 4.9c1.83 0 3.47.65 4.76 1.72l3.54-3.54A11.97 11.97 0 0 0 12 .96a12 12 0 0 0-10.74 6.65l4.01 3.15z"/>
+              <path fill="#34A853" d="M16.04 17.77A7.07 7.07 0 0 1 12 19.1a7.08 7.08 0 0 1-6.72-4.87L1.25 17.4A12 12 0 0 0 12 24a11.97 11.97 0 0 0 8.3-3.3l-4.26-2.93z"/>
+              <path fill="#4A90D9" d="M20.3 20.7A11.96 11.96 0 0 0 24 12c0-.7-.07-1.38-.19-2.04H12v4.56h6.7a5.77 5.77 0 0 1-2.46 3.72l4.06 2.46z"/>
+              <path fill="#FBBC05" d="M5.28 14.23a7.17 7.17 0 0 1 0-4.47L1.27 6.61A12.04 12.04 0 0 0 0 12c0 1.92.45 3.73 1.25 5.35l4.03-3.12z"/>
+            </svg>
+            <span>Se connecter avec Google</span>
+          </div>
+        </ng-template>
+      </div>
+
     </mat-card-content>
 
-    <mat-card-actions>
-      <a mat-button routerLink="/auth/register">Créer un compte organisateur</a>
-      <a mat-button routerLink="/inscription">Vous êtes bénévole ? S'inscrire</a>
-      <a mat-button routerLink="/auth/mot-de-passe-oublie" class="lien-oublie">Mot de passe oublié ?</a>
-    </mat-card-actions>
+    <!-- Liens secondaires -->
+    <mat-divider></mat-divider>
+    <div class="liens-footer">
+      <div class="liens-row">
+        <a mat-button routerLink="/auth/register">Créer un compte</a>
+        <a mat-button routerLink="/inscription">Bénévole ? S'inscrire</a>
+      </div>
+      <a mat-button routerLink="/auth/mot-de-passe-oublie" class="lien-oublie">
+        <mat-icon>lock_reset</mat-icon>
+        Mot de passe oublié ?
+      </a>
+    </div>
+
   </mat-card>
 </div>

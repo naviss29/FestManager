@@ -47,6 +47,17 @@ export class AuthService {
     );
   }
 
+  googleAuth(credential: string): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/google`, { credential }).pipe(
+      tap(response => {
+        if (!response.enAttenteValidation && response.token) {
+          localStorage.setItem(this.TOKEN_KEY, response.token);
+          this.utilisateurCourant$.next(this.decoder(response.token));
+        }
+      })
+    );
+  }
+
   motDePasseOublie(email: string): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/auth/mot-de-passe-oublie`, { email });
   }

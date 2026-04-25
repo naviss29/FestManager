@@ -112,6 +112,27 @@ public class EmailService {
     }
 
     // -------------------------------------------------------------------------
+    // Profil bénévole — lien magique
+    // -------------------------------------------------------------------------
+
+    @Async
+    public void envoyerLienProfil(String destinataire, String prenom, String lien) {
+        String sujet = "[FestManager] Modifier votre profil bénévole";
+        String corps = construireHtml(
+            "Modifier votre profil",
+            "Bonjour " + prenom + ",",
+            "<p>Vous avez demandé à modifier votre profil bénévole (taille de t-shirt, coordonnées, disponibilités…).</p>" +
+            "<p>Cliquez sur le bouton ci-dessous pour accéder à votre profil :</p>" +
+            "<p style='text-align:center;margin:24px 0'>" +
+            "<a href='" + lien + "' style='background:#1a237e;color:white;padding:12px 24px;" +
+            "border-radius:4px;text-decoration:none;font-weight:bold'>Accéder à mon profil</a></p>" +
+            "<p style='color:#888;font-size:0.85rem'>Ce lien est valable 24 heures. " +
+            "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>"
+        );
+        envoyer(destinataire, sujet, corps);
+    }
+
+    // -------------------------------------------------------------------------
     // Mot de passe oublié
     // -------------------------------------------------------------------------
 
