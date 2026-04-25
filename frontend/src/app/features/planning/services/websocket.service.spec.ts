@@ -1,17 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { WebSocketService } from './websocket.service';
-import * as RxStompModule from '@stomp/rx-stomp';
 
 const EVT_ID = 'evt-1';
 
-// Stub RxStomp pour éviter une vraie connexion réseau en test
-const mockWatch$ = { pipe: vi.fn().mockReturnValue({ subscribe: () => {} }) };
-const mockStomp = {
+// vi.hoisted() permet de référencer ces valeurs dans le factory de vi.mock(),
+// qui est hissé avant les imports par Vitest.
+const mockStomp = vi.hoisted(() => ({
   configure:  vi.fn(),
   activate:   vi.fn(),
   deactivate: vi.fn().mockResolvedValue(undefined),
-  watch:      vi.fn().mockReturnValue(mockWatch$)
-};
+  watch:      vi.fn().mockReturnValue({ pipe: vi.fn().mockReturnValue({ subscribe: () => {} }) })
+}));
+
+vi.mock('@stomp/rx-stomp', () => ({
+  RxStomp: vi.fn().mockImplementation(() => mockStomp)
+}));
 
 describe('WebSocketService', () => {
   let service: WebSocketService;
@@ -22,15 +25,11 @@ describe('WebSocketService', () => {
     mockStomp.deactivate.mockClear();
     mockStomp.watch.mockClear();
 
-    vi.spyOn(RxStompModule, 'RxStomp').mockReturnValue(mockStomp as any);
-
     TestBed.configureTestingModule({});
     service = TestBed.inject(WebSocketService);
   });
 
-  afterEach(() => {
-    service.deconnecter();
-  });
+  afterEach(() => service.deconnecter());
 
   it('should be created', () => expect(service).toBeTruthy());
 
