@@ -3,33 +3,37 @@ import { WebSocketService } from './websocket.service';
 
 const EVT_ID = 'evt-1';
 
-// vi.hoisted() permet de référencer ces valeurs dans le factory de vi.mock(),
-// qui est hissé avant les imports par Vitest.
-const mockStomp = vi.hoisted(() => ({
-  configure:  vi.fn(),
-  activate:   vi.fn(),
-  deactivate: vi.fn().mockResolvedValue(undefined),
-  watch:      vi.fn().mockReturnValue({ pipe: vi.fn().mockReturnValue({ subscribe: () => {} }) })
-}));
+// Une vraie classe (pas vi.fn()) contourne les problèmes de mocking ESM
+// avec le compilateur Angular. Chaque instance stocke ses propres spies.
+// On capture toutes les instances créées pour les inspecter dans les tests.
+const { MockRxStomp, getInstances, clearInstances } = vi.hoisted(() => {
+  const instances: any[] = [];
 
-vi.mock('@stomp/rx-stomp', () => ({
-  RxStomp: vi.fn(function(this: any) {
-    this.configure  = mockStomp.configure;
-    this.activate   = mockStomp.activate;
-    this.deactivate = mockStomp.deactivate;
-    this.watch      = mockStomp.watch;
-  })
-}));
+  class MockRxStomp {
+    configure  = vi.fn();
+    activate   = vi.fn();
+    deactivate = vi.fn().mockResolvedValue(undefined);
+    watch      = vi.fn().mockReturnValue({
+      pipe: vi.fn().mockReturnValue({ subscribe: () => {} })
+    });
+
+    constructor() { instances.push(this); }
+  }
+
+  return {
+    MockRxStomp,
+    getInstances:   () => [...instances],
+    clearInstances: () => { instances.length = 0; }
+  };
+});
+
+vi.mock('@stomp/rx-stomp', () => ({ RxStomp: MockRxStomp }));
 
 describe('WebSocketService', () => {
   let service: WebSocketService;
 
   beforeEach(() => {
-    mockStomp.configure.mockClear();
-    mockStomp.activate.mockClear();
-    mockStomp.deactivate.mockClear();
-    mockStomp.watch.mockClear();
-
+    clearInstances();
     TestBed.configureTestingModule({});
     service = TestBed.inject(WebSocketService);
   });
@@ -40,39 +44,44 @@ describe('WebSocketService', () => {
 
   it('connecter() crée et active une connexion RxStomp', () => {
     service.connecter(EVT_ID);
+    const [stomp] = getInstances();
 
-    expect(mockStomp.configure).toHaveBeenCalled();
-    expect(mockStomp.activate).toHaveBeenCalled();
+    expect(stomp.configure).toHaveBeenCalled();
+    expect(stomp.activate).toHaveBeenCalled();
   });
 
   it("connecter() s'abonne au topic dashboard de l'événement", () => {
     service.connecter(EVT_ID);
+    const [stomp] = getInstances();
 
-    expect(mockStomp.watch).toHaveBeenCalledWith(`/topic/dashboard/${EVT_ID}`);
+    expect(stomp.watch).toHaveBeenCalledWith(`/topic/dashboard/${EVT_ID}`);
   });
 
   it("connecter() déconnecte la connexion précédente avant d'en créer une nouvelle", () => {
     service.connecter(EVT_ID);
+    const [first] = getInstances();
     service.connecter(EVT_ID);
 
-    expect(mockStomp.deactivate).toHaveBeenCalled();
+    expect(first.deactivate).toHaveBeenCalled();
   });
 
-  it('deconnecter() appelle deactivate et vide la référence interne', () => {
+  it('deconnecter() appelle deactivate', () => {
     service.connecter(EVT_ID);
-    mockStomp.deactivate.mockClear();
+    const [stomp] = getInstances();
+    stomp.deactivate.mockClear();
 
     service.deconnecter();
 
-    expect(mockStomp.deactivate).toHaveBeenCalled();
+    expect(stomp.deactivate).toHaveBeenCalled();
   });
 
   it('ngOnDestroy() appelle deconnecter()', () => {
     service.connecter(EVT_ID);
-    mockStomp.deactivate.mockClear();
+    const [stomp] = getInstances();
+    stomp.deactivate.mockClear();
 
     service.ngOnDestroy();
 
-    expect(mockStomp.deactivate).toHaveBeenCalled();
+    expect(stomp.deactivate).toHaveBeenCalled();
   });
 });
