@@ -13,7 +13,12 @@ const mockStomp = vi.hoisted(() => ({
 }));
 
 vi.mock('@stomp/rx-stomp', () => ({
-  RxStomp: vi.fn(function() { return mockStomp; })
+  RxStomp: vi.fn(function(this: any) {
+    this.configure  = mockStomp.configure;
+    this.activate   = mockStomp.activate;
+    this.deactivate = mockStomp.deactivate;
+    this.watch      = mockStomp.watch;
+  })
 }));
 
 describe('WebSocketService', () => {
