@@ -3,7 +3,7 @@
 > Version : 1.0  
 > Auteur : Alan  
 > Date : Avril 2026  
-> Statut : **Phase 6 en cours — pipeline de recette**
+> Statut : **Phase 6 en cours — staging opérationnel (27/04/2026)**
 
 ---
 
@@ -23,6 +23,7 @@
 | 1.0 | Avril 2026 | F23 Connexion Google OAuth (staff) — F24 Portail self-service bénévole (profil + photo badge, magic link) |
 | 1.1 | Avril 2026 | CI vert : fix mocks AffectationServiceTest (N+1), env.prod frontend, tests Vitest (JWT réel, websocket contrat public) |
 | 1.2 | Avril 2026 | Infra Coolify : liveness probe Spring Boot, nginx resolver Docker, proxy_ssl_verify off, worker_rlimit_nofile 65535 |
+| 1.3 | 27/04/2026 | Staging **pleinement opérationnel** : backend Running (healthy) + frontend Running (healthy) — Flyway V5 appliqué, toutes migrations OK |
 
 ---
 
