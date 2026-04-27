@@ -7,7 +7,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
 ![Angular](https://img.shields.io/badge/Angular-21-red)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
-![Tests](https://img.shields.io/badge/tests-153%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-202%20passing-brightgreen)
 ![N+1 Free](https://img.shields.io/badge/N%2B1-éliminé-brightgreen)
 ![Swagger](https://img.shields.io/badge/API-Swagger%20OpenAPI%203-85EA2D)
 ![RGPD](https://img.shields.io/badge/RGPD-conforme-green)
@@ -32,7 +32,7 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 |---|---|
 | ![QR Code](docs/screenshots/accreditation-qr.png) | ![Swagger](docs/screenshots/swagger.png) |
 
-> Les screenshots seront ajoutés après le déploiement Railway.
+> Les screenshots seront ajoutés après stabilisation du déploiement Coolify.
 
 ---
 
@@ -60,6 +60,8 @@ L'application remplace les tableurs, emails et WhatsApp par une plateforme centr
 | Portail d'inscription public (`/inscription`, sans authentification) | ✅ |
 | Validation admin des nouveaux comptes (actif=false → validation manuelle) | ✅ |
 | Stockage de fichiers (photos bénévoles, bannières événements) | ✅ |
+| Connexion Google OAuth (staff) | ✅ |
+| Profil bénévole auto-éditable via magic link (taille t-shirt, photo) | ✅ |
 
 ---
 
@@ -143,8 +145,8 @@ FestManager/
 | Email | Spring Boot Mail (SMTP, async) |
 | Documentation API | springdoc-openapi 2.8.3 (OpenAPI 3) |
 | Containerisation | Docker + Docker Compose |
-| Déploiement | Railway (staging + production) |
-| CI/CD | GitHub Actions (CI + pipeline de recette) |
+| Déploiement | Hetzner VPS CX22 + Coolify (staging + production) |
+| CI/CD | GitHub Actions (CI + deploy via webhooks Coolify) |
 
 ---
 
@@ -213,17 +215,17 @@ npm install && npm start
 ## Tests
 
 ```bash
-# Backend — 90 tests Mockito (sans Spring context, sans base de données)
+# Backend — tests Mockito (sans Spring context, sans base de données)
 cd backend
 ./mvnw test
 
-# Frontend — 56 tests Jasmine/Karma
+# Frontend — tests Vitest
 cd frontend
 npm test -- --watch=false
 ```
 
-**Backend (95 tests)** : Auth, Bénévoles, Événements, Missions, Organisations, Créneaux, Affectations, Journal d'audit, Audit, Export CSV/PDF, RGPD, Badges PDF  
-**Frontend (56 tests)** : tous les services HTTP (MissionService, EvenementService, BenevoleService, AccreditationService, PlanningService, OrganisationService, DashboardRestService, AuthService, WebSocketService)
+**Backend (111 tests)** : Auth, Bénévoles, Événements, Missions, Organisations, Créneaux, Affectations, Journal d'audit, Audit, Export CSV/PDF, RGPD, Badges PDF, Google OAuth, Profil bénévole  
+**Frontend (91 tests)** : tous les services HTTP (MissionService, EvenementService, BenevoleService, AccreditationService, PlanningService, OrganisationService, DashboardRestService, AuthService, WebSocketService, FichierService)
 
 ---
 
@@ -243,7 +245,8 @@ npm test -- --watch=false
 - [x] Phase 3 — Features avancées (QR codes, dashboard temps réel, exports CSV/PDF, RGPD, email, mentions légales)
 - [x] Phase 4 — Finalisation (Swagger ✅, déploiement Railway ✅, diagramme architecture ✅, README screenshots ✅)
 - [x] Phase 5 — Gestion des comptes (portail inscription public ✅, validation admin ✅, stockage fichiers ✅, mot de passe oublié ✅, créneaux horaires ✅)
-- [ ] Phase 6 — Pipeline de recette (branche `develop` ✅, deploy staging auto ✅, approbation manuelle prod ✅)
+- [x] Phase 5b — Auth avancée (Google OAuth ✅, magic link profil bénévole ✅)
+- [ ] Phase 6 — Pipeline de recette (branche `develop` ✅, deploy staging auto ✅, approbation manuelle prod ✅, healthcheck Docker ✅, nginx resilient ✅, liveness probe Spring Boot ✅)
 
 ---
 
