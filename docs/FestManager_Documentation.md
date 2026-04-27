@@ -833,10 +833,13 @@ develop ──► PR ──► main ──[CI vert + approbation GitHub]──�
 
 | Secret | Description |
 |---|---|
-| `COOLIFY_STAGING_BACKEND_WEBHOOK` | URL webhook deploy backend staging |
+| `COOLIFY_STAGING_BACKEND_WEBHOOK` | URL webhook deploy backend staging (Coolify → Service → Webhooks) |
 | `COOLIFY_STAGING_FRONTEND_WEBHOOK` | URL webhook deploy frontend staging |
 | `COOLIFY_PROD_BACKEND_WEBHOOK` | URL webhook deploy backend production |
 | `COOLIFY_PROD_FRONTEND_WEBHOOK` | URL webhook deploy frontend production |
+| `COOLIFY_API_TOKEN` | Token API Coolify — **Keys & Tokens → API Tokens → permission `deploy`** — envoyé en `Authorization: Bearer` sur chaque webhook |
+
+> **Pourquoi `COOLIFY_API_TOKEN` ?** Les webhooks Coolify nécessitent un header `Authorization: Bearer <token>` en plus de l'URL. Sans lui, Coolify retourne 401 même si l'URL est correcte. Le token se crée dans Coolify → Keys & Tokens → API Tokens → cocher `deploy` → durée 1 an.
 
 ---
 
