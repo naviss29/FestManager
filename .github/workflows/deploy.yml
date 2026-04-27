@@ -22,12 +22,10 @@ jobs:
     steps:
       - name: Déclencher déploiement backend staging
         run: |
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
-            -X GET "${{ secrets.COOLIFY_STAGING_BACKEND_WEBHOOK }}")
-          BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS:.*//')
-          STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
-          echo "HTTP status : $STATUS"
-          echo "Response body : $BODY"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_STAGING_BACKEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+          echo "HTTP status backend staging : $STATUS"
           echo "$STATUS" | grep -q "^2" \
             && echo "Backend staging déclenché" \
             || (echo "Échec webhook backend staging (HTTP $STATUS)" && exit 1)
@@ -35,7 +33,8 @@ jobs:
       - name: Déclencher déploiement frontend staging
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK }}")
+            -X GET "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
           echo "HTTP status frontend staging : $STATUS"
           echo "$STATUS" | grep -q "^2" \
             && echo "Frontend staging déclenché" \
@@ -56,7 +55,8 @@ jobs:
       - name: Déclencher déploiement backend production
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.COOLIFY_PROD_BACKEND_WEBHOOK }}")
+            -X GET "${{ secrets.COOLIFY_PROD_BACKEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
           echo "HTTP status backend production : $STATUS"
           echo "$STATUS" | grep -q "^2" \
             && echo "Backend production déclenché" \
@@ -65,7 +65,8 @@ jobs:
       - name: Déclencher déploiement frontend production
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK }}")
+            -X GET "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
           echo "HTTP status frontend production : $STATUS"
           echo "$STATUS" | grep -q "^2" \
             && echo "Frontend production déclenché" \
