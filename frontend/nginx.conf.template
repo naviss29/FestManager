@@ -36,6 +36,12 @@ server {
         proxy_set_header   Host       $host;
     }
 
+    location /health {
+        access_log off;
+        return 200 "ok\n";
+        add_header Content-Type text/plain;
+    }
+
     # SPA fallback — toujours renvoyer index.html pour le routage Angular
     location / {
         try_files $uri $uri/ /index.html;
