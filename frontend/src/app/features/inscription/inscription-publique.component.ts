@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BenevoleService } from '../benevoles/services/benevole.service';
 import { TailleTshirt } from '../benevoles/models/benevole.model';
@@ -20,7 +20,8 @@ export class InscriptionPubliqueComponent {
 
   constructor(
     private fb: FormBuilder,
-    private benevoleService: BenevoleService
+    private benevoleService: BenevoleService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       nom:              ['', [Validators.required, Validators.maxLength(100)]],
@@ -50,12 +51,14 @@ export class InscriptionPubliqueComponent {
       next: () => {
         this.succes = true;
         this.chargement = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.erreur = err.status === 409
           ? 'Un compte existe déjà avec cet email.'
           : 'Une erreur est survenue. Veuillez réessayer.';
         this.chargement = false;
+        this.cdr.detectChanges();
       }
     });
   }

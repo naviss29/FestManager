@@ -18,9 +18,40 @@
 
 .full-width    { width: 100%; margin-bottom: 4px; }
 .info-text     { font-size: 0.8rem; color: #757575; margin: 8px 0 16px; }
-.erreur-globale { display: block; margin-bottom: 12px; font-size: 0.85rem; }
+.erreur-globale {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: #f44336;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
 
 mat-card-actions { justify-content: center; }
+
+.separateur {
+  display: flex;
+  align-items: center;
+  margin: 8px 0 16px;
+  color: #999;
+  font-size: 0.85rem;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid #e0e0e0;
+  }
+  span { margin: 0 12px; }
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  margin-bottom: 8px;
+}
 
 .attente {
   display: flex;

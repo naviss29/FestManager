@@ -122,7 +122,7 @@ class AffectationServiceTest {
     @Test
     @DisplayName("obtenir — lève NOT_FOUND si l'affectation est introuvable")
     void obtenir_leveNotFoundSiMissing() {
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.empty());
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.obtenir(affectationId))
                 .isInstanceOf(ResponseStatusException.class)
@@ -141,7 +141,7 @@ class AffectationServiceTest {
         request.setCreneauId(creneauId);
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
         when(affectationRepository.existsByBenevoleIdAndCreneauId(benevoleId, creneauId)).thenReturn(false);
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(0);
         when(creneauRepository.findChevauchements(any(), any(), any(), any())).thenReturn(List.of());
@@ -167,7 +167,7 @@ class AffectationServiceTest {
         request.setCreneauId(creneauId);
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
 
         assertThatThrownBy(() -> service.affecter(request))
                 .isInstanceOf(ResponseStatusException.class)
@@ -182,7 +182,7 @@ class AffectationServiceTest {
         request.setCreneauId(creneauId);
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
         when(affectationRepository.existsByBenevoleIdAndCreneauId(benevoleId, creneauId)).thenReturn(true);
 
         assertThatThrownBy(() -> service.affecter(request))
@@ -199,7 +199,7 @@ class AffectationServiceTest {
         request.setCreneauId(creneauId);
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
         when(affectationRepository.existsByBenevoleIdAndCreneauId(any(), any())).thenReturn(false);
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(3);
 
@@ -222,7 +222,7 @@ class AffectationServiceTest {
         creneauEnConflit.setFin(LocalDateTime.of(2026, 7, 1, 16, 0));
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
         when(affectationRepository.existsByBenevoleIdAndCreneauId(any(), any())).thenReturn(false);
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(0);
         when(creneauRepository.findChevauchements(any(), any(), any(), any()))
@@ -243,7 +243,7 @@ class AffectationServiceTest {
         request.setCreneauId(creneauId);
 
         when(benevoleRepository.findById(benevoleId)).thenReturn(Optional.of(benevole));
-        when(creneauRepository.findById(creneauId)).thenReturn(Optional.of(creneau));
+        when(creneauRepository.findByIdWithMissionAndEvenement(creneauId)).thenReturn(Optional.of(creneau));
         when(affectationRepository.existsByBenevoleIdAndCreneauId(any(), any())).thenReturn(false);
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(0);
         Affectation sauvegardee = new Affectation();
@@ -267,7 +267,7 @@ class AffectationServiceTest {
         affectation.setStatut(StatutAffectation.EN_ATTENTE);
         affectation.setCreneau(creneau);
 
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.of(affectation));
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.of(affectation));
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(1);
         Affectation sauvegardee = new Affectation();
         when(affectationRepository.save(any())).thenReturn(sauvegardee);
@@ -286,7 +286,7 @@ class AffectationServiceTest {
         affectation.setStatut(StatutAffectation.EN_ATTENTE);
         affectation.setCreneau(creneau);
 
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.of(affectation));
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.of(affectation));
         when(affectationRepository.countByCreneauIdAndStatut(creneauId, StatutAffectation.CONFIRME)).thenReturn(3);
 
         assertThatThrownBy(() -> service.changerStatut(affectationId, StatutAffectation.CONFIRME))
@@ -301,7 +301,7 @@ class AffectationServiceTest {
         affectation.setStatut(StatutAffectation.EN_ATTENTE);
         affectation.setCreneau(creneau);
 
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.of(affectation));
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.of(affectation));
         Affectation sauvegardee = new Affectation();
         when(affectationRepository.save(any())).thenReturn(sauvegardee);
         when(affectationMapper.toResponse(sauvegardee)).thenReturn(new AffectationResponse());
@@ -319,7 +319,7 @@ class AffectationServiceTest {
     @DisplayName("supprimer — supprime l'affectation et notifie le dashboard")
     void supprimer_supprime() {
         Affectation affectation = new Affectation();
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.of(affectation));
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.of(affectation));
 
         service.supprimer(affectationId);
 
@@ -330,7 +330,7 @@ class AffectationServiceTest {
     @Test
     @DisplayName("supprimer — lève NOT_FOUND si l'affectation est introuvable")
     void supprimer_leveNotFoundSiMissing() {
-        when(affectationRepository.findById(affectationId)).thenReturn(Optional.empty());
+        when(affectationRepository.findByIdWithAssociations(affectationId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.supprimer(affectationId))
                 .isInstanceOf(ResponseStatusException.class)

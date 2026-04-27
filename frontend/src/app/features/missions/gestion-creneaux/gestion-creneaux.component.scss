@@ -6,7 +6,6 @@ h2 {
 }
 
 .full-width { width: 100%; }
-.half-width { width: 280px; }
 
 .vide {
   text-align: center;
@@ -18,15 +17,69 @@ h2 {
 
 .btn-ajouter { margin-top: 8px; }
 
+// ── Formulaire ──────────────────────────────────────────────────────────────
+
 .form-creneau {
   margin-top: 16px;
-  h3 { margin: 0 0 16px; font-size: 1rem; color: #1a237e; }
+
+  h3 {
+    margin: 0 0 16px;
+    font-size: 1rem;
+    color: #1a237e;
+  }
 }
 
-.row-2col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.ligne-creneau {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px 4px;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.ligne-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  .ligne-numero {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1a237e;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+// Ligne 1 : 4 champs date/heure sur la même rangée
+.ligne-datetimes {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  mat-form-field { flex: 1; }
+
+  .separateur {
+    align-self: center;
+    margin-bottom: 22px; // compense la hauteur du label flottant
+    color: #888;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+}
+
+// Ligne 2 : bénévoles requis
+.ligne-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .champ-nb { width: 200px; }
+}
+
+.btn-ajouter-ligne {
+  margin: 4px 0 16px;
 }
 
 .form-actions {

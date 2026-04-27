@@ -1,5 +1,6 @@
 package com.festmanager.controller;
 
+import com.festmanager.dto.GoogleAuthRequest;
 import com.festmanager.dto.LoginRequest;
 import com.festmanager.dto.LoginResponse;
 import com.festmanager.dto.MotDePasseOublieRequest;
@@ -59,5 +60,17 @@ public class AuthController {
     public ResponseEntity<Void> resetMotDePasse(@Valid @RequestBody ResetMotDePasseRequest request) {
         authService.resetMotDePasse(request);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/google")
+    @SecurityRequirements
+    @Operation(
+        summary = "Connexion via Google",
+        description = "Valide un ID token Google Identity Services. " +
+                      "Lie le compte si l'email existe, en crée un sinon (en attente de validation si ce n'est pas le premier compte).")
+    public ResponseEntity<RegisterResponse> google(@Valid @RequestBody GoogleAuthRequest request) {
+        RegisterResponse response = authService.connexionGoogle(request);
+        int status = response.enAttenteValidation() ? 202 : 200;
+        return ResponseEntity.status(status).body(response);
     }
 }

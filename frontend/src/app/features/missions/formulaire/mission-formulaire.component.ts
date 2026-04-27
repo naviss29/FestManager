@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -33,7 +33,8 @@ export class MissionFormulaireComponent implements OnInit {
     private missionService: MissionService,
     private organisationService: OrganisationService,
     private dialogRef: MatDialogRef<MissionFormulaireComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MissionFormulaireData
+    @Inject(MAT_DIALOG_DATA) public data: MissionFormulaireData,
+    private cdr: ChangeDetectorRef
   ) {
     const m = data.mission;
     this.estModification = !!m;
@@ -102,7 +103,7 @@ export class MissionFormulaireComponent implements OnInit {
 
     op$.subscribe({
       next: mission => this.dialogRef.close(mission),
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

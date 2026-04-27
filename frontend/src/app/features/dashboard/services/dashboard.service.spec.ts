@@ -8,8 +8,8 @@ const EVT_ID = 'evt-1';
 
 const SNAPSHOT = {
   evenementId: EVT_ID,
-  totalBenevoles: 50,
-  totalMissions: 8,
+  nbBenevolesEngages: 50,
+  nbMissions: 8,
   tauxRemplissage: 0.75
 };
 
@@ -29,7 +29,7 @@ describe('DashboardRestService', () => {
 
   it('snapshot() appelle GET /dashboard/:evenementId', () => {
     service.snapshot(EVT_ID).subscribe(s => {
-      expect(s.totalBenevoles).toBe(50);
+      expect(s.nbBenevolesEngages).toBe(50);
       expect(s.tauxRemplissage).toBe(0.75);
     });
     const req = http.expectOne(`${BASE}/${EVT_ID}`);

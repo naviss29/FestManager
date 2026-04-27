@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,7 +28,8 @@ export class AccreditationsListeComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -40,8 +41,8 @@ export class AccreditationsListeComponent implements OnInit {
   charger(): void {
     this.chargement = true;
     this.accreditationService.listerParEvenement(this.evenementId).subscribe({
-      next: data => { this.accreditations = data; this.chargement = false; },
-      error: () => { this.chargement = false; }
+      next: data => { this.accreditations = data; this.chargement = false; this.cdr.detectChanges(); },
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

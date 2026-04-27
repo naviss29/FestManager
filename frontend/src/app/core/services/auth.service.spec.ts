@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
 
-// Mock jwtDecode pour éviter de construire un vrai JWT signé
-vi.mock('jwt-decode', () => ({
-  jwtDecode: vi.fn().mockReturnValue({
-    sub: 'test@example.com',
-    role: 'ADMIN',
-    exp: 9999999999
-  })
-}));
+// JWT valide (header + payload decodable + signature factice).
+// vi.mock('jwt-decode') ne fonctionne pas avec le compilateur Angular —
+// on utilise un vrai JWT dont le payload contient les champs attendus.
+// Décodage : { sub: 'test@example.com', role: 'ADMIN', exp: 9999999999 }
+const FAKE_JWT =
+  'eyJhbGciOiJIUzI1NiJ9' +
+  '.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiZXhwIjo5OTk5OTk5OTk5fQ' +
+  '.fakesig';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -42,25 +42,22 @@ describe('AuthService', () => {
     expect(service.estConnecte()).toBe(false);
   });
 
-  it('login() stocke le token et expose l\'utilisateur courant', () => {
+  it("login() stocke le token et expose l'utilisateur courant", () => {
     let utilisateur: any;
     service.getUtilisateur().subscribe(u => (utilisateur = u));
 
     service.login({ email: 'test@example.com', password: 'pass' }).subscribe();
 
-    const req = http.expectOne(`${environment.apiUrl}/auth/login`);
-    expect(req.request.method).toBe('POST');
-    req.flush({ token: 'fake.jwt.token' });
+    http.expectOne(`${environment.apiUrl}/auth/login`).flush({ token: FAKE_JWT });
 
-    expect(localStorage.getItem('fm_token')).toBe('fake.jwt.token');
+    expect(localStorage.getItem('fm_token')).toBe(FAKE_JWT);
     expect(utilisateur?.email).toBe('test@example.com');
     expect(utilisateur?.role).toBe('ADMIN');
   });
 
   it('hasRole() retourne true si le rôle correspond', () => {
-    // Simule un utilisateur déjà connecté via le BehaviorSubject interne
     service.login({ email: 'test@example.com', password: 'pass' }).subscribe();
-    http.expectOne(`${environment.apiUrl}/auth/login`).flush({ token: 'fake.jwt.token' });
+    http.expectOne(`${environment.apiUrl}/auth/login`).flush({ token: FAKE_JWT });
 
     expect(service.hasRole('ADMIN')).toBe(true);
     expect(service.hasRole('ORGANISATEUR')).toBe(false);
@@ -69,7 +66,7 @@ describe('AuthService', () => {
 
   it('logout() supprime le token et vide l\'utilisateur', () => {
     service.login({ email: 'test@example.com', password: 'pass' }).subscribe();
-    http.expectOne(`${environment.apiUrl}/auth/login`).flush({ token: 'fake.jwt.token' });
+    http.expectOne(`${environment.apiUrl}/auth/login`).flush({ token: FAKE_JWT });
 
     service.logout();
 

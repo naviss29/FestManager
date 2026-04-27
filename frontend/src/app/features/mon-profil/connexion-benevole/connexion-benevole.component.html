@@ -1,0 +1,21 @@
+<div class="connexion-container">
+  <mat-card class="connexion-card">
+    <mat-card-header>
+      <mat-card-title>FestManager</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="chargement" class="centrer">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Connexion en cours…</p>
+      </div>
+
+      <div *ngIf="erreur" class="lien-invalide">
+        <mat-icon class="erreur-icon">link_off</mat-icon>
+        <h3>Lien invalide ou expiré</h3>
+        <p>{{ erreur }}</p>
+        <a mat-raised-button color="primary" routerLink="/mon-profil">Demander un nouveau lien</a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

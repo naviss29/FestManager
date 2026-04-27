@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BenevoleService } from '../services/benevole.service';
@@ -49,7 +49,8 @@ export class BenevoleFormulaireComponent {
     private fb: FormBuilder,
     private service: BenevoleService,
     private dialogRef: MatDialogRef<BenevoleFormulaireComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: BenevoleDialogData
+    @Inject(MAT_DIALOG_DATA) public data: BenevoleDialogData,
+    private cdr: ChangeDetectorRef
   ) {
     this.estModification = !!data.benevole;
     const b = data.benevole;
@@ -110,7 +111,7 @@ export class BenevoleFormulaireComponent {
           this.dialogRef.close(benevole);
         }
       },
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

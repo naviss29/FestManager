@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
@@ -38,7 +38,8 @@ export class OrganisationsListeComponent implements OnInit {
     private organisationService: OrganisationService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +51,7 @@ export class OrganisationsListeComponent implements OnInit {
   charger(): void {
     this.chargement = true;
     this.organisationService.lister(this.pageIndex, this.pageSize, this.filtreType || undefined)
-      .subscribe({ next: p => { this.organisations = p.content; this.totalElements = p.totalElements; this.chargement = false; }, error: () => { this.chargement = false; } });
+      .subscribe({ next: p => { this.organisations = p.content; this.totalElements = p.totalElements; this.chargement = false; this.cdr.detectChanges(); }, error: () => { this.chargement = false; this.cdr.detectChanges(); } });
   }
 
   onFiltreTypeChange(valeur: TypeOrganisation | ''): void {

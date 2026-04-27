@@ -1,76 +1,73 @@
 name: Deploy — FestManager
 
-# Se déclenche uniquement quand le CI est terminé (succès ou échec)
-# → garantit qu'aucun déploiement n'arrive sur du code cassé
 on:
   workflow_run:
     workflows: ["CI — FestManager"]
     types: [completed]
-    branches: [develop, main]
+    branches: [main, develop]
 
 jobs:
 
-  # ------------------------------------------------------------------
-  # Staging : déploiement automatique quand le CI de develop est vert
-  # ------------------------------------------------------------------
+  # ------------------------------------------------------------
+  # Staging — déploiement automatique sur develop (CI vert)
+  # ------------------------------------------------------------
   deploy-staging:
-    name: Deploy → Staging
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'develop'
+    name: Deploy Staging
     runs-on: ubuntu-latest
     environment: staging
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
 
     steps:
-      - name: Checkout (commit exact ayant passé le CI)
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Déclencher déploiement backend staging
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_STAGING_BACKEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+          echo "HTTP status backend staging : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
+            && echo "Backend staging déclenché" \
+            || (echo "Échec webhook backend staging (HTTP $STATUS)" && exit 1)
 
-      - name: Installer Railway CLI
-        run: npm install -g @railway/cli@latest
+      - name: Déclencher déploiement frontend staging
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+          echo "HTTP status frontend staging : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
+            && echo "Frontend staging déclenché" \
+            || (echo "Échec webhook frontend staging (HTTP $STATUS)" && exit 1)
 
-      - name: Deploy Backend → Staging
-        working-directory: backend
-        run: railway up --detach --environment staging --service ${{ vars.RAILWAY_BACKEND_SERVICE }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy Frontend → Staging
-        working-directory: frontend
-        run: railway up --detach --environment staging --service ${{ vars.RAILWAY_FRONTEND_SERVICE }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-  # ------------------------------------------------------------------
-  # Production : déploiement sur main avec approbation manuelle
-  # L'approbateur est configuré dans GitHub → Settings → Environments → production
-  # ------------------------------------------------------------------
-  deploy-prod:
-    name: Deploy → Production
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main'
+  # ------------------------------------------------------------
+  # Production — déploiement sur main avec approbation manuelle
+  # ------------------------------------------------------------
+  deploy-production:
+    name: Deploy Production
     runs-on: ubuntu-latest
     environment: production
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
 
     steps:
-      - name: Checkout (commit exact ayant passé le CI)
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Déclencher déploiement backend production
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_PROD_BACKEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+          echo "HTTP status backend production : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
+            && echo "Backend production déclenché" \
+            || (echo "Échec webhook backend production (HTTP $STATUS)" && exit 1)
 
-      - name: Installer Railway CLI
-        run: npm install -g @railway/cli@latest
-
-      - name: Deploy Backend → Production
-        working-directory: backend
-        run: railway up --detach --environment production --service ${{ vars.RAILWAY_BACKEND_SERVICE }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy Frontend → Production
-        working-directory: frontend
-        run: railway up --detach --environment production --service ${{ vars.RAILWAY_FRONTEND_SERVICE }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Déclencher déploiement frontend production
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}")
+          echo "HTTP status frontend production : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
+            && echo "Frontend production déclenché" \
+            || (echo "Échec webhook frontend production (HTTP $STATUS)" && exit 1)

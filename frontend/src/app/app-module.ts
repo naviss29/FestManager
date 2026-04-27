@@ -1,7 +1,7 @@
-import { NgModule, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { AppRoutingModule } from './app-routing-module';
@@ -14,14 +14,12 @@ import { LayoutModule } from './shared/layout/layout.module';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     AppRoutingModule,
     LayoutModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners(),
+    provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    // Locale française : dates jj/mm/aaaa, séparateur décimal virgule
     { provide: LOCALE_ID, useValue: 'fr-FR' },
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ],

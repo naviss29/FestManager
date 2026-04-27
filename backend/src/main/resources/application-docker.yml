@@ -34,6 +34,17 @@ springdoc:
   swagger-ui:
     enabled: false
 
+# Actuator : expose uniquement /actuator/health pour le health check Railway
+# Les autres endpoints (metrics, env, beans…) restent désactivés pour la sécurité
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 app:
   uploads:
     # Répertoire de stockage des fichiers — monter un volume Docker persistant sur ce chemin en production

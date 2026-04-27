@@ -1,0 +1,112 @@
+.profil-container {
+  max-width: 520px;
+  margin: 32px auto;
+  padding: 0 16px 48px;
+}
+
+.centrer {
+  display: flex;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+// --- En-tête ---
+
+.profil-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0 20px;
+  position: relative;
+}
+
+.photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.photo-cercle {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #1976d2;
+
+  &.chargement { cursor: default; }
+
+  .photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-placeholder {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #bdbdbd;
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    mat-icon { color: white; font-size: 28px; }
+  }
+
+  &:hover .photo-overlay { opacity: 1; }
+}
+
+.photo-hint {
+  font-size: 0.72rem;
+  color: #9e9e9e;
+  text-align: center;
+}
+
+.profil-identite {
+  flex: 1;
+  h2 { margin: 0 0 4px; font-size: 1.3rem; font-weight: 600; }
+  .profil-email { font-size: 0.85rem; color: #757575; }
+}
+
+.btn-deconnexion {
+  align-self: flex-start;
+  color: #757575;
+}
+
+// --- Formulaire ---
+
+.formulaire { padding-top: 16px; }
+.section-titre { font-size: 1rem; font-weight: 600; color: #424242; margin: 16px 0 12px; }
+.full-width { width: 100%; margin-bottom: 8px; }
+
+.succes-message, .erreur-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+.succes-message { color: #4caf50; }
+.erreur-message  { color: #f44336; }
+
+button[type="submit"] {
+  height: 48px;
+  font-size: 1rem;
+  mat-spinner { margin: 0 auto; }
+}

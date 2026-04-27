@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EvenementService } from '../services/evenement.service';
@@ -24,7 +24,8 @@ export class EvenementFormulaireComponent implements OnInit {
     private fb: FormBuilder,
     private evenementService: EvenementService,
     private dialogRef: MatDialogRef<EvenementFormulaireComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Evenement | null
+    @Inject(MAT_DIALOG_DATA) public data: Evenement | null,
+    private cdr: ChangeDetectorRef
   ) {
     this.estModification = !!data;
     this.form = this.fb.group({
@@ -66,7 +67,7 @@ export class EvenementFormulaireComponent implements OnInit {
           this.dialogRef.close(evenement);
         }
       },
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 

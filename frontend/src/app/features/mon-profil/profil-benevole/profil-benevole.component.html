@@ -1,0 +1,91 @@
+<div class="profil-container">
+
+  <!-- Chargement initial -->
+  <div *ngIf="chargementInitial" class="centrer">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!chargementInitial && profil">
+
+    <!-- En-tête avec photo -->
+    <div class="profil-header">
+      <div class="photo-wrapper">
+        <div class="photo-cercle" (click)="ouvrirSelecteurPhoto()" [class.chargement]="chargementPhoto">
+          <img *ngIf="photoUrl()" [src]="photoUrl()" alt="Photo de profil" class="photo-img" />
+          <mat-icon *ngIf="!photoUrl() && !chargementPhoto" class="photo-placeholder">person</mat-icon>
+          <mat-spinner *ngIf="chargementPhoto" diameter="32"></mat-spinner>
+          <div class="photo-overlay">
+            <mat-icon>photo_camera</mat-icon>
+          </div>
+        </div>
+        <input #photoInput type="file" accept="image/jpeg,image/png,image/webp"
+               style="display:none" (change)="onPhotoSelectionnee($event)" />
+        <span class="photo-hint">Photo pour le badge</span>
+      </div>
+
+      <div class="profil-identite">
+        <h2>{{ profil.prenom }} {{ profil.nom }}</h2>
+        <span class="profil-email">{{ profil.email }}</span>
+      </div>
+
+      <button mat-icon-button class="btn-deconnexion" (click)="seDeconnecter()" title="Se déconnecter">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Formulaire d'édition -->
+    <form [formGroup]="form" (ngSubmit)="soumettre()" class="formulaire">
+
+      <h3 class="section-titre">Mes informations</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Taille de t-shirt</mat-label>
+        <mat-select formControlName="tailleTshirt">
+          <mat-option [value]="null">Non renseignée</mat-option>
+          <mat-option *ngFor="let t of tailles" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>checkroom</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Téléphone</mat-label>
+        <input matInput type="tel" formControlName="telephone" />
+        <mat-icon matPrefix>phone</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Compétences</mat-label>
+        <textarea matInput formControlName="competences" rows="3"
+                  placeholder="Ex : logistique, communication, secourisme…"></textarea>
+        <mat-icon matPrefix>star</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Disponibilités</mat-label>
+        <textarea matInput formControlName="disponibilites" rows="3"
+                  placeholder="Ex : vendredi soir, samedi toute la journée…"></textarea>
+        <mat-icon matPrefix>event_available</mat-icon>
+      </mat-form-field>
+
+      <div *ngIf="succes" class="succes-message">
+        <mat-icon>check_circle</mat-icon>
+        Profil mis à jour avec succès.
+      </div>
+
+      <div *ngIf="erreur" class="erreur-message">
+        <mat-icon>error_outline</mat-icon>
+        {{ erreur }}
+      </div>
+
+      <button mat-raised-button color="primary" type="submit"
+              class="full-width" [disabled]="chargementSave">
+        <mat-spinner *ngIf="chargementSave" diameter="20"></mat-spinner>
+        <span *ngIf="!chargementSave">Enregistrer</span>
+      </button>
+
+    </form>
+
+  </ng-container>
+</div>

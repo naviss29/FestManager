@@ -17,6 +17,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/inscription/inscription.module').then(m => m.InscriptionModule)
   },
   {
+    path: 'mon-profil',
+    loadChildren: () => import('./features/mon-profil/mon-profil.module').then(m => m.MonProfilModule)
+  },
+  {
     path: '',
     component: LayoutComponent,
     canActivate: [AuthGuard],

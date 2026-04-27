@@ -19,6 +19,8 @@ public interface BenevoleRepository extends JpaRepository<Benevole, UUID> {
 
     Optional<Benevole> findByEmail(String email);
 
+    Optional<Benevole> findByProfilToken(String profilToken);
+
     boolean existsByEmail(String email);
 
     Page<Benevole> findByStatutCompte(StatutCompteBenevole statut, Pageable pageable);

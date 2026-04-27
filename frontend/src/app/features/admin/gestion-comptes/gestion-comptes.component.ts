@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UtilisateurAdminService } from '../services/utilisateur-admin.service';
 import { UtilisateurAdmin } from '../models/utilisateur-admin.model';
 import { PageEvent } from '@angular/material/paginator';
@@ -21,7 +21,7 @@ export class GestionComptesComponent implements OnInit {
 
   colonnes = ['email', 'role', 'createdAt', 'actions'];
 
-  constructor(private service: UtilisateurAdminService) {}
+  constructor(private service: UtilisateurAdminService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.charger();
@@ -34,8 +34,9 @@ export class GestionComptesComponent implements OnInit {
         this.utilisateurs = p.content;
         this.total = p.totalElements;
         this.chargement = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.chargement = false; }
+      error: () => { this.chargement = false; this.cdr.detectChanges(); }
     });
   }
 
