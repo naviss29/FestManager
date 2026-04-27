@@ -4,6 +4,29 @@
 
 ---
 
+## ⚠️ Limitation Vitest + Angular build : vi.mock inopérant sur les services
+
+Dans le runner `@angular/build:unit-test` (Angular 21), **`vi.mock()` ne s'applique pas aux modules importés dans les services compilés** par le pipeline Angular/esbuild. Il s'applique uniquement aux imports du fichier de test lui-même.
+
+**Conséquences connues :**
+- `vi.mock('jwt-decode')` → ignoré dans `AuthService` → utiliser un vrai JWT valide dans les tests
+- `vi.mock('@stomp/rx-stomp')` → ignoré dans `WebSocketService` → tester le contrat public (retourne Observable, pas d'erreur) sans inspecter les internals
+- `vi.mock('sockjs-client')` → même limitation
+
+**Pattern recommandé pour les services Angular :**
+```typescript
+// ❌ Ne fonctionne pas pour les dépendances des services compilés
+vi.mock('jwt-decode', () => ({ jwtDecode: vi.fn().mockReturnValue({...}) }));
+
+// ✅ Utiliser un vrai JWT syntaxiquement valide à la place
+const FAKE_JWT = 'eyJhbGciOiJIUzI1NiJ9.<payload_base64url>.fakesig';
+// Généré avec : node -e "console.log(Buffer.from(JSON.stringify({sub:...})).toString('base64url'))"
+```
+
+**Pour les services instanciant une classe externe avec `new` :** tester le contrat public (retour Observable, absence d'erreur) plutôt que les appels internes.
+
+---
+
 ## ⚠️ Règle obligatoire — Angular 21 : change detection après HTTP
 
 **Tout nouveau composant qui fait un appel HTTP et met à jour la vue DOIT suivre ce pattern :**
