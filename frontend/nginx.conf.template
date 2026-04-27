@@ -24,6 +24,9 @@ server {
         proxy_buffer_size          64k;
         proxy_buffers              8 64k;
         proxy_busy_buffers_size    128k;
+        # Requis si BACKEND_URL utilise https:// (Coolify force HTTPS sur sslip.io)
+        proxy_ssl_verify       off;
+        proxy_ssl_server_name  on;
     }
 
     # Proxy WebSocket (STOMP)
@@ -34,6 +37,8 @@ server {
         proxy_set_header   Upgrade    $http_upgrade;
         proxy_set_header   Connection "upgrade";
         proxy_set_header   Host       $host;
+        proxy_ssl_verify   off;
+        proxy_ssl_server_name on;
     }
 
     location /health {

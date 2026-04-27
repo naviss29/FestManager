@@ -34,8 +34,9 @@ springdoc:
   swagger-ui:
     enabled: false
 
-# Actuator : expose uniquement /actuator/health pour le health check Railway
-# Les autres endpoints (metrics, env, beans…) restent désactivés pour la sécurité
+# Actuator : health + liveness/readiness probes pour Coolify
+# liveness répond 200 dès que le contexte Spring est chargé (avant Flyway/readiness)
+# → permet au health check Coolify de ne pas timeout pendant le démarrage (~49s)
 management:
   endpoints:
     web:
@@ -44,6 +45,8 @@ management:
   endpoint:
     health:
       show-details: never
+      probes:
+        enabled: true
 
 app:
   uploads:
