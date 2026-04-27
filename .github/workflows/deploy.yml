@@ -22,19 +22,21 @@ jobs:
     steps:
       - name: Déclencher déploiement backend staging
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.COOLIFY_STAGING_BACKEND_WEBHOOK }}" \
-            -H "Content-Type: application/json" | grep -q "^2" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_STAGING_BACKEND_WEBHOOK }}")
+          echo "HTTP status backend staging : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
             && echo "Backend staging déclenché" \
-            || (echo "Échec webhook backend staging" && exit 1)
+            || (echo "Échec webhook backend staging (HTTP $STATUS)" && exit 1)
 
       - name: Déclencher déploiement frontend staging
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK }}" \
-            -H "Content-Type: application/json" | grep -q "^2" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK }}")
+          echo "HTTP status frontend staging : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
             && echo "Frontend staging déclenché" \
-            || (echo "Échec webhook frontend staging" && exit 1)
+            || (echo "Échec webhook frontend staging (HTTP $STATUS)" && exit 1)
 
   # ------------------------------------------------------------
   # Production — déploiement sur main avec approbation manuelle
@@ -50,16 +52,18 @@ jobs:
     steps:
       - name: Déclencher déploiement backend production
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.COOLIFY_PROD_BACKEND_WEBHOOK }}" \
-            -H "Content-Type: application/json" | grep -q "^2" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_PROD_BACKEND_WEBHOOK }}")
+          echo "HTTP status backend production : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
             && echo "Backend production déclenché" \
-            || (echo "Échec webhook backend production" && exit 1)
+            || (echo "Échec webhook backend production (HTTP $STATUS)" && exit 1)
 
       - name: Déclencher déploiement frontend production
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK }}" \
-            -H "Content-Type: application/json" | grep -q "^2" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK }}")
+          echo "HTTP status frontend production : $STATUS"
+          echo "$STATUS" | grep -q "^2" \
             && echo "Frontend production déclenché" \
-            || (echo "Échec webhook frontend production" && exit 1)
+            || (echo "Échec webhook frontend production (HTTP $STATUS)" && exit 1)
